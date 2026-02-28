@@ -1,5 +1,5 @@
-// index.js (FiestaRuta Backend)
-// PASO 5: rutas municipalities y festivals
+// index.js (FestQuest Backend)
+// Rutas municipalities y festivals
 
 const express = require("express");
 const cors = require("cors");
@@ -11,7 +11,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rutas FiestaRuta (compatibilidad)
+// ✅ Ruta raíz (health check)
+app.get("/", (req, res) => {
+  res.json({
+    status: "FestQuest backend activo",
+    ok: true,
+  });
+});
+
+// Rutas FestQuest (compatibilidad)
 app.use("/municipalities", require("./routes/municipalities"));
 app.use("/festivals", require("./routes/festivals"));
 
@@ -28,7 +36,7 @@ app.get("/__debug/db", (req, res) => {
     if (err) return res.status(500).json({ error: err.message });
 
     res.json({
-      app: "FiestaRuta",
+      app: "FestQuest",
       puerto: process.env.PORT || 3002,
       dbPath,
       exists,
@@ -39,4 +47,4 @@ app.get("/__debug/db", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3002;
-app.listen(PORT, () => console.log(`✅ FiestaRuta backend running on port ${PORT}`));
+app.listen(PORT, () => console.log(`✅ FestQuest backend running on port ${PORT}`));
