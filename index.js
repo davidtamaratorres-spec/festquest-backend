@@ -1,10 +1,7 @@
 // index.js (FestQuest Backend)
-// Rutas municipalities y festivals
 
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
-const fs = require("fs");
 const db = require("./db");
 
 const app = express();
@@ -19,18 +16,17 @@ app.get("/", (req, res) => {
   });
 });
 
-// Rutas FestQuest (compatibilidad)
+// Rutas FestQuest
 app.use("/municipalities", require("./routes/municipalities"));
 app.use("/festivals", require("./routes/festivals"));
 
-// Alias API v1 (sin romper rutas actuales)
+// Alias API v1
 app.use("/api/v1/municipalities", require("./routes/municipalities"));
 app.use("/api/v1/festivals", require("./routes/festivals"));
 
-// Diagnóstico temporal
+// ✅ Diagnóstico REAL (detecta Postgres vs SQLite)
 app.get("/__debug/db", (req, res) => {
-  const dbPath = path.join(__dirname, "database.sqlite");
-  const exists = fs.existsSync(dbPath);
+  const usingPg = !!process.env.DATABASE_URL;
 
   db.get("SELECT 1 as ok", (err, r1) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -38,13 +34,15 @@ app.get("/__debug/db", (req, res) => {
     res.json({
       app: "FestQuest",
       puerto: process.env.PORT || 3002,
-      dbPath,
-      exists,
-      fileSizeBytes: exists ? fs.statSync(dbPath).size : 0,
+      mode: usingPg ? "postgres" : "sqlite",
+      databaseUrlSet: usingPg,
+      sqlitePath: db.SQLITE_PATH || null,
       dbTest: r1,
     });
   });
 });
 
 const PORT = process.env.PORT || 3002;
-app.listen(PORT, () => console.log(`✅ FestQuest backend running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`✅ FestQuest backend running on port ${PORT}`);
+});
