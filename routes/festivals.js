@@ -1,209 +1,99 @@
-// routes/festivals.js
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// =========================
-// ✅ Compat SQLite (?) + Postgres ($1)
-// =========================
 const isPostgres = !!db._pool;
 
-function adaptSql(sql) {
-  if (!isPostgres) return sql; // SQLite usa ?
-  let i = 0; // Postgres usa $1, $2, ...
-  return sql.replace(/\?/g, () => `$${++i}`);
-}
-
-function dbGet(sql, params, cb) {
-  return db.get(adaptSql(sql), params, cb);
-}
-function dbAll(sql, params, cb) {
-  return db.all(adaptSql(sql), params, cb);
-}
-
-// --- Helpers ---
 function isISODate(d) {
   return typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d);
 }
-function normalizeBool1(v) {
-  return v === "1" || v === 1 || v === true || v === "true";
-}
+
 function clampInt(value, fallback, { min, max }) {
   const n = parseInt(value, 10);
   if (Number.isNaN(n)) return fallback;
   return Math.max(min, Math.min(max, n));
 }
 
-// ✅ LISTADO: GET /festivals   (y también /api/v1/festivals por alias en index.js)
-router.get("/", (req, res) => {
-  const {
-    from,
-    to,
-    departamento,
-    municipioId,
-    onlyHolidays,
-    sortBy = "fecha_inicio",
-    sortDir = "asc",
-    page = 1,
-    pageSize = 20,
-  } = req.query;
+router.get("/", async (req, res) => {
+  try {
+    const {
+      page = 1,
+      pageSize = 20
+    } = req.query;
 
-  const hasFrom = from !== undefined && from !== null && String(from).trim() !== "";
-  const hasTo = to !== undefined && to !== null && String(to).trim() !== "";
+    const safePage = clampInt(page, 1, { min: 1, max: 1_000_000 });
+    const safePageSize = clampInt(pageSize, 20, { min: 1, max: 100 });
+    const limit = safePageSize;
+    const offset = (safePage - 1) * limit;
 
-  if (hasFrom !== hasTo) {
-    return res.status(400).json({
-      error: "Debes enviar ambos parámetros: from y to (YYYY-MM-DD).",
-    });
-  }
+    if (isPostgres) {
 
-  if (hasFrom && hasTo) {
-    if (!isISODate(from) || !isISODate(to)) {
-      return res.status(400).json({
-        error: "Formato de fecha inválido. Usa YYYY-MM-DD en from y to.",
-      });
-    }
-    if (from > to) {
-      return res.status(400).json({
-        error: "Rango inválido: from no puede ser mayor que to.",
-      });
-    }
-  }
+      const countResult = await db._pool.query(
+        `SELECT COUNT(*)::int as total FROM festivals`
+      );
 
-  const safePage = clampInt(page, 1, { min: 1, max: 1_000_000 });
-  const safePageSize = clampInt(pageSize, 20, { min: 1, max: 100 });
-  const limit = safePageSize;
-  const offset = (safePage - 1) * limit;
+      const total = countResult.rows[0].total;
+      const totalPages = Math.max(1, Math.ceil(total / limit));
 
-  const sortByMap = {
-    fecha_inicio: "f.fecha_inicio",
-    fecha_fin: "f.fecha_fin",
-    nombre: "f.nombre",
-    municipio: "m.nombre",
-    departamento: "m.departamento",
-    id: "f.id",
-  };
+      const dataResult = await db._pool.query(
+        `
+        SELECT f.*, m.nombre as municipio_nombre, m.departamento
+        FROM festivals f
+        JOIN municipalities m ON f.municipio_id = m.id
+        ORDER BY f.fecha_inicio ASC
+        LIMIT $1 OFFSET $2
+        `,
+        [limit, offset]
+      );
 
-  const safeSortBy = sortByMap[sortBy] ? sortBy : "fecha_inicio";
-  const safeSortDir = String(sortDir).toLowerCase() === "desc" ? "DESC" : "ASC";
-  const orderClause = ` ORDER BY ${sortByMap[safeSortBy]} ${safeSortDir}, f.id ${safeSortDir}`;
-
-  const conditions = [];
-  const params = [];
-
-  // Intersección de rangos (real)
-  if (hasFrom && hasTo) {
-    conditions.push("(COALESCE(f.fecha_fin, f.fecha_inicio) >= ?)");
-    conditions.push("(f.fecha_inicio <= ?)");
-    params.push(from, to);
-  }
-
-  if (departamento) {
-    conditions.push("m.departamento = ?");
-    params.push(departamento);
-  }
-
-  if (municipioId) {
-    conditions.push("f.municipio_id = ?");
-    params.push(municipioId);
-  }
-
-  const onlyH = normalizeBool1(onlyHolidays);
-  if (onlyH) {
-    let existsSql = `
-      EXISTS (
-        SELECT 1
-        FROM holidays h
-        WHERE h.fecha BETWEEN f.fecha_inicio AND COALESCE(f.fecha_fin, f.fecha_inicio)
-    `;
-
-    if (hasFrom && hasTo) {
-      existsSql += ` AND h.fecha BETWEEN ? AND ? `;
-      params.push(from, to);
-    }
-
-    existsSql += `)`;
-    conditions.push(existsSql);
-  }
-
-  const whereClause = conditions.length ? " WHERE " + conditions.join(" AND ") : "";
-
-  const baseFrom = `
-    FROM festivals f
-    JOIN municipalities m ON f.municipio_id = m.id
-    ${whereClause}
-  `;
-
-  const countSql = `SELECT COUNT(*) as total ${baseFrom}`;
-  const countParams = [...params];
-
-  dbGet(countSql, countParams, (err, countRow) => {
-    if (err) return res.status(500).json({ error: err.message });
-
-    // PG puede devolver COUNT como string
-    const totalRaw = countRow?.total ?? 0;
-    const total = typeof totalRaw === "string" ? parseInt(totalRaw, 10) : totalRaw;
-    const totalPages = Math.max(1, Math.ceil((total || 0) / limit));
-
-    const dataSql = `
-      SELECT
-        f.*,
-        m.nombre as municipio_nombre,
-        m.departamento
-      ${baseFrom}
-      ${orderClause}
-      LIMIT ? OFFSET ?
-    `;
-
-    const dataParams = [...params, limit, offset];
-
-    dbAll(dataSql, dataParams, (err2, rows) => {
-      if (err2) return res.status(500).json({ error: err2.message });
-
-      res.json({
-        data: rows,
+      return res.json({
+        data: dataResult.rows,
         meta: {
           page: safePage,
           pageSize: limit,
-          total: total || 0,
-          totalPages,
-          sortBy: safeSortBy,
-          sortDir: safeSortDir.toLowerCase(),
-          filters: {
-            from: hasFrom ? from : null,
-            to: hasTo ? to : null,
-            departamento: departamento || null,
-            municipioId: municipioId ? Number(municipioId) : null,
-            onlyHolidays: onlyH,
-          },
-        },
+          total,
+          totalPages
+        }
       });
-    });
-  });
-});
 
-// ✅ DETALLE: GET /festivals/:id
-router.get("/:id", (req, res) => {
-  const id = parseInt(req.params.id, 10);
-  if (Number.isNaN(id)) return res.status(400).json({ error: "ID inválido" });
+    } else {
 
-  const sql = `
-    SELECT
-      f.*,
-      m.nombre as municipio_nombre,
-      m.departamento
-    FROM festivals f
-    JOIN municipalities m ON f.municipio_id = m.id
-    WHERE f.id = ?
-    LIMIT 1
-  `;
+      db.get(`SELECT COUNT(*) as total FROM festivals`, [], (err, countRow) => {
+        if (err) return res.status(500).json({ error: err.message });
 
-  dbGet(sql, [id], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: "Festival no encontrado" });
+        const total = countRow.total;
+        const totalPages = Math.max(1, Math.ceil(total / limit));
 
-    res.json({ data: row });
-  });
+        db.all(
+          `
+          SELECT f.*, m.nombre as municipio_nombre, m.departamento
+          FROM festivals f
+          JOIN municipalities m ON f.municipio_id = m.id
+          ORDER BY f.fecha_inicio ASC
+          LIMIT ? OFFSET ?
+          `,
+          [limit, offset],
+          (err2, rows) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+
+            res.json({
+              data: rows,
+              meta: {
+                page: safePage,
+                pageSize: limit,
+                total,
+                totalPages
+              }
+            });
+          }
+        );
+      });
+    }
+
+  } catch (e) {
+    console.error("FESTIVALS ERROR:", e);
+    res.status(500).json({ error: e.message });
+  }
 });
 
 module.exports = router;
