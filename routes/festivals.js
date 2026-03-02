@@ -1,6 +1,25 @@
+// routes/festivals.js
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
+
+// =========================
+// ✅ Compat SQLite (?) + Postgres ($1)
+// =========================
+const isPostgres = !!db._pool;
+
+function adaptSql(sql) {
+  if (!isPostgres) return sql; // SQLite usa ?
+  let i = 0; // Postgres usa $1, $2, ...
+  return sql.replace(/\?/g, () => `$${++i}`);
+}
+
+function dbGet(sql, params, cb) {
+  return db.get(adaptSql(sql), params, cb);
+}
+function dbAll(sql, params, cb) {
+  return db.all(adaptSql(sql), params, cb);
+}
 
 // --- Helpers ---
 function isISODate(d) {
@@ -15,7 +34,7 @@ function clampInt(value, fallback, { min, max }) {
   return Math.max(min, Math.min(max, n));
 }
 
-// ✅ LISTADO: GET /api/v1/festivals
+// ✅ LISTADO: GET /festivals   (y también /api/v1/festivals por alias en index.js)
 router.get("/", (req, res) => {
   const {
     from,
@@ -118,11 +137,13 @@ router.get("/", (req, res) => {
   const countSql = `SELECT COUNT(*) as total ${baseFrom}`;
   const countParams = [...params];
 
-  db.get(countSql, countParams, (err, countRow) => {
+  dbGet(countSql, countParams, (err, countRow) => {
     if (err) return res.status(500).json({ error: err.message });
 
-    const total = countRow?.total ?? 0;
-    const totalPages = Math.max(1, Math.ceil(total / limit));
+    // PG puede devolver COUNT como string
+    const totalRaw = countRow?.total ?? 0;
+    const total = typeof totalRaw === "string" ? parseInt(totalRaw, 10) : totalRaw;
+    const totalPages = Math.max(1, Math.ceil((total || 0) / limit));
 
     const dataSql = `
       SELECT
@@ -136,7 +157,7 @@ router.get("/", (req, res) => {
 
     const dataParams = [...params, limit, offset];
 
-    db.all(dataSql, dataParams, (err2, rows) => {
+    dbAll(dataSql, dataParams, (err2, rows) => {
       if (err2) return res.status(500).json({ error: err2.message });
 
       res.json({
@@ -144,7 +165,7 @@ router.get("/", (req, res) => {
         meta: {
           page: safePage,
           pageSize: limit,
-          total,
+          total: total || 0,
           totalPages,
           sortBy: safeSortBy,
           sortDir: safeSortDir.toLowerCase(),
@@ -161,7 +182,7 @@ router.get("/", (req, res) => {
   });
 });
 
-// ✅ DETALLE: GET /api/v1/festivals/:id
+// ✅ DETALLE: GET /festivals/:id
 router.get("/:id", (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (Number.isNaN(id)) return res.status(400).json({ error: "ID inválido" });
@@ -177,7 +198,7 @@ router.get("/:id", (req, res) => {
     LIMIT 1
   `;
 
-  db.get(sql, [id], (err, row) => {
+  dbGet(sql, [id], (err, row) => {
     if (err) return res.status(500).json({ error: err.message });
     if (!row) return res.status(404).json({ error: "Festival no encontrado" });
 
