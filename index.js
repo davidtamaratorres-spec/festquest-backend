@@ -8,9 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// =========================
 // Healthcheck
-// =========================
 app.get("/", (req, res) => {
   res.json({
     ok: true,
@@ -20,23 +18,18 @@ app.get("/", (req, res) => {
   });
 });
 
-// =========================
-// API routes (NOMBRES REALES)
-// =========================
-app.use("/restaurants", require("./rutas/restaurants"));
-app.use("/dishes", require("./rutas/dishes"));
-app.use("/promotions", require("./rutas/promotions"));
+// Rutas (ESPAÑOL: existen en /rutas)
+app.use("/restaurantes", require("./rutas/restaurantes"));
+app.use("/platos", require("./rutas/platos"));
+app.use("/promociones", require("./rutas/promociones"));
 app.use("/analytics", require("./rutas/analytics"));
 
-app.use("/municipalities", require("./rutas/municipalities"));
-app.use("/festivals", require("./rutas/festivals"));
+app.use("/municipios", require("./rutas/municipios"));
+app.use("/festivales", require("./rutas/festivales"));
 
 // Debug
 app.use("/__debug", require("./rutas/debugColombia"));
 
-// =========================
-// Start
-// =========================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
