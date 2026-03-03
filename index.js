@@ -21,18 +21,18 @@ app.get("/", (req, res) => {
 });
 
 // =========================
-// API routes (CARPETA REAL = routes)
+// API routes (CARPETA REAL = rutas)
 // =========================
-app.use("/restaurantes", require("./routes/restaurantes"));
-app.use("/platos", require("./routes/platos"));
-app.use("/promociones", require("./routes/promociones"));
-app.use("/analytics", require("./routes/analytics"));
+app.use("/restaurantes", require("./rutas/restaurantes"));
+app.use("/platos", require("./rutas/platos"));
+app.use("/promociones", require("./rutas/promociones"));
+app.use("/analytics", require("./rutas/analytics"));
 
-app.use("/municipios", require("./routes/municipios"));
-app.use("/festivales", require("./routes/festivales"));
+app.use("/municipios", require("./rutas/municipios"));
+app.use("/festivales", require("./rutas/festivales"));
 
 // Debug
-app.use("/__debug", require("./routes/debugColombia"));
+app.use("/__debug", require("./rutas/debugColombia"));
 
 // =========================
 // Start
