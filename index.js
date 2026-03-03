@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 // =========================
-// ✅ Healthcheck
+// Healthcheck
 // =========================
 app.get("/", (req, res) => {
   res.json({
@@ -21,26 +21,24 @@ app.get("/", (req, res) => {
 });
 
 // =========================
-// ✅ API routes (según tu carpeta /rutas)
+// API routes (CARPETA REAL = routes)
 // =========================
-app.use("/restaurantes", require("./rutas/restaurantes"));
-app.use("/platos", require("./rutas/platos"));
-app.use("/promociones", require("./rutas/promociones"));
-app.use("/analytics", require("./rutas/analytics"));
+app.use("/restaurantes", require("./routes/restaurantes"));
+app.use("/platos", require("./routes/platos"));
+app.use("/promociones", require("./routes/promociones"));
+app.use("/analytics", require("./routes/analytics"));
 
-app.use("/municipios", require("./rutas/municipios"));
-app.use("/festivales", require("./rutas/festivales"));
+app.use("/municipios", require("./routes/municipios"));
+app.use("/festivales", require("./routes/festivales"));
 
-// =========================
-// ✅ Debug route
-// =========================
-app.use("/__debug", require("./rutas/debugColombia"));
+// Debug
+app.use("/__debug", require("./routes/debugColombia"));
 
 // =========================
-// ✅ Start
+// Start
 // =========================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Server up on port ${PORT}`);
-  console.log(`✅ DB mode: ${db.mode || "unknown"}`);
+  console.log(`Server running on port ${PORT}`);
+  console.log(`DB mode: ${db.mode || "unknown"}`);
 });
