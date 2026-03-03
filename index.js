@@ -1,48 +1,46 @@
-// index.js (FestQuest Backend)
-
+// index.js
 const express = require("express");
 const cors = require("cors");
+
 const db = require("./db");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Ruta raíz (health check)
+// =========================
+// ✅ Healthcheck
+// =========================
 app.get("/", (req, res) => {
   res.json({
-    status: "FestQuest backend activo",
     ok: true,
+    status: "FestQuest backend activo",
+    dbMode: db.mode || "unknown",
+    hasDbUrl: !!process.env.DATABASE_URL,
   });
 });
 
-// Rutas FestQuest
-app.use("/municipalities", require("./routes/municipalities"));
-app.use("/festivals", require("./routes/festivals"));
+// =========================
+// ✅ API routes (según tu carpeta /rutas)
+// =========================
+app.use("/restaurantes", require("./rutas/restaurantes"));
+app.use("/platos", require("./rutas/platos"));
+app.use("/promociones", require("./rutas/promociones"));
+app.use("/analytics", require("./rutas/analytics"));
 
-// Alias API v1
-app.use("/api/v1/municipalities", require("./routes/municipalities"));
-app.use("/api/v1/festivals", require("./routes/festivals"));
+app.use("/municipios", require("./rutas/municipios"));
+app.use("/festivales", require("./rutas/festivales"));
 
-// ✅ Diagnóstico REAL (detecta Postgres vs SQLite)
-app.get("/__debug/db", (req, res) => {
-  const usingPg = !!process.env.DATABASE_URL;
+// =========================
+// ✅ Debug route
+// =========================
+app.use("/__debug", require("./rutas/debugColombia"));
 
-  db.get("SELECT 1 as ok", (err, r1) => {
-    if (err) return res.status(500).json({ error: err.message });
-
-    res.json({
-      app: "FestQuest",
-      puerto: process.env.PORT || 3002,
-      mode: usingPg ? "postgres" : "sqlite",
-      databaseUrlSet: usingPg,
-      sqlitePath: db.SQLITE_PATH || null,
-      dbTest: r1,
-    });
-  });
-});
-
-const PORT = process.env.PORT || 3002;
+// =========================
+// ✅ Start
+// =========================
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ FestQuest backend running on port ${PORT}`);
+  console.log(`✅ Server up on port ${PORT}`);
+  console.log(`✅ DB mode: ${db.mode || "unknown"}`);
 });
