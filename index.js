@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Rutas (ESPAÑOL: existen en /rutas)
+// Rutas
 app.use("/restaurantes", require("./rutas/restaurantes"));
 app.use("/platos", require("./rutas/platos"));
 app.use("/promociones", require("./rutas/promociones"));
@@ -31,7 +31,8 @@ app.use("/festivales", require("./rutas/festivales"));
 app.use("/__debug", require("./rutas/debugColombia"));
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`DB mode: ${db.mode || "unknown"}`);
+  console.log(`Servidor ejecutándose en puerto ${PORT}`);
+  console.log(`Modo DB: ${db.mode || "unknown"}`);
 });
