@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Rutas (ESPAÑOL: existen en /rutas)
+// ✅ Rutas en español (como funcionaba antes)
 app.use("/restaurantes", require("./rutas/restaurantes"));
 app.use("/platos", require("./rutas/platos"));
 app.use("/promociones", require("./rutas/promociones"));
@@ -32,6 +32,6 @@ app.use("/__debug", require("./rutas/debugColombia"));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`DB mode: ${db.mode || "unknown"}`);
+  console.log(`✅ Backend FestQuest activo en puerto ${PORT}`);
+  console.log(`✅ DB mode: ${db.mode || "unknown"}`);
 });
