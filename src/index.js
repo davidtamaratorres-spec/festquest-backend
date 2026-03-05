@@ -1,4 +1,6 @@
 // src/index.js
+console.log("=== RUNNING SRC/INDEX.JS ===", new Date().toISOString());
+
 const express = require("express");
 const cors = require("cors");
 
@@ -8,7 +10,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// =========================
 // Healthcheck
+// =========================
 app.get("/", (req, res) => {
   res.json({
     ok: true,
@@ -18,7 +22,9 @@ app.get("/", (req, res) => {
   });
 });
 
-// Rutas (carpeta real está en la RAÍZ: /rutas)
+// =========================
+// Rutas
+// =========================
 app.use("/restaurantes", require("../rutas/restaurantes"));
 app.use("/platos", require("../rutas/platos"));
 app.use("/promociones", require("../rutas/promociones"));
@@ -27,10 +33,16 @@ app.use("/analytics", require("../rutas/analytics"));
 app.use("/municipios", require("../rutas/municipios"));
 app.use("/festivales", require("../rutas/festivales"));
 
+// =========================
 // Debug
+// =========================
 app.use("/__debug", require("../rutas/debugColombia"));
 
+// =========================
+// Start server
+// =========================
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`Servidor ejecutándose en puerto ${PORT}`);
   console.log(`Modo DB: ${db.mode || "unknown"}`);
