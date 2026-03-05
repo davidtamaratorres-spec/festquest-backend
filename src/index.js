@@ -1,6 +1,4 @@
 // src/index.js
-console.log("=== RUNNING SRC/INDEX.JS ===", new Date().toISOString());
-
 const express = require("express");
 const cors = require("cors");
 
@@ -23,7 +21,8 @@ app.get("/", (req, res) => {
 });
 
 // =========================
-// Rutas
+// Rutas (carpeta real: /rutas en la raíz)
+// OJO: desde /src hay que subir un nivel => ../rutas
 // =========================
 app.use("/restaurantes", require("../rutas/restaurantes"));
 app.use("/platos", require("../rutas/platos"));
