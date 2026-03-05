@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Rutas (están en ../rutas)
+// Rutas (carpeta real está en la RAÍZ: /rutas)
 app.use("/restaurantes", require("../rutas/restaurantes"));
 app.use("/platos", require("../rutas/platos"));
 app.use("/promociones", require("../rutas/promociones"));
