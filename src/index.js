@@ -2,64 +2,30 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
-
-const db = require("../db");
+// En tu Screenshot_91 veo que db.js está en la misma carpeta que index.js
+const db = require("./db"); 
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// =========================
-// Diagnóstico de archivos (ANTES de require)
-// =========================
-const rutasDir = path.join(__dirname, "..", "rutas"); // /project/src/rutas
-const restaurantesFile = path.join(rutasDir, "restaurantes.js");
+// Definimos la carpeta 'routes' subiendo un nivel desde 'src'
+const routesDir = path.join(__dirname, "..", "routes");
 
-console.log("=== DEBUG PATHS ===");
-console.log("cwd:", process.cwd());
-console.log("__dirname:", __dirname);
-console.log("rutasDir:", rutasDir);
-console.log("exists rutasDir:", fs.existsSync(rutasDir));
-if (fs.existsSync(rutasDir)) {
-  try {
-    console.log("rutasDir files:", fs.readdirSync(rutasDir));
-  } catch (e) {
-    console.log("ERROR reading rutasDir:", e.message);
-  }
-}
-console.log("restaurantesFile:", restaurantesFile);
-console.log("exists restaurantes.js:", fs.existsSync(restaurantesFile));
-console.log("===================");
-
-// =========================
-// Healthcheck
-// =========================
+// Ruta de prueba para saber que el motor encendió
 app.get("/", (req, res) => {
-  res.json({
-    ok: true,
-    status: "FestQuest backend activo",
-    dbMode: db.mode || "unknown",
-    hasDbUrl: !!process.env.DATABASE_URL,
-  });
+  res.json({ ok: true, status: "Motor FestQuest Encendido" });
 });
 
-// =========================
-// Rutas (con require ABSOLUTO al archivo .js)
-// =========================
-app.use("/restaurantes", require(restaurantesFile));
-app.use("/platos", require(path.join(rutasDir, "platos.js")));
-app.use("/promociones", require(path.join(rutasDir, "promociones.js")));
-app.use("/analytics", require(path.join(rutasDir, "analytics.js")));
-
-app.use("/municipios", require(path.join(rutasDir, "municipios.js")));
-app.use("/festivales", require(path.join(rutasDir, "festivales.js")));
-
-// Debug
-app.use("/__debug", require(path.join(rutasDir, "debugColombia.js")));
+// Usamos los nombres REALES de tus archivos en inglés
+app.use("/restaurantes", require(path.join(routesDir, "restaurants.js")));
+app.use("/platos", require(path.join(routesDir, "dishes.js")));
+app.use("/municipios", require(path.join(routesDir, "municipalities.js")));
+app.use("/festivales", require(path.join(routesDir, "festivals.js")));
+app.use("/analytics", require(path.join(routesDir, "analytics.js")));
+app.use("/promociones", require(path.join(routesDir, "promotions.js")));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en puerto ${PORT}`);
-  console.log(`Modo DB: ${db.mode || "unknown"}`);
+  console.log(`Servidor escuchando en puerto ${PORT}`);
 });
