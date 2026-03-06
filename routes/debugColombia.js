@@ -1,40 +1,22 @@
-// routes/debugColombia.js
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const db = require("../db");
+const db = require('../db');
 
-// Devuelve conteos reales en la DB activa (postgres en Render si hay DATABASE_URL)
-router.get("/colombia-counts", (req, res) => {
-  const out = {
-    ok: true,
-    dbMode: db.mode || "unknown",
-    hasDbUrl: !!process.env.DATABASE_URL,
-    counts: {
-      municipalities: null,
-      festivals: null,
-      holidays: null,
-    },
-  };
+router.get('/colombia-counts', async (req, res) => {
+  try {
+    // Usamos .query() que es lo que PostgreSQL entiende
+    const mun = await db.query("SELECT COUNT(*) FROM municipalities");
+    const fest = await db.query("SELECT COUNT(*) FROM festivals");
 
-  db.get("SELECT COUNT(*) AS c FROM municipalities;", [], (e1, r1) => {
-    if (e1) return res.status(500).json({ ok: false, error: e1.message });
-
-    out.counts.municipalities = r1?.c ?? 0;
-
-    db.get("SELECT COUNT(*) AS c FROM festivals;", [], (e2, r2) => {
-      if (e2) return res.status(500).json({ ok: false, error: e2.message });
-
-      out.counts.festivals = r2?.c ?? 0;
-
-      db.get("SELECT COUNT(*) AS c FROM holidays;", [], (e3, r3) => {
-        if (e3) return res.status(500).json({ ok: false, error: e3.message });
-
-        out.counts.holidays = r3?.c ?? 0;
-
-        return res.json(out);
-      });
+    res.json({
+      municipios: mun.rows[0].count,
+      festivales: fest.rows[0].count,
+      mensaje: "¡Conexión exitosa desde Render Pro!"
     });
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
