@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 // En tu Screenshot_91 veo que db.js está en la misma carpeta que index.js
-const db = require("./db"); 
+const db = require("../db"); 
 
 const app = express();
 app.use(cors());
