@@ -1,22 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-// Esta línea es la que arregla el error de "Cannot find module"
-const db = require(path.join(__dirname, '../db')); 
+
+// Esta línea usa rutas absolutas para evitar el error de la Screenshot_129
+const db = require(path.join(__dirname, '../../src/db')); 
 
 router.get('/colombia-counts', async (req, res) => {
   try {
-    // Usamos db.query (que es la función correcta según el log anterior)
+    // Usamos db.query() para corregir el TypeError visto en la Screenshot_125
     const mun = await db.query("SELECT COUNT(*) FROM municipalities");
     const fest = await db.query("SELECT COUNT(*) FROM festivals");
 
     res.json({
       municipios: mun.rows[0].count,
       festivales: fest.rows[0].count,
-      status: "¡Conexión Exitosa con Render Pro!"
+      mensaje: "¡Conexión exitosa en Render Pro!"
     });
   } catch (err) {
-    res.status(500).json({ error: err.message, stack: "Revisa la conexión a DB" });
+    res.status(500).json({ error: err.message });
   }
 });
 
