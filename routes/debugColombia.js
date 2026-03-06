@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // Sube un nivel para encontrar db.js en la raíz
+// IMPORTANTE: Un solo punto fuera para buscar db.js en la raíz
+const db = require('../db'); 
 
 router.get('/colombia-counts', async (req, res) => {
   try {
@@ -10,7 +11,7 @@ router.get('/colombia-counts', async (req, res) => {
     res.json({
       municipios: mun.rows[0].count,
       festivales: fest.rows[0].count,
-      status: "¡Sincronización Exitosa!"
+      status: "Conectado a PostgreSQL en Render"
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
