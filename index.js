@@ -1,29 +1,11 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-
-// REGLA DE ORO: Un solo punto (.) porque db.js está en la misma carpeta raíz
-const db = require("./db"); 
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// Ruta de bienvenida confirmada
+// Cambia la ruta de bienvenida para estar 100% seguros
 app.get("/", (req, res) => {
   res.json({ 
-    ok: true, 
-    mensaje: "FestQuest Backend Online",
-    status: "Sincronizado con Plan Pro" 
+    mensaje: "REINTENTO TOTAL: USANDO PUNTO SIMPLE",
+    db_path: "./db",
+    timestamp: "NUEVO_INTENTO_" + new Date().getTime() 
   });
 });
 
-// Carga de rutas desde la carpeta /routes
-app.use("/__debug", require("./routes/debugColombia"));
-app.use("/festivales", require("./routes/festivals"));
-app.use("/municipios", require("./routes/municipalities"));
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en puerto ${PORT}`);
-});
+// ASEGÚRATE DE QUE ESTO TENGA UN SOLO PUNTO
+const db = require("./db");
