@@ -1,8 +1,9 @@
 const { Pool } = require("pg");
+
 try {
   require("dotenv").config();
 } catch (e) {
-  console.log("Dotenv no encontrado, usando variables de entorno de Render");
+  console.log("Usando variables de entorno de Render");
 }
 
 const pool = new Pool({
@@ -13,17 +14,14 @@ const pool = new Pool({
 });
 
 module.exports = {
-  mode: "postgres", // <--- AÑADE ESTA LÍNEA AQUÍ
+  mode: "postgres",
   query: (text, params) => pool.query(text, params),
-  // Añadimos estas funciones para que festivals.js no falle al llamarlas:
-  get: (text, params, callback) => {
-    pool.query(text, params)
-      .then(res => callback(null, res.rows[0]))
-      .catch(err => callback(err));
+  get: async (text, params) => {
+    const res = await pool.query(text, params);
+    return res.rows[0];
   },
-  all: (text, params, callback) => {
-    pool.query(text, params)
-      .then(res => callback(null, res.rows))
-      .catch(err => callback(err));
+  all: async (text, params) => {
+    const res = await pool.query(text, params);
+    return res.rows;
   }
 };
