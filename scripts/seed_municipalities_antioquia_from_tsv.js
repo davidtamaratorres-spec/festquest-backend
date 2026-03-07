@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const db = require("../db");
+const db = require("../db"); // Asegúrate de que este db.js sea el de la conexión a Render
 
 const FILE = path.join(__dirname, "..", "data", "antioquia_municipios_profile.tsv");
 const DEPARTAMENTO = "Antioquia";
@@ -14,10 +14,7 @@ function norm(s) {
 }
 
 function toNumberRaw(v) {
-  const s = String(v || "")
-    .trim()
-    .replace(/\s+/g, "")
-    .replace(",", ".");
+  const s = String(v || "").trim().replace(/\s+/g, "").replace(",", ".");
   if (s === "") return null;
   const n = Number(s);
   return Number.isFinite(n) ? n : null;
@@ -49,9 +46,7 @@ function parseTSV(text) {
   const iFund = idx("Fundación");
 
   if ([iNombre, iSub, iAlt, iTemp, iArea, iHab, iFund].some((i) => i < 0)) {
-    throw new Error(
-      "Encabezado inválido. Debe contener: Nombre, Subregión, Altitud, Temperatura, Área, Habitantes, Fundación"
-    );
+    throw new Error("Encabezado inválido en el TSV.");
   }
 
   const rows = [];
@@ -75,18 +70,6 @@ function parseTSV(text) {
   return rows;
 }
 
-function run(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, (err) => (err ? reject(err) : resolve()));
-  });
-}
-
-function all(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => (err ? reject(err) : resolve(rows)));
-  });
-}
-
 (async () => {
   try {
     if (!fs.existsSync(FILE)) throw new Error(`No existe el TSV: ${FILE}`);
@@ -96,15 +79,16 @@ function all(sql, params = []) {
 
     if (incoming.length === 0) throw new Error("El TSV no tiene filas válidas.");
 
-    console.log(`== Seed municipalities Antioquia desde TSV ==`);
-    console.log(`Filas TSV: ${incoming.length}`);
+    console.log(`== Seed municipalities Antioquia (PostgreSQL) ==`);
+    console.log(`Filas encontradas en TSV: ${incoming.length}`);
 
-    // Para evitar duplicados por tildes, consultamos existentes y comparamos por nombre normalizado
-    const existing = await all(
-      `SELECT id, nombre, departamento FROM municipalities WHERE departamento = ?`,
+    // Consultar existentes en PostgreSQL
+    const resExisting = await db.query(
+      `SELECT id, nombre, departamento FROM municipalities WHERE departamento = $1`,
       [DEPARTAMENTO]
     );
-
+    
+    const existing = resExisting.rows;
     const byNorm = new Map(existing.map((r) => [norm(r.nombre), r]));
 
     let inserted = 0;
@@ -115,62 +99,39 @@ function all(sql, params = []) {
       const match = byNorm.get(key);
 
       if (!match) {
-        await run(
-          `
-          INSERT INTO municipalities
+        // PostgreSQL usa $1, $2 en lugar de ?
+        await db.query(
+          `INSERT INTO municipalities
             (nombre, departamento, subregion, altitud_msnm, temperatura_prom, area_km2, habitantes, fundacion, bandera_url)
           VALUES
-            (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
+            ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
           [
-            row.nombre,
-            row.departamento,
-            row.subregion,
-            row.altitud_msnm,
-            row.temperatura_prom,
-            row.area_km2,
-            row.habitantes,
-            row.fundacion,
-            row.bandera_url,
+            row.nombre, row.departamento, row.subregion, row.altitud_msnm,
+            row.temperatura_prom, row.area_km2, row.habitantes, row.fundacion, row.bandera_url
           ]
         );
         inserted++;
       } else {
-        // Si ya existe (porque venía de festivales), lo actualizamos con perfil
-        await run(
-          `
-          UPDATE municipalities
-          SET subregion = ?,
-              altitud_msnm = ?,
-              temperatura_prom = ?,
-              area_km2 = ?,
-              habitantes = ?,
-              fundacion = ?,
-              bandera_url = COALESCE(bandera_url, ?)
-          WHERE id = ?
-        `,
+        await db.query(
+          `UPDATE municipalities
+          SET subregion = $1, altitud_msnm = $2, temperatura_prom = $3,
+              area_km2 = $4, habitantes = $5, fundacion = $6,
+              bandera_url = COALESCE(bandera_url, $7)
+          WHERE id = $8`,
           [
-            row.subregion,
-            row.altitud_msnm,
-            row.temperatura_prom,
-            row.area_km2,
-            row.habitantes,
-            row.fundacion,
-            row.bandera_url,
-            match.id,
+            row.subregion, row.altitud_msnm, row.temperatura_prom,
+            row.area_km2, row.habitantes, row.fundacion, row.bandera_url, match.id
           ]
         );
         updated++;
       }
     }
 
-    console.log(`✅ Seed listo`);
-    console.log(`Insertados nuevos: ${inserted}`);
-    console.log(`Actualizados existentes: ${updated}`);
-
+    console.log(`✅ ¡Proceso terminado!`);
+    console.log(`Nuevos: ${inserted} | Actualizados: ${updated}`);
     process.exit(0);
   } catch (e) {
-    console.error("❌ Error seed:", e.message);
+    console.error("❌ Error en el seed:", e.message);
     process.exit(1);
   }
 })();
