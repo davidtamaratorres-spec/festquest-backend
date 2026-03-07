@@ -1,5 +1,4 @@
 const { Pool } = require("pg");
-// Intenta cargar dotenv solo si existe
 try {
   require("dotenv").config();
 } catch (e) {
@@ -14,5 +13,17 @@ const pool = new Pool({
 });
 
 module.exports = {
+  mode: "postgres", // <--- AÑADE ESTA LÍNEA AQUÍ
   query: (text, params) => pool.query(text, params),
+  // Añadimos estas funciones para que festivals.js no falle al llamarlas:
+  get: (text, params, callback) => {
+    pool.query(text, params)
+      .then(res => callback(null, res.rows[0]))
+      .catch(err => callback(err));
+  },
+  all: (text, params, callback) => {
+    pool.query(text, params)
+      .then(res => callback(null, res.rows))
+      .catch(err => callback(err));
+  }
 };
