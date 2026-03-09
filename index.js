@@ -1,19 +1,21 @@
-console.log("Servidor iniciando...");
-const express = require("express");
-const cors = require("cors");
-const db = require("./db"); // Ya no fallará
+const express = require('express');
+const cors = require('cors');
+const db = require('./db');
+const debugRoutes = require('./src/routes/debugColombia');
 
 const app = express();
+const PORT = process.env.PORT || 10000;
+
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({ ok: true, mensaje: "Backend FestQuest - ¡Base de datos conectada!" });
+// Rutas
+app.use('/debug', debugRoutes);
+
+app.get('/', (req, res) => {
+    res.send('Servidor de FestQuest funcionando');
 });
 
-app.use("/__debug", require("./routes/debugColombia"));
-app.use("/festivales", require("./routes/festivals"));
-app.use("/municipios", require("./routes/municipalities"));
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Servidor listo"));
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en puerto ${PORT}`);
+});
