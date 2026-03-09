@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const db = require('./db');
-const debugRoutes = require('./src/routes/debugColombia');
+// Corregimos la ruta para que apunte a donde realmente está el archivo
+const debugRoutes = require('./routes/debugColombia');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -13,7 +14,7 @@ app.use(express.json());
 app.use('/debug', debugRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Servidor de FestQuest funcionando');
+    res.send('Servidor de FestQuest funcionando correctamente');
 });
 
 app.listen(PORT, () => {
