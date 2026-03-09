@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../db');
+const db = require('../db'); // Subimos un nivel para encontrar db.js
 
 router.get("/colombia-counts", async (req, res) => {
     try {
@@ -8,7 +8,7 @@ router.get("/colombia-counts", async (req, res) => {
         res.json({ 
             success: true, 
             count: result.rows[0].count,
-            message: "Conexión exitosa con la base de datos" 
+            message: "Conexión exitosa con PostgreSQL" 
         });
     } catch (err) {
         console.error(err);
