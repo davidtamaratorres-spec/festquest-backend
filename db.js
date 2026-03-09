@@ -17,11 +17,21 @@ module.exports = {
   mode: "postgres",
   query: (text, params) => pool.query(text, params),
   get: async (text, params) => {
-    const res = await pool.query(text, params);
-    return res.rows[0];
+    try {
+      const res = await pool.query(text, params);
+      return res.rows[0];
+    } catch (err) {
+      console.error("Error en db.get:", err);
+      throw err;
+    }
   },
   all: async (text, params) => {
-    const res = await pool.query(text, params);
-    return res.rows;
+    try {
+      const res = await pool.query(text, params);
+      return res.rows;
+    } catch (err) {
+      console.error("Error en db.all:", err);
+      throw err;
+    }
   }
 };

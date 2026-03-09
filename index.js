@@ -1,3 +1,4 @@
+console.log("Servidor iniciando...");
 const express = require("express");
 const cors = require("cors");
 const db = require("./db"); // Ya no fallará
