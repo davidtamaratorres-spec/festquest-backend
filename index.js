@@ -1,22 +1,23 @@
 const express = require('express');
 const cors = require('cors');
 const db = require('./db');
-// Corregimos la ruta para que apunte a donde realmente está el archivo
 const debugRoutes = require('./routes/debugColombia');
 
 const app = express();
-const PORT = process.env.PORT || 10000;
 
+// Opción A: Permitir que cualquier dispositivo (como tu iPhone) se conecte
 app.use(cors());
 app.use(express.json());
 
-// Rutas
+const PORT = process.env.PORT || 10000;
+
 app.use('/debug', debugRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Servidor de FestQuest funcionando correctamente');
+    res.send('Servidor FestQuest Conectado y Abierto');
 });
 
-app.listen(PORT, () => {
+// Importante: '0.0.0.0' permite conexiones externas en Render
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);
 });
