@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// 1. Esta ruta sirve para ver la LISTA de todos los festivales
+// 1. RUTA PARA LA LISTA
 router.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 2. ESTA ES LA QUE TE FALTA: Sirve para ver el DETALLE de uno solo
+// 2. RUTA PARA EL DETALLE (Esta es la que arregla el error del JSON)
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -37,7 +37,8 @@ router.get("/:id", async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, message: "No encontrado" });
     }
-    res.json({ success: true, data: result.rows[0] });
+    // Respondemos con JSON puro
+    res.json(result.rows[0]); 
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
