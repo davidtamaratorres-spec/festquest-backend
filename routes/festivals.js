@@ -6,28 +6,30 @@ router.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 20;
+    const depto = req.query.departamento || ""; // Capturamos el filtro
     const offset = (page - 1) * pageSize;
 
-    // Consulta simplificada para evitar el error 500
-    // Traemos todo (*) para que no falle por nombres de columnas
-    const query = `
-      SELECT * FROM festivals 
-      ORDER BY id ASC 
-      LIMIT $1 OFFSET $2
-    `;
+    let query = "SELECT * FROM festivals";
+    let params = [];
 
-    const result = await db.query(query, [pageSize, offset]);
+    // Lógica de filtrado corregida
+    if (depto) {
+      query += " WHERE departamento ILIKE $1";
+      params.push(`%${depto}%`);
+    }
+
+    // Paginación
+    query += ` ORDER BY id ASC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    params.push(pageSize, offset);
+
+    const result = await db.query(query, params);
 
     res.json({
       success: true,
       page: page,
-      count: result.rows.length,
       data: result.rows
     });
-
   } catch (err) {
-    console.error("ERROR festivals:", err);
-    // Esto nos dirá exactamente qué columna falta en los logs de Render
     res.status(500).json({ success: false, error: err.message });
   }
 });
