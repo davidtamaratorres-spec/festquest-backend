@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-
 const db = require("./db");
 
 const app = express();
@@ -12,29 +11,20 @@ app.get("/", (req, res) => {
   res.send("Servidor FestQuest Activo");
 });
 
-// Rutas reales (carpeta routes al lado de index.js)
-app.use("/restaurants", require("./routes/restaurants"));
-app.use("/restaurantes", require("./routes/restaurants"));
+// Rutas con el prefijo /api para que el móvil las encuentre
+app.use("/api/municipalities", require("./routes/municipalities"));
+app.use("/api/municipios", require("./routes/municipalities"));
 
-app.use("/dishes", require("./routes/dishes"));
-app.use("/platos", require("./routes/dishes"));
+app.use("/api/festivals", require("./routes/festivals"));
+app.use("/api/festivales", require("./routes/festivals"));
 
-app.use("/promotions", require("./routes/promotions"));
-app.use("/promociones", require("./routes/promotions"));
-
-app.use("/analytics", require("./routes/analytics"));
-
-app.use("/municipalities", require("./routes/municipalities"));
-app.use("/municipios", require("./routes/municipalities"));
-
-app.use("/festivals", require("./routes/festivals"));
-app.use("/festivales", require("./routes/festivals"));
-
-app.use("/__debug", require("./routes/debugColombia"));
+// Las demás rutas (puedes añadir /api/ si el móvil las usa así)
+app.use("/api/restaurants", require("./routes/restaurants"));
+app.use("/api/dishes", require("./routes/dishes"));
+app.use("/api/promotions", require("./routes/promotions"));
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Servidor ejecutándose en puerto ${PORT}`);
-  console.log(`Modo DB: ${db.mode || "unknown"}`);
 });
