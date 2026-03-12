@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// 1. RUTA PARA LA LISTA (Con filtros y paginación)
+// LISTADO GENERAL (URL: /api/festivals)
 router.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -22,20 +22,28 @@ router.get("/", async (req, res) => {
     params.push(pageSize, offset);
 
     const result = await db.query(query, params);
-    res.json({ success: true, page: page, data: result.rows });
+    res.json({
+      success: true,
+      page: page,
+      data: result.rows
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// 2. RUTA PARA EL DETALLE (Esto es lo que arregla el error del móvil)
+// DETALLE DE UN FESTIVAL (URL: /api/festivals/:id)
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    // Buscamos por la columna 'id' que es la que tiene los números como 409
     const result = await db.query("SELECT * FROM festivals WHERE id = $1", [id]);
+    
     if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, message: "No encontrado" });
+      return res.status(404).json({ success: false, message: "Festival no encontrado" });
     }
+
+    // Enviamos el objeto directo para que el móvil lo lea fácil
     res.json(result.rows[0]); 
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
