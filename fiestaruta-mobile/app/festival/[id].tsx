@@ -13,11 +13,13 @@ import { fetchFestivalById } from "../../services/festivalById";
 type Detail = {
   id: number;
   municipio_id: number;
+  id_municipio?: number; // Por si el backend usa este nombre
   nombre: string;
   fecha_inicio: string;
   fecha_fin: string | null;
   descripcion: string | null;
-  municipio_nombre: string;
+  municipio_nombre?: string;
+  municipio?: string;
   departamento: string;
 };
 
@@ -25,7 +27,6 @@ export default function FestivalDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
-  // URL de Render
   const BASE_URL = "https://festquest-backend.onrender.com";
 
   const [loading, setLoading] = useState(true);
@@ -37,14 +38,10 @@ export default function FestivalDetail() {
     setLoading(true);
     setError(null);
 
-    // Llamamos al servicio (asegúrate que fetchFestivalById use /api/festivals)
     fetchFestivalById(BASE_URL, id)
       .then((resp) => {
         if (!alive) return;
-        
-        // ✅ CORRECCIÓN AQUÍ: 
-        // Como el servidor ya manda el festival directo (visto en Screenshot 33),
-        // no necesitamos el ".data". Usamos "resp" directamente.
+        // Cargamos la respuesta directa del servidor
         setData(resp as Detail);
       })
       .catch((e: any) => {
@@ -82,7 +79,7 @@ export default function FestivalDetail() {
   if (!data) {
     return (
       <View style={styles.center}>
-        <Text style={styles.gray}>Sin datos encontrados para el ID: {id}</Text>
+        <Text style={styles.gray}>Sin datos.</Text>
       </View>
     );
   }
@@ -93,14 +90,17 @@ export default function FestivalDetail() {
 
       <View style={styles.card}>
         <Text style={styles.k}>Municipio</Text>
-        <Text style={styles.v}>{data.municipio_nombre || "No disponible"}</Text>
+        {/* ✅ Busca el nombre en municipio_nombre o municipio */}
+        <Text style={styles.v}>{data.municipio_nombre || data.municipio || "No disponible"}</Text>
 
         <Text style={styles.k}>Departamento</Text>
         <Text style={styles.v}>{data.departamento}</Text>
 
         <Text style={styles.k}>Fechas</Text>
         <Text style={styles.v}>
-          {data.fecha_inicio?.split('T')[0]} → {(data.fecha_fin || data.fecha_inicio)?.split('T')[0]}
+          {/* ✅ Formato de fecha corregido para evitar el 2026 estático */}
+          {new Date(data.fecha_inicio).toLocaleDateString('es-CO', { timeZone: 'UTC' })} 
+          {data.fecha_fin ? ` → ${new Date(data.fecha_fin).toLocaleDateString('es-CO', { timeZone: 'UTC' })}` : ""}
         </Text>
       </View>
 
@@ -118,7 +118,7 @@ export default function FestivalDetail() {
         onPress={() =>
           router.push({
             pathname: "/municipality/[id]",
-            params: { id: String(data.municipio_id) },
+            params: { id: String(data.municipio_id || data.id_municipio || "0") },
           })
         }
       >
@@ -127,7 +127,7 @@ export default function FestivalDetail() {
 
       <View style={styles.small}>
         <Text style={styles.gray}>
-          ID: {data.id} • municipio_id: {data.municipio_id}
+          ID: {data.id} • municipio_id: {data.municipio_id || data.id_municipio}
         </Text>
       </View>
     </ScrollView>
