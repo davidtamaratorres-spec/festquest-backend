@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "FestQuest",
+    "slug": "festquest-app",
+    "scheme": "festquest",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FF6600"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.festquest.app"
+    },
+    "android": {
+      "package": "com.festquest.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FF6600"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "extra": {
+      "baseUrl": "https://festquest-backend.onrender.com"
+    }
+  }
+}
