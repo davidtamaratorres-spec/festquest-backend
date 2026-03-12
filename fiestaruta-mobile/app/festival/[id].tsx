@@ -25,7 +25,7 @@ export default function FestivalDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
-  // ✅ CAMBIO SEGURO: Ahora apunta a Render
+  // URL de Render
   const BASE_URL = "https://festquest-backend.onrender.com";
 
   const [loading, setLoading] = useState(true);
@@ -37,10 +37,15 @@ export default function FestivalDetail() {
     setLoading(true);
     setError(null);
 
+    // Llamamos al servicio (asegúrate que fetchFestivalById use /api/festivals)
     fetchFestivalById(BASE_URL, id)
       .then((resp) => {
         if (!alive) return;
-        setData(resp.data as Detail);
+        
+        // ✅ CORRECCIÓN AQUÍ: 
+        // Como el servidor ya manda el festival directo (visto en Screenshot 33),
+        // no necesitamos el ".data". Usamos "resp" directamente.
+        setData(resp as Detail);
       })
       .catch((e: any) => {
         if (!alive) return;
@@ -77,7 +82,7 @@ export default function FestivalDetail() {
   if (!data) {
     return (
       <View style={styles.center}>
-        <Text style={styles.gray}>Sin datos.</Text>
+        <Text style={styles.gray}>Sin datos encontrados para el ID: {id}</Text>
       </View>
     );
   }
@@ -88,15 +93,14 @@ export default function FestivalDetail() {
 
       <View style={styles.card}>
         <Text style={styles.k}>Municipio</Text>
-        <Text style={styles.v}>{data.municipio_nombre}</Text>
+        <Text style={styles.v}>{data.municipio_nombre || "No disponible"}</Text>
 
         <Text style={styles.k}>Departamento</Text>
         <Text style={styles.v}>{data.departamento}</Text>
 
         <Text style={styles.k}>Fechas</Text>
         <Text style={styles.v}>
-          {/* ✅ Formato de fecha limpio (YYYY-MM-DD) */}
-          {data.fecha_inicio.split('T')[0]} → {(data.fecha_fin || data.fecha_inicio).split('T')[0]}
+          {data.fecha_inicio?.split('T')[0]} → {(data.fecha_fin || data.fecha_inicio)?.split('T')[0]}
         </Text>
       </View>
 
