@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// LISTADO (Este ya te funciona bien)
+// 1. RUTA PARA LA LISTA (Con filtros y paginación)
 router.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -28,18 +28,14 @@ router.get("/", async (req, res) => {
   }
 });
 
-// DETALLE (Aquí estaba el error "id does not exist")
-router.get("/:id_festival", async (req, res) => {
+// 2. RUTA PARA EL DETALLE (Esto es lo que arregla el error del móvil)
+router.get("/:id", async (req, res) => {
   try {
-    const { id_festival } = req.params;
-    // IMPORTANTE: Asegúrate de usar el nombre correcto de la columna (id)
-    const result = await db.query("SELECT * FROM festivals WHERE id = $1", [id_festival]);
-    
+    const { id } = req.params;
+    const result = await db.query("SELECT * FROM festivals WHERE id = $1", [id]);
     if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, message: "Festival no encontrado" });
+      return res.status(404).json({ success: false, message: "No encontrado" });
     }
-
-    // Enviamos el objeto directo para que el celular no se confunda con el JSON
     res.json(result.rows[0]); 
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
