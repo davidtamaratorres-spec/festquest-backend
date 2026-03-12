@@ -1,10 +1,5 @@
 const { Pool } = require("pg");
-
-try {
-  require("dotenv").config();
-} catch (e) {
-  console.log("Usando variables de entorno de Render");
-}
+require("dotenv").config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -13,25 +8,15 @@ const pool = new Pool({
   },
 });
 
-module.exports = {
-  mode: "postgres",
-  query: (text, params) => pool.query(text, params),
-  get: async (text, params) => {
-    try {
-      const res = await pool.query(text, params);
-      return res.rows[0];
-    } catch (err) {
-      console.error("Error en db.get:", err);
-      throw err;
-    }
-  },
-  all: async (text, params) => {
-    try {
-      const res = await pool.query(text, params);
-      return res.rows;
-    } catch (err) {
-      console.error("Error en db.all:", err);
-      throw err;
-    }
+// Verificación de conexión para los logs
+pool.connect((err, client, release) => {
+  if (err) {
+    return console.error('❌ Error adquiriendo cliente de base de datos', err.stack);
   }
+  console.log('✅ Conexión a PostgreSQL establecida con éxito');
+  release();
+});
+
+module.exports = {
+  query: (text, params) => pool.query(text, params),
 };

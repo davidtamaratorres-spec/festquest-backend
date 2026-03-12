@@ -19,41 +19,33 @@ function clampInt(value, fallback, { min, max }) {
 }
 
 /**
- * GET /api/v1/municipalities
- * Query:
- * - departamento=Antioquia
- * - q=texto libre (busca por nombre y subregion, tolerante a tildes)
- * - page, pageSize
- *
- * Respuesta (ESTÁNDAR):
- * { data: [...], meta: { page, pageSize, total, totalPages, signature } }
+ * GET /api/municipalities
  */
-router.get("/", (req, res) => {
-  const { departamento, q, page = 1, pageSize = 20 } = req.query;
+router.get("/", async (req, res) => {
+  try {
+    const { departamento, q, page = 1, pageSize = 20 } = req.query;
 
-  const safePage = clampInt(page, 1, { min: 1, max: 1_000_000 });
-  const safePageSize = clampInt(pageSize, 20, { min: 1, max: 100 });
-  const limit = safePageSize;
-  const offset = (safePage - 1) * limit;
+    const safePage = clampInt(page, 1, { min: 1, max: 1_000_000 });
+    const safePageSize = clampInt(pageSize, 20, { min: 1, max: 100 });
+    const limit = safePageSize;
+    const offset = (safePage - 1) * limit;
 
-  const hasQ = q !== undefined && q !== null && String(q).trim() !== "";
-  const qNorm = hasQ ? norm(q) : null;
+    const hasQ = q !== undefined && q !== null && String(q).trim() !== "";
+    const qNorm = hasQ ? norm(q) : null;
 
-  // ✅ IMPORTANTE:
-  // Para tolerancia real a tildes, NO usamos prefilter SQL con LIKE del texto crudo,
-  // porque 'Caceres' no encuentra 'Cáceres'. Traemos por departamento y filtramos en JS.
-  let sql = "SELECT * FROM municipalities";
-  const params = [];
+    let sql = "SELECT * FROM municipalities";
+    const params = [];
 
-  if (departamento) {
-    sql += " WHERE departamento = ?";
-    params.push(departamento);
-  }
+    if (departamento) {
+      sql += " WHERE departamento = $1"; // USAMOS $1 para PostgreSQL
+      params.push(departamento);
+    }
 
-  sql += " ORDER BY nombre ASC, id ASC";
+    sql += " ORDER BY nombre ASC, id ASC";
 
-  db.all(sql, params, (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
+    // Usamos await db.query que es lo que definimos en db.js
+    const result = await db.query(sql, params);
+    let rows = result.rows;
 
     let filtered = rows;
 
@@ -76,45 +68,47 @@ router.get("/", (req, res) => {
         pageSize: limit,
         total,
         totalPages,
-        // ✅ “Firma” para identificar este archivo
-        signature: "FiestaRuta municipalities.js v2 (data/meta)",
+        signature: "FestQuest municipalities.js v3 (PostgreSQL Fix)",
         filters: {
           departamento: departamento || null,
           q: hasQ ? String(q) : null,
         },
       },
     });
-  });
+  } catch (err) {
+    console.error("Error en listado:", err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 /**
- * GET /api/v1/municipalities/:id
- * Incluye festivalsCount (cantidad de festivales en ese municipio)
+ * GET /api/municipalities/:id
  */
-router.get("/:id", (req, res) => {
-  const id = parseInt(req.params.id, 10);
-  if (!Number.isFinite(id)) return res.status(400).json({ error: "ID inválido" });
+router.get("/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isFinite(id)) return res.status(400).json({ error: "ID inválido" });
 
-  const sql = `
-    SELECT
-      m.*,
-      (SELECT COUNT(*) FROM festivals f WHERE f.municipio_id = m.id) as festivalsCount
-    FROM municipalities m
-    WHERE m.id = ?
-    LIMIT 1
-  `;
+    // Cambiamos ? por $1 y quitamos el LIMIT conflictivo
+    const sql = `
+      SELECT
+        m.*,
+        (SELECT COUNT(*) FROM festivals f WHERE f.municipio_id = m.id) as "festivalsCount"
+      FROM municipalities m
+      WHERE m.id = $1
+    `;
 
-  db.get(sql, [id], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
+    const result = await db.query(sql, [id]);
+    const row = result.rows[0];
+
     if (!row) return res.status(404).json({ error: "Municipio no encontrado" });
 
-    res.json({
-      data: row,
-      meta: {
-        signature: "FiestaRuta municipalities.js v2 (data/meta)",
-      },
-    });
-  });
+    // IMPORTANTE: Enviamos el objeto directo para que tu App lo lea bien
+    res.json(row);
+  } catch (err) {
+    console.error("Error en detalle:", err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
