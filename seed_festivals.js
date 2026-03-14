@@ -3,9 +3,9 @@ const fs = require('fs');
 
 (async () => {
   try {
-    console.log("🛠️ Preparando tabla para la Versión 3 Final...");
+    console.log("🛠️ Iniciando carga final de los 32 festivales (Versión Blindada)...");
     
-    // 1. Columnas actualizadas
+    // 1. Asegurar que todas las columnas existan
     const nuevasColumnas = [
       'departamento VARCHAR(255)',
       'codigo_dane VARCHAR(20)',
@@ -25,27 +25,33 @@ const fs = require('fs');
       await db.query(`ALTER TABLE festivals ADD COLUMN IF NOT EXISTS ${col}`);
     }
 
-    console.log("🧹 Limpiando base de datos...");
+    // 2. Limpieza total de datos previos
+    console.log("🧹 Borrando registros previos...");
     await db.query('TRUNCATE TABLE festivals RESTART IDENTITY CASCADE');
 
+    // 3. Leer el archivo CSV
     const data = fs.readFileSync('data/FestQuest_Database_Final_V3.csv', 'utf8');
     const lines = data.split(/\r?\n/).slice(1).filter(l => l.trim() !== '');
     
-    console.log(`🚀 Procesando ${lines.length} registros...`);
+    console.log(`🚀 Procesando ${lines.length} líneas del archivo...`);
     let cargados = 0;
 
     for (const line of lines) {
+      // Separador inteligente (maneja comas dentro de comillas)
       const p = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(x => x.replace(/"/g, '').trim());
       
       if (p.length < 5) continue; 
 
-      // AJUSTE DE COLUMNAS SEGÚN TU SCREENSHOT 45:
-      // [0] Código_id, [1] departamento, [2] municipio, [3] Subregión, [4] habitantes, 
-      // [5] altura, [6] festival, [7] fecha, [8] sitio_1, [9] maps_1...
+      // MAPEADO SEGÚN TU EXCEL (Screenshot 45):
+      // [0] Código_id, [1] depto, [2] municipio, [3] subregion, [4] hab, [5] alt, [6] fest, [7] fecha...
       const [idDane, depto, mun, subregion, hab, alt, fest, fechaTexto, s1, m1, s2, m2, s3, m3] = p;
 
+      // BUSQUEDA BLINDADA: Compara nombres ignorando tildes y mayúsculas
       const res = await db.query(
-        'SELECT id FROM municipalities WHERE TRIM(LOWER(nombre)) = TRIM(LOWER($1)) LIMIT 1', 
+        `SELECT id FROM municipalities 
+         WHERE TRANSLATE(LOWER(nombre), 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU') = TRANSLATE(LOWER($1), 'áéíóúÁÉÍÓÚ', 'aeiouAEIOU')
+         OR TRIM(LOWER(nombre)) = TRIM(LOWER($1))
+         LIMIT 1`, 
         [mun]
       );
 
@@ -66,14 +72,15 @@ const fs = require('fs');
         ]);
         cargados++;
       } else {
-        console.log(`⚠️ No encontrado: "${mun}" (Revisar ortografía)`);
+        // Esto te dirá exactamente cuál municipio no está haciendo match
+        console.log(`⚠️ Saltando: "${mun}" (No encontrado en municipalities)`);
       }
     }
 
     console.log(`\n🎉 ¡MISIÓN CUMPLIDA! ${cargados} festivales cargados con éxito.`);
     process.exit(0);
   } catch (e) {
-    console.error('❌ ERROR:', e.message);
+    console.error('❌ ERROR CRÍTICO:', e.message);
     process.exit(1);
   }
 })();
