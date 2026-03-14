@@ -3,9 +3,8 @@ const fs = require('fs');
 
 (async () => {
   try {
-    console.log("🛠️ Iniciando carga final de los 32 festivales (Versión Match Total)...");
+    console.log("🛠️ Iniciando carga final de los 32 festivales (Versión Cero Errores)...");
     
-    // 1. Asegurar columnas
     const nuevasColumnas = [
       'departamento VARCHAR(255)', 'codigo_dane VARCHAR(20)', 'subregion VARCHAR(100)',
       'habitantes VARCHAR(50)', 'altura VARCHAR(50)', 'sitio_1 VARCHAR(255)', 
@@ -20,7 +19,6 @@ const fs = require('fs');
 
     await db.query('TRUNCATE TABLE festivals RESTART IDENTITY CASCADE');
 
-    // 2. Leer CSV
     const data = fs.readFileSync('data/FestQuest_Database_Final_V3.csv', 'utf8');
     const lines = data.split(/\r?\n/).slice(1).filter(l => l.trim() !== '');
     
@@ -33,28 +31,16 @@ const fs = require('fs');
 
       let [idDane, depto, mun, subregion, hab, alt, fest, fechaTexto, s1, m1, s2, m2, s3, m3] = p;
 
-      // MAPA DE CORRECCIÓN PARA LOS 5 QUE FALTAN (Basado en Screenshot 47)
-      const correcciones = {
-        'Cucuta': 'Cúcuta',
-        'Cúcuta': 'Cucuta',
-        'Inirida': 'Inírida',
-        'Inírida': 'Inirida',
-        'Florencia': 'Florencia',
-        'San Jose del Guaviare': 'San José del Guaviare',
-        'San José del Guaviare': 'San Jose del Guaviare',
-        'Puerto Carreno': 'Puerto Carreño',
-        'Puerto Carreño': 'Puerto Carreno'
-      };
+      // BUSQUEDA POR COMODÍN: Si es "Cucuta", busca "Cuc%" o "Cúc%". 
+      // Esto ignora tildes y finales de palabra.
+      const inicioMun = mun.substring(0, 4); // Toma las primeras 4 letras (ej: "Cucu", "Inir")
 
-      const nombreBuscar = correcciones[mun] || mun;
-
-      // Búsqueda en la tabla municipalities
       const res = await db.query(
-        `SELECT id FROM municipalities 
-         WHERE TRIM(LOWER(nombre)) = TRIM(LOWER($1)) 
-         OR TRIM(LOWER(nombre)) = TRIM(LOWER($2)) 
+        `SELECT id, nombre FROM municipalities 
+         WHERE nombre ILIKE $1 
+         OR nombre ILIKE $2
          LIMIT 1`, 
-        [mun, nombreBuscar]
+        [`${inicioMun}%`, `${mun}%`]
       );
 
       if (res.rows.length > 0) {
@@ -70,11 +56,11 @@ const fs = require('fs');
         );
         cargados++;
       } else {
-        console.log(`⚠️ Falló match final: "${mun}"`);
+        console.log(`❌ Imposible encontrar: "${mun}" tras todos los intentos.`);
       }
     }
 
-    console.log(`\n🎉 ¡MISIÓN CUMPLIDA! ${cargados} festivales cargados con éxito.`);
+    console.log(`\n🎉 ¡POR FIN! ${cargados} festivales cargados exitosamente.`);
     process.exit(0);
   } catch (e) {
     console.error('❌ ERROR:', e.message);
