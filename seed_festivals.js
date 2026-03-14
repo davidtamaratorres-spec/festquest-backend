@@ -3,9 +3,9 @@ const fs = require('fs');
 
 (async () => {
   try {
-    console.log("🛠️ Preparando tabla para la Versión 3 (DANE, Mapas, WhatsApp)...");
+    console.log("🛠️ Preparando tabla para la Versión 3 Final...");
     
-    // 1. Columnas necesarias
+    // 1. Columnas actualizadas
     const nuevasColumnas = [
       'departamento VARCHAR(255)',
       'codigo_dane VARCHAR(20)',
@@ -25,22 +25,24 @@ const fs = require('fs');
       await db.query(`ALTER TABLE festivals ADD COLUMN IF NOT EXISTS ${col}`);
     }
 
-    // 2. Limpieza
-    console.log("🧹 Borrando datos viejos...");
+    console.log("🧹 Limpiando base de datos...");
     await db.query('TRUNCATE TABLE festivals RESTART IDENTITY CASCADE');
 
-    // 3. Leer archivo
     const data = fs.readFileSync('data/FestQuest_Database_Final_V3.csv', 'utf8');
     const lines = data.split(/\r?\n/).slice(1).filter(l => l.trim() !== '');
     
-    console.log(`🚀 Procesando ${lines.length} líneas del CSV...`);
+    console.log(`🚀 Procesando ${lines.length} registros...`);
     let cargados = 0;
 
     for (const line of lines) {
       const p = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(x => x.replace(/"/g, '').trim());
-      if (p.length < 10) continue; 
+      
+      if (p.length < 5) continue; 
 
-      const [depto, mun, hab, alt, fest, fechaTexto, s1, m1, s2, m2, s3, m3, h1, w1, h2, w2, h3, w3] = p;
+      // AJUSTE DE COLUMNAS SEGÚN TU SCREENSHOT 45:
+      // [0] Código_id, [1] departamento, [2] municipio, [3] Subregión, [4] habitantes, 
+      // [5] altura, [6] festival, [7] fecha, [8] sitio_1, [9] maps_1...
+      const [idDane, depto, mun, subregion, hab, alt, fest, fechaTexto, s1, m1, s2, m2, s3, m3] = p;
 
       const res = await db.query(
         'SELECT id FROM municipalities WHERE TRIM(LOWER(nombre)) = TRIM(LOWER($1)) LIMIT 1', 
@@ -51,30 +53,27 @@ const fs = require('fs');
         const munId = res.rows[0].id;
         const fechaSegura = '2026-01-01'; 
 
-        // INSERT con fecha_fin incluida para evitar el error de la captura 32
         const queryInsert = `
           INSERT INTO festivals (
             municipio_id, nombre, departamento, fecha_inicio, fecha_fin, habitantes, altura,
-            sitio_1, maps_1, sitio_2, maps_2, sitio_3, maps_3,
-            hotel_1, wa_1, hotel_2, wa_2, hotel_3, wa_3, descripcion
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`;
+            sitio_1, maps_1, sitio_2, maps_2, sitio_3, maps_3, codigo_dane, subregion, descripcion
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`;
 
         await db.query(queryInsert, [
           munId, fest, depto, fechaSegura, fechaSegura, hab, alt, 
-          s1, m1, s2, m2, s3, m3, 
-          h1, w1, h2, w2, h3, w3,
+          s1, m1, s2, m2, s3, m3, idDane, subregion,
           `Fecha original: ${fechaTexto}`
         ]);
         cargados++;
       } else {
-        console.log(`⚠️ Saltando: "${mun}" no es un municipio en la base de datos.`);
+        console.log(`⚠️ No encontrado: "${mun}" (Revisar ortografía)`);
       }
     }
 
-    console.log(`\n🎉 ¡SÚPER ÉXITO! ${cargados} festivales cargados correctamente.`);
+    console.log(`\n🎉 ¡MISIÓN CUMPLIDA! ${cargados} festivales cargados con éxito.`);
     process.exit(0);
   } catch (e) {
-    console.error('❌ ERROR CRÍTICO:', e.message);
+    console.error('❌ ERROR:', e.message);
     process.exit(1);
   }
 })();
