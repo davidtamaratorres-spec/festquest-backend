@@ -6,25 +6,44 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Healthcheck
-app.get("/", (req, res) => {
-  res.send("Servidor FestQuest Activo");
+// --- ESTA FUNCIÓN METE LOS DATOS APENAS SUBAS EL CÓDIGO ---
+const cargarMunicipiosYa = async () => {
+  try {
+    console.log("Revisando base de datos...");
+    await db.query(`
+      INSERT INTO festivales ("Código_id", municipio, departamento, festival, habitantes, altura)
+      VALUES 
+      (91001, 'Leticia', 'Amazonas', 'Festival de la Confraternidad Amazónica', '42k', '96m'),
+      (5001, 'Medellín', 'Antioquia', 'Feria de las Flores', '2.5M', '1495m'),
+      (5030, 'Amagá', 'Antioquia', 'Festival del Carbón', '30k', '1250m'),
+      (5129, 'Caldas', 'Antioquia', 'Fiestas del Aguacero', '80k', '1750m')
+      ON CONFLICT DO NOTHING;
+    `);
+    console.log("¡Base de datos lista para usar!");
+  } catch (err) {
+    console.log("Nota: Los datos ya existían o hubo un aviso:", err.message);
+  }
+};
+
+// --- RUTA QUE EL MÓVIL BUSCA ---
+app.get("/api/festivals", async (req, res) => {
+  try {
+    const result = await db.query("SELECT * FROM festivales");
+    // Esto es lo que el móvil recibe
+    res.json(result.rows); 
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Rutas con el prefijo /api para que el móvil las encuentre
+// Otras rutas para que no den error
 app.use("/api/municipalities", require("./routes/municipalities"));
-app.use("/api/municipios", require("./routes/municipalities"));
-
-app.use("/api/festivals", require("./routes/festivals"));
-app.use("/api/festivales", require("./routes/festivals"));
-
-// Las demás rutas (puedes añadir /api/ si el móvil las usa así)
 app.use("/api/restaurants", require("./routes/restaurants"));
-app.use("/api/dishes", require("./routes/dishes"));
-app.use("/api/promotions", require("./routes/promotions"));
+
+app.get("/", (req, res) => { res.send("Servidor Funcionando"); });
 
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en puerto ${PORT}`);
+  console.log("Servidor FestQuest Online");
+  cargarMunicipiosYa();
 });
