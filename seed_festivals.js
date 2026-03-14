@@ -3,8 +3,9 @@ const fs = require('fs');
 
 (async () => {
   try {
-    console.log("🛠️ Operación Final: Forzando carga de Cúcuta para llegar a 32/32...");
+    console.log("🛠️ Operación Maestra: Recuperando 31 y forzando el 32...");
     
+    // Asegurar extensiones de búsqueda inteligente
     await db.query('CREATE EXTENSION IF NOT EXISTS pg_trgm');
     await db.query('TRUNCATE TABLE festivals RESTART IDENTITY CASCADE');
 
@@ -19,24 +20,22 @@ const fs = require('fs');
 
       let [idDane, depto, mun, subregion, hab, alt, fest, fechaTexto, s1, m1, s2, m2, s3, m3] = p;
 
-      // Lógica especial para Cúcuta o búsqueda normal
-      let querySql;
-      let params;
+      // --- ESTRATEGIA DE BÚSQUEDA MULTI-NIVEL ---
+      // Nivel 1: Match exacto o por similitud (Lo que nos dio 31/32)
+      // Nivel 2: Si es Cúcuta, buscar por texto parcial
+      let res = await db.query(
+        `SELECT id FROM municipalities 
+         WHERE TRIM(LOWER(nombre)) = TRIM(LOWER($1))
+         OR nombre % $1
+         OR $1 ILIKE '%' || nombre || '%'
+         ORDER BY similarity(nombre, $1) DESC LIMIT 1`, 
+        [mun]
+      );
 
-      if (mun.toLowerCase().includes('cucuta')) {
-        // Busca cualquier cosa que contenga "Cucuta" o "Cúcuta"
-        querySql = `SELECT id FROM municipalities WHERE nombre ILIKE '%Cucuta%' OR nombre ILIKE '%Cúcuta%' LIMIT 1`;
-        params = [];
-      } else {
-        querySql = `SELECT id FROM municipalities 
-                    WHERE TRIM(LOWER(nombre)) = TRIM(LOWER($1))
-                    OR nombre % $1
-                    OR $1 ILIKE '%' || nombre || '%'
-                    ORDER BY similarity(nombre, $1) DESC LIMIT 1`;
-        params = [mun];
+      // Nivel 3: Si falló y es Cúcuta, forzamos búsqueda por fragmento
+      if (res.rows.length === 0 && mun.toLowerCase().includes('cucu')) {
+        res = await db.query(`SELECT id FROM municipalities WHERE nombre ILIKE '%Cucu%' LIMIT 1`);
       }
-
-      const res = await db.query(querySql, params);
 
       if (res.rows.length > 0) {
         const munId = res.rows[0].id;
@@ -51,12 +50,12 @@ const fs = require('fs');
         );
         cargados++;
       } else {
-        console.log(`❌ Error crítico: No se encontró "${mun}" ni con búsqueda forzada.`);
+        console.log(`❌ No se encontró: "${mun}"`);
       }
     }
 
-    console.log(`\n🏆 RESULTADO: ${cargados} de 32 festivales.`);
-    if (cargados === 32) console.log("✨ ¡POR FIN! LOS 32 ESTÁN ADENTRO. ✨");
+    console.log(`\n🏆 RESULTADO FINAL: ${cargados} de 32 festivales.`);
+    if (cargados === 32) console.log("✨ ¡PERFECCIÓN ALCANZADA! LOS 32 ESTÁN ADENTRO. ✨");
     process.exit(0);
   } catch (e) {
     console.error('❌ ERROR:', e.message);
