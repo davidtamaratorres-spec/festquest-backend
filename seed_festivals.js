@@ -3,26 +3,16 @@ const fs = require('fs');
 
 (async () => {
   try {
-    console.log("🛠️ Iniciando carga final de los 32 festivales (Versión Cero Errores)...");
+    console.log("🛠️ Ejecutando búsqueda por similitud para los últimos 3 municipios...");
     
-    const nuevasColumnas = [
-      'departamento VARCHAR(255)', 'codigo_dane VARCHAR(20)', 'subregion VARCHAR(100)',
-      'habitantes VARCHAR(50)', 'altura VARCHAR(50)', 'sitio_1 VARCHAR(255)', 
-      'maps_1 TEXT', 'sitio_2 VARCHAR(255)', 'maps_2 TEXT', 'sitio_3 VARCHAR(255)', 
-      'maps_3 TEXT', 'hotel_1 VARCHAR(255)', 'wa_1 TEXT', 'hotel_2 VARCHAR(255)', 
-      'wa_2 TEXT', 'hotel_3 VARCHAR(255)', 'wa_3 TEXT', 'descripcion TEXT'
-    ];
-
-    for (const col of nuevasColumnas) {
-      await db.query(`ALTER TABLE festivals ADD COLUMN IF NOT EXISTS ${col}`);
-    }
+    // Asegurar extensión necesaria para búsquedas inteligentes
+    await db.query('CREATE EXTENSION IF NOT EXISTS pg_trgm');
 
     await db.query('TRUNCATE TABLE festivals RESTART IDENTITY CASCADE');
 
     const data = fs.readFileSync('data/FestQuest_Database_Final_V3.csv', 'utf8');
     const lines = data.split(/\r?\n/).slice(1).filter(l => l.trim() !== '');
     
-    console.log(`🚀 Procesando ${lines.length} registros...`);
     let cargados = 0;
 
     for (const line of lines) {
@@ -31,16 +21,19 @@ const fs = require('fs');
 
       let [idDane, depto, mun, subregion, hab, alt, fest, fechaTexto, s1, m1, s2, m2, s3, m3] = p;
 
-      // BUSQUEDA POR COMODÍN: Si es "Cucuta", busca "Cuc%" o "Cúc%". 
-      // Esto ignora tildes y finales de palabra.
-      const inicioMun = mun.substring(0, 4); // Toma las primeras 4 letras (ej: "Cucu", "Inir")
-
+      // BÚSQUEDA ULTRA-FLEXIBLE:
+      // 1. Busca coincidencia exacta
+      // 2. Busca por similitud (trigramas)
+      // 3. Busca si el nombre del CSV está contenido en el de la BD
       const res = await db.query(
         `SELECT id, nombre FROM municipalities 
-         WHERE nombre ILIKE $1 
-         OR nombre ILIKE $2
+         WHERE TRIM(LOWER(nombre)) = TRIM(LOWER($1))
+         OR nombre % $1
+         OR $1 ILIKE '%' || nombre || '%'
+         OR nombre ILIKE '%' || SUBSTRING($1 FROM 1 FOR 3) || '%'
+         ORDER BY similarity(nombre, $1) DESC 
          LIMIT 1`, 
-        [`${inicioMun}%`, `${mun}%`]
+        [mun]
       );
 
       if (res.rows.length > 0) {
@@ -56,11 +49,12 @@ const fs = require('fs');
         );
         cargados++;
       } else {
-        console.log(`❌ Imposible encontrar: "${mun}" tras todos los intentos.`);
+        console.log(`❌ No hay forma de encontrar a: "${mun}"`);
       }
     }
 
-    console.log(`\n🎉 ¡POR FIN! ${cargados} festivales cargados exitosamente.`);
+    console.log(`\n🏆 RESULTADO FINAL: ${cargados} de 32 festivales cargados.`);
+    if (cargados === 32) console.log("✨ ¡PERFECCIÓN ALCANZADA! ✨");
     process.exit(0);
   } catch (e) {
     console.error('❌ ERROR:', e.message);
