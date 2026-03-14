@@ -1,193 +1,204 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
   View,
+  StatusBar,
+  Platform
 } from "react-native";
 import { useRouter } from "expo-router";
-import { fetchFestivals, FestivalItem } from "../services/festivals";
-
-type Filters = {
-  from: string;
-  to: string;
-  departamento: string;
-  onlyHolidays: boolean;
-};
-
-// Función para validar fechas (No la borres)
-function isValidISODate(s: string) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
-  const [y, m, d] = s.split("-").map(Number);
-  const dt = new Date(y, m - 1, d);
-  return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
-}
+import { fetchFestivals } from "../services/festivals";
 
 export default function Home() {
   const router = useRouter();
   const BASE_URL = "https://festquest-backend.onrender.com";
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [items, setItems] = useState<FestivalItem[]>([]);
-  const [page, setPage] = useState(1);
-  const pageSize = 20;
+  const [items, setItems] = useState<any[]>([]);
+  
+  // Estados de los filtros
+  const [departamento, setDepartamento] = useState("");
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
 
-  const [draft, setDraft] = useState<Filters>({
-    from: "",
-    to: "",
-    departamento: "",
-    onlyHolidays: false,
-  });
+  const calcularDias = (inicio: string, fin: string) => {
+    if (!inicio || !fin) return "1";
+    try {
+      const d1 = new Date(inicio.split('T')[0]);
+      const d2 = new Date(fin.split('T')[0]);
+      const diff = Math.ceil((d2.getTime() - d1.getTime()) / 86400000) + 1;
+      return diff > 0 ? diff : "1";
+    } catch (e) { return "1"; }
+  };
 
-  const [applied, setApplied] = useState<Filters>({
-    from: "",
-    to: "",
-    departamento: "",
-    onlyHolidays: false,
-  });
-
-  // ✅ Los parámetros se recalculan cada vez que cambia 'page' o 'applied'
-  const params = useMemo(() => {
-    const p: Record<string, string> = {
-      page: String(page),
-      pageSize: String(pageSize),
-    };
-    if (applied.departamento.trim()) p.departamento = applied.departamento.trim();
-    if (applied.from.trim()) p.from = applied.from.trim();
-    if (applied.to.trim()) p.to = applied.to.trim();
-    if (applied.onlyHolidays) p.onlyHolidays = "1";
-    return p;
-  }, [page, applied]);
-
-  // ✅ EFECTO PRINCIPAL: Aquí es donde ocurre la magia de la recarga
-  useEffect(() => {
-    let alive = true;
+  const cargarDatos = useCallback(async () => {
+    Keyboard.dismiss();
     setLoading(true);
-    setError(null);
+    try {
+      const params: any = {
+        page: "1",
+        pageSize: "50",
+        ...(departamento.trim() ? { departamento: departamento.trim() } : {}),
+        // Filtros de rango para tus vacaciones
+        ...(fechaInicio.trim() ? { fecha_inicio: fechaInicio.trim() } : {}),
+        ...(fechaFin.trim() ? { fecha_fin: fechaFin.trim() } : {})
+      };
+      const resp = await fetchFestivals(BASE_URL, params);
+      setItems(resp.data || []);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  }, [departamento, fechaInicio, fechaFin]);
 
-    fetchFestivals(BASE_URL, params)
-      .then((resp) => {
-        if (!alive) return;
-        // Si no vienen datos, mostramos un error amigable
-        if (!resp.data || resp.data.length === 0) {
-          setItems([]);
-          if (page > 1) setError("No hay más festivales en esta página.");
-        } else {
-          setItems(resp.data);
-        }
-      })
-      .catch((e: any) => {
-        if (!alive) return;
-        setError("Error al cargar datos. Verifica tu conexión.");
-      })
-      .finally(() => {
-        if (!alive) return;
-        setLoading(false);
-      });
+  const limpiarFiltros = () => {
+    setDepartamento("");
+    setFechaInicio("");
+    setFechaFin("");
+    // Recargamos sin filtros
+    setTimeout(() => cargarDatos(), 100);
+  };
 
-    return () => { alive = false; };
-  }, [params]); // 🔑 RECARGA AUTOMÁTICA AL CAMBIAR PARÁMETROS
-
-  function applyFilters() {
-    Keyboard.dismiss();
-    setPage(1); // Siempre resetear a página 1 al filtrar
-    setApplied({ ...draft });
-  }
-
-  function clearFilters() {
-    Keyboard.dismiss();
-    setPage(1);
-    const empty = { from: "", to: "", departamento: "", onlyHolidays: false };
-    setDraft(empty);
-    setApplied(empty);
-  }
+  useEffect(() => {
+    cargarDatos();
+  }, []);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <FlatList
-          data={items}
-          keyExtractor={(it, index) => String(it.id || index)}
-          ListHeaderComponent={
-            <View style={styles.header}>
-              <Text style={styles.h1}>FestQuest 🇨🇴</Text>
-              <View style={styles.filtersCard}>
-                <TextInput
-                  placeholder="Departamento (ej: Antioquia)"
-                  placeholderTextColor="#555"
-                  style={styles.input}
-                  value={draft.departamento}
-                  onChangeText={(t) => setDraft({...draft, departamento: t})}
-                />
-                <View style={styles.btnRow}>
-                  <Pressable style={styles.btnPrimary} onPress={applyFilters}><Text style={styles.btnText}>Aplicar</Text></Pressable>
-                  <Pressable style={styles.btnSecondary} onPress={clearFilters}><Text style={styles.btnText}>Limpiar</Text></Pressable>
-                </View>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      
+      {/* CABEZAL FIJO CON RANGO DE FECHAS */}
+      <View style={styles.fixedHeader}>
+        <Text style={styles.brandTitle}>FiestaRuta</Text>
+        <Text style={styles.mainTitle}>Festividades</Text>
+        
+        <View style={styles.filterBox}>
+          <TextInput
+            placeholder="Departamento (ej: Huila)"
+            placeholderTextColor="#666"
+            style={styles.inputSmall}
+            value={departamento}
+            onChangeText={setDepartamento}
+          />
+          
+          <View style={styles.row}>
+            <TextInput
+              placeholder="Desde: AAAA-MM-DD"
+              placeholderTextColor="#666"
+              style={[styles.inputSmall, { flex: 1 }]}
+              value={fechaInicio}
+              onChangeText={setFechaInicio}
+            />
+            <TextInput
+              placeholder="Hasta: AAAA-MM-DD"
+              placeholderTextColor="#666"
+              style={[styles.inputSmall, { flex: 1 }]}
+              value={fechaFin}
+              onChangeText={setFechaFin}
+            />
+          </View>
 
-                {/* BOTONES DE PAGINACIÓN */}
-                <View style={styles.pager}>
-                  <Pressable 
-                    onPress={() => setPage(p => Math.max(1, p - 1))} 
-                    style={[styles.pagerBtn, page === 1 && {opacity: 0.5}]}
-                    disabled={page === 1}
-                  >
-                    <Text style={{color:'white'}}>◀ Ant.</Text>
-                  </Pressable>
-                  <Text style={{color:'white', fontWeight:'bold'}}>Página {page}</Text>
-                  <Pressable 
-                    onPress={() => setPage(p => p + 1)} 
-                    style={styles.pagerBtn}
-                  >
-                    <Text style={{color:'white'}}>Sig. ▶</Text>
-                  </Pressable>
-                </View>
-              </View>
-              {error && <Text style={styles.errorText}>⚠️ {error}</Text>}
-              {loading && <ActivityIndicator color="#FF6A00" style={{marginTop: 15}} />}
-            </View>
-          }
-          renderItem={({ item }) => (
-            <Pressable style={styles.card} onPress={() => router.push(`/festival/${item.id}`)}>
-              <Text style={styles.title}>{item.nombre}</Text>
-              <Text style={styles.sub}>{item.municipio_nombre} • {item.departamento}</Text>
-              <Text style={styles.dates}>
-                {item.fecha_inicio ? item.fecha_inicio.substring(0, 10) : "---"} → {item.fecha_fin ? item.fecha_fin.substring(0, 10) : item.fecha_inicio?.substring(0, 10)}
-              </Text>
+          <View style={styles.row}>
+            <Pressable style={styles.btnSearch} onPress={cargarDatos}>
+              <Text style={styles.btnSearchText}>BUSCAR EVENTOS</Text>
             </Pressable>
-          )}
-          ListEmptyComponent={
-            !loading && !error ? <Text style={styles.emptyText}>No se encontraron festivales.</Text> : null
-          }
-        />
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+            <Pressable style={styles.btnClear} onPress={limpiarFiltros}>
+              <Text style={styles.btnClearText}>LIMPIAR</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+
+      <FlatList
+        data={items}
+        keyExtractor={(it, index) => index.toString()}
+        contentContainerStyle={styles.listContent}
+        renderItem={({ item }) => (
+          <Pressable 
+            style={styles.card}
+            onPress={() => router.push(`/municipality/${item.municipio_id}`)}
+          >
+            <Text style={styles.cardTitle}>{item.nombre}</Text>
+            
+            <View style={styles.infoRow}>
+               <Text style={styles.cardDate}>📅 {item.fecha_inicio?.split('T')[0]}</Text>
+               <Text style={styles.cardDays}>🎉 {calcularDias(item.fecha_inicio, item.fecha_fin)} Días</Text>
+            </View>
+            
+            <Text style={styles.cardDept}>📍 {item.departamento} • {item.municipio}</Text>
+            
+            <View style={styles.footerCard}>
+                <Text style={styles.detailLink}>Ver municipio →</Text>
+            </View>
+          </Pressable>
+        )}
+        ListEmptyComponent={
+          !loading ? <Text style={styles.emptyText}>No hay fiestas en esas fechas o lugar.</Text> : null
+        }
+      />
+
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <ActivityIndicator size="large" color="#FF6A00" />
+        </View>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0b0b0b" },
-  header: { padding: 14 },
-  h1: { color: "white", fontSize: 28, fontWeight: "900", marginBottom: 10 },
-  filtersCard: { backgroundColor: "#141414", borderRadius: 16, padding: 12, borderWidth: 1, borderColor: "#232323" },
-  input: { backgroundColor: "#0f0f0f", borderWidth: 1, borderColor: "#2a2a2a", borderRadius: 12, padding: 10, color: "white", marginBottom: 10 },
-  btnRow: { flexDirection: "row", gap: 10 },
-  btnPrimary: { flex: 1, backgroundColor: "#FF6A00", padding: 12, borderRadius: 12, alignItems: "center" },
-  btnSecondary: { flex: 1, backgroundColor: "#222", padding: 12, borderRadius: 12, alignItems: "center" },
-  btnText: { color: "white", fontWeight: "bold" },
-  pager: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 15 },
-  pagerBtn: { backgroundColor: "#333", padding: 10, borderRadius: 10 },
-  card: { marginHorizontal: 14, backgroundColor: "#141414", borderRadius: 14, padding: 15, marginBottom: 10, borderWidth: 1, borderColor: "#232323" },
-  title: { color: "white", fontSize: 18, fontWeight: "bold" },
-  sub: { color: "#aaa", marginTop: 4 },
-  dates: { color: "#FF6A00", marginTop: 8, fontSize: 14, fontWeight: "700" },
-  errorText: { color: "#FF7777", textAlign: "center", marginTop: 10 },
-  emptyText: { color: "#aaa", textAlign: "center", marginTop: 50 }
+  container: { flex: 1, backgroundColor: "#000" },
+  fixedHeader: {
+    backgroundColor: "#161616",
+    paddingTop: Platform.OS === "ios" ? 50 : 40,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderColor: "#222",
+  },
+  brandTitle: { color: "#666", fontSize: 10, fontWeight: "700", textAlign: "center", marginBottom: 5, letterSpacing: 1 },
+  mainTitle: { color: "white", fontSize: 24, fontWeight: "900", marginBottom: 15 },
+  
+  filterBox: { gap: 8 },
+  row: { flexDirection: 'row', gap: 8 },
+  inputSmall: { 
+    backgroundColor: "#000", 
+    borderRadius: 8, 
+    padding: 10, 
+    color: "white", 
+    fontSize: 12,
+    borderWidth: 1, 
+    borderColor: "#333" 
+  },
+  btnSearch: { backgroundColor: "#FF6A00", flex: 2, padding: 12, borderRadius: 8, alignItems: "center" },
+  btnClear: { backgroundColor: "#333", flex: 1, padding: 12, borderRadius: 8, alignItems: "center" },
+  btnSearchText: { color: "white", fontWeight: "800", fontSize: 12 },
+  btnClearText: { color: "#AAA", fontWeight: "800", fontSize: 12 },
+
+  listContent: { padding: 15 },
+  card: { 
+    backgroundColor: "#161616", 
+    borderRadius: 12, 
+    padding: 16, 
+    marginBottom: 12, 
+    borderLeftWidth: 3, 
+    borderLeftColor: "#FF6A00" 
+  },
+  cardTitle: { color: "white", fontSize: 15, fontWeight: "700" },
+  infoRow: { flexDirection: 'row', gap: 12, marginVertical: 6 },
+  cardDate: { color: "#FF6A00", fontSize: 12, fontWeight: "600" },
+  cardDays: { color: "#888", fontSize: 11 },
+  cardDept: { color: "#666", fontSize: 11, marginBottom: 8 },
+  
+  footerCard: { borderTopWidth: 1, borderTopColor: "#222", paddingTop: 8, alignItems: 'flex-end' },
+  detailLink: { color: "#FF6A00", fontSize: 11, fontWeight: "bold" },
+
+  emptyText: { color: "#444", textAlign: "center", marginTop: 40, fontSize: 13 },
+  loaderOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' }
 });
