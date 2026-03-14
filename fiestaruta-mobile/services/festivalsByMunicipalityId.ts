@@ -1,18 +1,13 @@
-export async function fetchFestivalsByMunicipalityId(
-  baseUrl: string,
-  municipioId: string | undefined
-) {
-  if (!municipioId) throw new Error("municipioId faltante");
+export async function fetchFestivalsByMunicipalityId(baseUrl: string, query?: string) {
+  // Cambiamos 'id=' por 'municipio_id=' para que el backend lo reconozca
+  const url = query 
+    ? `${baseUrl}/festivals?municipio_id=${encodeURIComponent(query)}`
+    : `${baseUrl}/festivals`;
 
-  const url = `${baseUrl}/api/v1/festivals?municipioId=${encodeURIComponent(
-    String(municipioId)
-  )}`;
-
-  const r = await fetch(url);
-  if (!r.ok) {
-    const text = await r.text().catch(() => "");
-    throw new Error(`HTTP ${r.status} ${r.statusText} ${text}`);
-  }
-
-  return r.json();
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Error en servidor");
+  
+  const result = await response.json();
+  // Retornamos directamente el array de datos
+  return result.data || []; 
 }
