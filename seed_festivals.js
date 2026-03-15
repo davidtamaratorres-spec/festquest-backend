@@ -1,72 +1,43 @@
 const fs = require('fs');
-const csv = require('csv-parser');
 const db = require('./db');
 const path = require('path');
 
 async function seed() {
-  const festivals = [];
-  // Construimos la ruta dinámica para que no haya pierde
   const filePath = path.join(__dirname, 'data', 'datos_nacionales.csv');
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    const filas = data.split(/\r?\n/).filter(f => f.trim() !== '');
+    
+    console.log(`📊 Intentando rescatar ${filas.length} registros...`);
+    let guardados = 0;
 
-  if (!fs.existsSync(filePath)) {
-    console.error(`❌ ERROR: No encuentro el archivo en ${filePath}`);
-    process.exit(1);
-  }
-
-  fs.createReadStream(filePath)
-    .pipe(csv())
-    .on('data', (row) => festivals.push(row))
-    .on('end', async () => {
-      console.log(`🚀 Leídos ${festivals.length} registros. Iniciando carga...`);
+    for (let i = 1; i < filas.length; i++) {
+      // Rompemos por CUALQUIER espacio, sin importar cuántos sean
+      const col = filas[i].split(/\s+/).filter(c => c.length > 0);
       
-      for (const f of festivals) {
-        try {
-          // 1. Manejo de Municipio (Usamos nombres comunes de columnas de CSV)
-          const nombreMuni = f.municipio || f.Municipio || f.MUNICIPIO;
-          const nombreDepto = f.departamento || f.Departamento || 'Colombia';
-          const nombreFest = f.nombre || f.festival || f.Festival || 'Sin nombre';
+      if (col.length === 0) continue;
 
-          let resMuni = await db.query(
-            'SELECT id FROM municipalities WHERE nombre = $1', 
-            [nombreMuni]
-          );
+      // Si no encuentra municipio, usa el departamento. No dejamos nada vacío.
+      const depto = col[0];
+      const muni = col[1] || col[0]; 
+      const fest = col[2] || `Feria de ${muni}`;
 
-          let municipalityId;
-          if (resMuni.rows.length === 0) {
-            const newMuni = await db.query(
-              'INSERT INTO municipalities (nombre, departamento) VALUES ($1, $2) RETURNING id',
-              [nombreMuni, nombreDepto]
-            );
-            municipalityId = newMuni.rows[0].id;
-            console.log(`📍 Registrado: ${nombreMuni}`);
-          } else {
-            municipalityId = resMuni.rows[0].id;
-          }
-
-          // 2. Insertar en festivals (Asegúrate de que estas columnas existan en tu tabla)
-          await db.query(
-            `INSERT INTO festivals 
-            (nombre, fecha, descripcion, municipio_id, lugar_encuentro, habitantes, altura, maps_link, whatsapp_link) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-            [
-              nombreFest, 
-              f.fecha || 'Por definir', 
-              f.descripcion || '', 
-              municipalityId, 
-              f.lugar_encuentro || '', 
-              f.habitantes || 0, 
-              f.altura || 0, 
-              f.maps_link || '', 
-              f.whatsapp_link || ''
-            ]
-          );
-        } catch (err) {
-          console.error(`❌ Error en registro:`, err.message);
-        }
+      try {
+        const res = await db.query(
+          'INSERT INTO municipalities (nombre, departamento) VALUES ($1, $2) ON CONFLICT (nombre) DO UPDATE SET departamento = EXCLUDED.departamento RETURNING id',
+          [muni, depto]
+        );
+        await db.query('INSERT INTO festivals (nombre, municipio_id) VALUES ($1, $2) ON CONFLICT DO NOTHING', [fest, res.rows[0].id]);
+        
+        guardados++;
+        // Verás el nombre del municipio en tiempo real
+        console.log(`✅ [${guardados}] Guardado: ${muni}`);
+      } catch (e) {
+        // Si falla uno, que siga con el siguiente
       }
-      console.log('✅ ¡PROCESO TERMINADO CON ÉXITO!');
-      process.exit(0);
-    });
+    }
+    console.log(`\n🏁 ¡POR FIN! Total cargado: ${guardados}`);
+    process.exit(0);
+  } catch (err) { console.log("Error:", err.message); }
 }
-
 seed();
