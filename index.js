@@ -6,15 +6,46 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// --- RUTA PRINCIPAL ---
+async function initDB() {
+  try {
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS municipalities (
+        id SERIAL PRIMARY KEY,
+        nombre VARCHAR(255) UNIQUE NOT NULL,
+        departamento VARCHAR(255)
+      );
+    `);
+
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS festivals (
+        id SERIAL PRIMARY KEY,
+        nombre VARCHAR(255),
+        fecha VARCHAR(100),
+        descripcion TEXT,
+        municipio_id INTEGER REFERENCES municipalities(id),
+        habitantes TEXT,
+        altura TEXT,
+        lugar_encuentro TEXT,
+        maps_link TEXT,
+        whatsapp_link TEXT
+      );
+    `);
+
+    console.log("✅ Tablas verificadas/creadas correctamente");
+  } catch (err) {
+    console.error("❌ Error inicializando base:", err.message);
+  }
+}
+
 app.get("/", (req, res) => {
-  res.send("Servidor Funcionando");
+  res.send("Servidor FestQuest funcionando");
 });
 
-// --- RUTA DE FESTIVALES ---
 app.get("/api/festivals", async (req, res) => {
   try {
-    const result = await db.query(`
+    const { departamento, municipio, fecha } = req.query;
+
+    let query = `
       SELECT
         f.id,
         f.nombre,
@@ -30,10 +61,33 @@ app.get("/api/festivals", async (req, res) => {
         m.departamento
       FROM festivals f
       LEFT JOIN municipalities m ON f.municipio_id = m.id
-      ORDER BY f.id ASC
-      LIMIT 100
-    `);
+      WHERE 1=1
+    `;
 
+    const params = [];
+    let paramIndex = 1;
+
+    if (departamento) {
+      query += ` AND LOWER(m.departamento) = LOWER($${paramIndex})`;
+      params.push(departamento);
+      paramIndex++;
+    }
+
+    if (municipio) {
+      query += ` AND LOWER(m.nombre) = LOWER($${paramIndex})`;
+      params.push(municipio);
+      paramIndex++;
+    }
+
+    if (fecha) {
+      query += ` AND f.fecha LIKE $${paramIndex}`;
+      params.push(`${fecha}%`);
+      paramIndex++;
+    }
+
+    query += ` ORDER BY f.fecha ASC, f.id ASC`;
+
+    const result = await db.query(query, params);
     res.json(result.rows);
   } catch (err) {
     console.error("❌ Error en /api/festivals:", err.message);
@@ -41,16 +95,13 @@ app.get("/api/festivals", async (req, res) => {
   }
 });
 
-// --- RUTA DE MUNICIPIOS ---
 app.get("/api/municipalities", async (req, res) => {
   try {
     const result = await db.query(`
       SELECT *
       FROM municipalities
       ORDER BY nombre ASC
-      LIMIT 200
     `);
-
     res.json(result.rows);
   } catch (err) {
     console.error("❌ Error en /api/municipalities:", err.message);
@@ -58,10 +109,9 @@ app.get("/api/municipalities", async (req, res) => {
   }
 });
 
-// --- OTRAS RUTAS ---
-app.use("/api/restaurants", require("./routes/restaurants"));
-
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+
+app.listen(PORT, async () => {
   console.log("Servidor FestQuest Online");
+  await initDB();
 });
