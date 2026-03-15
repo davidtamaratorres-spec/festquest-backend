@@ -12,7 +12,13 @@ async function initDB() {
       CREATE TABLE IF NOT EXISTS municipalities (
         id SERIAL PRIMARY KEY,
         nombre VARCHAR(255) UNIQUE NOT NULL,
-        departamento VARCHAR(255)
+        departamento VARCHAR(255),
+        codigo_dane INTEGER,
+        subregion VARCHAR(255),
+        habitantes TEXT,
+        temperatura_promedio TEXT,
+        altura TEXT,
+        bandera_url TEXT
       );
     `);
 
@@ -23,12 +29,47 @@ async function initDB() {
         fecha VARCHAR(100),
         descripcion TEXT,
         municipio_id INTEGER REFERENCES municipalities(id),
-        habitantes TEXT,
-        altura TEXT,
-        lugar_encuentro TEXT,
-        maps_link TEXT,
-        whatsapp_link TEXT
+
+        sitio_1 TEXT,
+        maps_1 TEXT,
+        sitio_2 TEXT,
+        maps_2 TEXT,
+        sitio_3 TEXT,
+        maps_3 TEXT,
+
+        hotel_1 TEXT,
+        wa_1 TEXT,
+        hotel_2 TEXT,
+        wa_2 TEXT,
+        hotel_3 TEXT,
+        wa_3 TEXT
       );
+    `);
+
+    await db.query(`
+      ALTER TABLE municipalities
+      ADD COLUMN IF NOT EXISTS codigo_dane INTEGER,
+      ADD COLUMN IF NOT EXISTS subregion VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS habitantes TEXT,
+      ADD COLUMN IF NOT EXISTS temperatura_promedio TEXT,
+      ADD COLUMN IF NOT EXISTS altura TEXT,
+      ADD COLUMN IF NOT EXISTS bandera_url TEXT;
+    `);
+
+    await db.query(`
+      ALTER TABLE festivals
+      ADD COLUMN IF NOT EXISTS sitio_1 TEXT,
+      ADD COLUMN IF NOT EXISTS maps_1 TEXT,
+      ADD COLUMN IF NOT EXISTS sitio_2 TEXT,
+      ADD COLUMN IF NOT EXISTS maps_2 TEXT,
+      ADD COLUMN IF NOT EXISTS sitio_3 TEXT,
+      ADD COLUMN IF NOT EXISTS maps_3 TEXT,
+      ADD COLUMN IF NOT EXISTS hotel_1 TEXT,
+      ADD COLUMN IF NOT EXISTS wa_1 TEXT,
+      ADD COLUMN IF NOT EXISTS hotel_2 TEXT,
+      ADD COLUMN IF NOT EXISTS wa_2 TEXT,
+      ADD COLUMN IF NOT EXISTS hotel_3 TEXT,
+      ADD COLUMN IF NOT EXISTS wa_3 TEXT;
     `);
 
     console.log("✅ Tablas verificadas/creadas correctamente");
@@ -52,13 +93,29 @@ app.get("/api/festivals", async (req, res) => {
         f.fecha,
         f.descripcion,
         f.municipio_id,
-        f.habitantes,
-        f.altura,
-        f.lugar_encuentro,
-        f.maps_link,
-        f.whatsapp_link,
+
+        f.sitio_1,
+        f.maps_1,
+        f.sitio_2,
+        f.maps_2,
+        f.sitio_3,
+        f.maps_3,
+
+        f.hotel_1,
+        f.wa_1,
+        f.hotel_2,
+        f.wa_2,
+        f.hotel_3,
+        f.wa_3,
+
+        m.codigo_dane,
         m.nombre AS municipio,
-        m.departamento
+        m.departamento,
+        m.subregion,
+        m.habitantes,
+        m.temperatura_promedio,
+        m.altura,
+        m.bandera_url
       FROM festivals f
       LEFT JOIN municipalities m ON f.municipio_id = m.id
       WHERE 1=1
@@ -91,6 +148,60 @@ app.get("/api/festivals", async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error("❌ Error en /api/festivals:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/festivals/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await db.query(
+      `
+      SELECT
+        f.id,
+        f.nombre,
+        f.fecha,
+        f.descripcion,
+        f.municipio_id,
+
+        f.sitio_1,
+        f.maps_1,
+        f.sitio_2,
+        f.maps_2,
+        f.sitio_3,
+        f.maps_3,
+
+        f.hotel_1,
+        f.wa_1,
+        f.hotel_2,
+        f.wa_2,
+        f.hotel_3,
+        f.wa_3,
+
+        m.codigo_dane,
+        m.nombre AS municipio,
+        m.departamento,
+        m.subregion,
+        m.habitantes,
+        m.temperatura_promedio,
+        m.altura,
+        m.bandera_url
+      FROM festivals f
+      LEFT JOIN municipalities m ON f.municipio_id = m.id
+      WHERE f.id = $1
+      LIMIT 1
+      `,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Festival no encontrado" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("❌ Error en /api/festivals/:id", err.message);
     res.status(500).json({ error: err.message });
   }
 });
