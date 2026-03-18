@@ -47,29 +47,21 @@ async function initDB() {
     `);
 
     await db.query(`
-      ALTER TABLE municipalities
-      ADD COLUMN IF NOT EXISTS codigo_dane INTEGER,
-      ADD COLUMN IF NOT EXISTS subregion VARCHAR(255),
-      ADD COLUMN IF NOT EXISTS habitantes TEXT,
-      ADD COLUMN IF NOT EXISTS temperatura_promedio TEXT,
-      ADD COLUMN IF NOT EXISTS altura TEXT,
-      ADD COLUMN IF NOT EXISTS bandera_url TEXT;
+      CREATE TABLE IF NOT EXISTS places (
+        id SERIAL PRIMARY KEY,
+        nombre TEXT NOT NULL,
+        maps_link TEXT,
+        municipio_id INTEGER REFERENCES municipalities(id) ON DELETE CASCADE
+      );
     `);
 
     await db.query(`
-      ALTER TABLE festivals
-      ADD COLUMN IF NOT EXISTS sitio_1 TEXT,
-      ADD COLUMN IF NOT EXISTS maps_1 TEXT,
-      ADD COLUMN IF NOT EXISTS sitio_2 TEXT,
-      ADD COLUMN IF NOT EXISTS maps_2 TEXT,
-      ADD COLUMN IF NOT EXISTS sitio_3 TEXT,
-      ADD COLUMN IF NOT EXISTS maps_3 TEXT,
-      ADD COLUMN IF NOT EXISTS hotel_1 TEXT,
-      ADD COLUMN IF NOT EXISTS wa_1 TEXT,
-      ADD COLUMN IF NOT EXISTS hotel_2 TEXT,
-      ADD COLUMN IF NOT EXISTS wa_2 TEXT,
-      ADD COLUMN IF NOT EXISTS hotel_3 TEXT,
-      ADD COLUMN IF NOT EXISTS wa_3 TEXT;
+      CREATE TABLE IF NOT EXISTS hotels (
+        id SERIAL PRIMARY KEY,
+        nombre TEXT NOT NULL,
+        whatsapp_link TEXT,
+        municipio_id INTEGER REFERENCES municipalities(id) ON DELETE CASCADE
+      );
     `);
 
     console.log("✅ Tablas verificadas/creadas correctamente");
@@ -82,6 +74,67 @@ app.get("/", (req, res) => {
   res.send("Servidor FestQuest funcionando");
 });
 
+
+// =========================
+// MUNICIPALITIES LIST
+// =========================
+app.get("/api/municipalities", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT *
+      FROM municipalities
+      ORDER BY nombre ASC
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("❌ Error en /api/municipalities:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// =========================
+// MUNICIPALITY DETAIL
+// =========================
+app.get("/api/municipalities/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const municipio = await db.query(
+      `SELECT * FROM municipalities WHERE id = $1 LIMIT 1`,
+      [id]
+    );
+
+    if (municipio.rows.length === 0) {
+      return res.status(404).json({ error: "Municipio no encontrado" });
+    }
+
+    const places = await db.query(
+      `SELECT * FROM places WHERE municipio_id = $1`,
+      [id]
+    );
+
+    const hotels = await db.query(
+      `SELECT * FROM hotels WHERE municipio_id = $1`,
+      [id]
+    );
+
+    res.json({
+      municipio: municipio.rows[0],
+      places: places.rows,
+      hotels: hotels.rows,
+    });
+
+  } catch (err) {
+    console.error("❌ Error municipio detalle:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// =========================
+// FESTIVALS
+// =========================
 app.get("/api/festivals", async (req, res) => {
   try {
     const { departamento, municipio, fecha } = req.query;
@@ -152,6 +205,10 @@ app.get("/api/festivals", async (req, res) => {
   }
 });
 
+
+// =========================
+// FESTIVAL DETAIL
+// =========================
 app.get("/api/festivals/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -206,19 +263,6 @@ app.get("/api/festivals/:id", async (req, res) => {
   }
 });
 
-app.get("/api/municipalities", async (req, res) => {
-  try {
-    const result = await db.query(`
-      SELECT *
-      FROM municipalities
-      ORDER BY nombre ASC
-    `);
-    res.json(result.rows);
-  } catch (err) {
-    console.error("❌ Error en /api/municipalities:", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
 
 const PORT = process.env.PORT || 3000;
 
