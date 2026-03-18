@@ -1,45 +1,82 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  Pressable,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-// Asegúrate de que esta ruta sea la correcta hacia tu servicio
-import { fetchFestivalsByMunicipalityId } from "../../services/festivalsByMunicipalityId";
+
+type MunicipalityFestival = {
+  id: number;
+  nombre: string;
+  fecha: string | null;
+  municipio_id: number;
+  municipio: string;
+  departamento: string;
+  subregion?: string | null;
+  habitantes?: string | null;
+  temperatura_promedio?: string | null;
+  altura?: string | null;
+};
 
 export default function MunicipalityDetail() {
-  const { id } = useLocalSearchParams<{ id: string }>(); 
+  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const BASE_URL = "https://festquest-backend.onrender.com/api";
 
-  // Aquí definimos las variables que VS Code decía que no encontraba
-  const [festivals, setFestivals] = useState<any[]>([]);
+  const [festivals, setFestivals] = useState<MunicipalityFestival[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const municipioInfo = festivals.length > 0 ? festivals[0] : null;
 
   useEffect(() => {
     async function load() {
       try {
         setLoading(true);
         setError(null);
-        // Llamamos al servicio. El 'id' viene de la URL (ej: 50001)
-        const response = await fetchFestivalsByMunicipalityId(BASE_URL, id);
-        
-        // Como vimos en tu captura que los datos vienen en .data, 
-        // el servicio ya debería retornar ese array.
-        setFestivals(Array.isArray(response) ? response : []);
+
+        const response = await fetch(
+          "https://festquest-backend.onrender.com/api/festivals"
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error("La respuesta no es una lista válida");
+        }
+
+        const filtrados = data.filter(
+          (item: any) => String(item.municipio_id) === String(id)
+        );
+
+        setFestivals(filtrados);
       } catch (err: any) {
+        console.log("Error municipio:", err);
         setError("Error al conectar con el servidor");
+        setFestivals([]);
       } finally {
         setLoading(false);
       }
     }
+
     load();
   }, [id]);
 
-  if (loading) return (
-    <View style={styles.center}>
-      <ActivityIndicator size="large" color="#FF6A00" />
-      <Text>Buscando festivales...</Text>
-    </View>
-  );
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#FF6A00" />
+        <Text style={styles.loadingText}>Buscando municipio...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -47,23 +84,63 @@ export default function MunicipalityDetail() {
         <Text style={styles.backTxt}>← Volver</Text>
       </Pressable>
 
-      <Text style={styles.title}>Resultados para: {id}</Text>
+      {municipioInfo ? (
+        <>
+          <Text style={styles.title}>{municipioInfo.municipio}</Text>
+          <Text style={styles.subtitle}>
+            {municipioInfo.departamento}
+            {municipioInfo.subregion ? ` · ${municipioInfo.subregion}` : ""}
+          </Text>
+
+          <View style={styles.infoBox}>
+            <Text style={styles.infoLine}>
+              👥 Habitantes: {municipioInfo.habitantes || "No disponible"}
+            </Text>
+            <Text style={styles.infoLine}>
+              🌡 Temperatura promedio:{" "}
+              {municipioInfo.temperatura_promedio
+                ? `${municipioInfo.temperatura_promedio}°C`
+                : "No disponible"}
+            </Text>
+            <Text style={styles.infoLine}>
+              ⛰ Altura:{" "}
+              {municipioInfo.altura
+                ? `${municipioInfo.altura} m`
+                : "No disponible"}
+            </Text>
+          </View>
+
+          <Text style={styles.sectionTitle}>Festivales del municipio</Text>
+        </>
+      ) : (
+        <Text style={styles.title}>Municipio</Text>
+      )}
 
       {error ? (
         <Text style={styles.err}>{error}</Text>
       ) : (
         <FlatList
           data={festivals}
-          keyExtractor={(_, index) => index.toString()}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Text style={styles.muni}>{item.municipio || "Sin nombre"}</Text>
-              <Text style={styles.fest}>🎉 {item.festival}</Text>
-              <Text style={styles.info}>📍 {item.departamento} | 🏔️ {item.altura}</Text>
-            </View>
+            <Pressable
+              style={styles.card}
+              onPress={() => router.push(`/festival/${item.id}`)}
+            >
+              <Text style={styles.fest}>{item.nombre}</Text>
+              <Text style={styles.info}>
+                📅 {item.fecha || "Sin fecha"}
+              </Text>
+              <Text style={styles.detailLink}>Ver festival →</Text>
+            </Pressable>
           )}
           ListEmptyComponent={
-            <Text style={styles.empty}>No se encontraron festivales para "{id}".</Text>
+            <Text style={styles.empty}>
+              No se encontraron festivales para este municipio.
+            </Text>
+          }
+          contentContainerStyle={
+            festivals.length === 0 ? { flexGrow: 1 } : { paddingBottom: 30 }
           }
         />
       )}
@@ -72,15 +149,93 @@ export default function MunicipalityDetail() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, paddingTop: 60, backgroundColor: '#FFF' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  back: { marginBottom: 20 },
-  backTxt: { color: '#FF6A00', fontWeight: 'bold', fontSize: 16 },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
-  card: { padding: 15, backgroundColor: '#F5F5F5', borderRadius: 12, marginBottom: 15, borderLeftWidth: 5, borderLeftColor: '#FF6A00' },
-  muni: { fontSize: 18, fontWeight: 'bold' },
-  fest: { color: '#E67E22', fontWeight: 'bold', marginVertical: 5, fontSize: 16 },
-  info: { color: '#666', fontSize: 13 },
-  err: { color: 'red', textAlign: 'center', marginTop: 20 },
-  empty: { textAlign: 'center', marginTop: 50, color: '#999' }
+  container: {
+    flex: 1,
+    padding: 20,
+    paddingTop: 60,
+    backgroundColor: "#0b0b0b",
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#0b0b0b",
+  },
+  loadingText: {
+    color: "#fff",
+    marginTop: 10,
+  },
+  back: {
+    marginBottom: 20,
+  },
+  backTxt: {
+    color: "#FF6A00",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "900",
+    marginBottom: 4,
+    color: "#fff",
+  },
+  subtitle: {
+    color: "#aaa",
+    fontSize: 15,
+    marginBottom: 18,
+  },
+  infoBox: {
+    backgroundColor: "#141414",
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#222",
+  },
+  infoLine: {
+    color: "#e6e6e6",
+    marginBottom: 8,
+    fontSize: 14,
+  },
+  sectionTitle: {
+    color: "#FF6A00",
+    fontSize: 20,
+    fontWeight: "900",
+    marginBottom: 14,
+  },
+  card: {
+    padding: 15,
+    backgroundColor: "#141414",
+    borderRadius: 12,
+    marginBottom: 15,
+    borderLeftWidth: 5,
+    borderLeftColor: "#FF6A00",
+  },
+  fest: {
+    color: "#fff",
+    fontWeight: "bold",
+    marginBottom: 6,
+    fontSize: 17,
+  },
+  info: {
+    color: "#bbb",
+    fontSize: 13,
+    marginBottom: 8,
+  },
+  detailLink: {
+    color: "#FF6A00",
+    fontWeight: "bold",
+    fontSize: 13,
+    textAlign: "right",
+  },
+  err: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 20,
+  },
+  empty: {
+    textAlign: "center",
+    marginTop: 50,
+    color: "#999",
+  },
 });
