@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// Normaliza: minúsculas + sin tildes + sin espacios dobles
+// Normaliza
 function norm(s) {
   return String(s || "")
     .trim()
@@ -75,7 +75,7 @@ router.get("/", async (req, res) => {
         pageSize: limit,
         total,
         totalPages,
-        signature: "FestQuest municipalities.js v4 (detail payload fixed)",
+        signature: "FestQuest municipalities.js v5 FINAL",
         filters: {
           departamento: departamento || null,
           q: hasQ ? String(q) : null,
@@ -113,18 +113,23 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "Municipio no encontrado" });
     }
 
+    // 🔹 SPLIT DE DATOS
     const placesNames = splitPipe(row.sitios_turisticos);
     const hotelsNames = splitPipe(row.hoteles);
     const contacts = splitPipe(row.contacto_hoteles);
 
-    const places = placesNames.map((nombre, i) => ({
+    // 🔹 LUGARES (maps automático)
+    const places = placesNames.map((nombre) => ({
       nombre,
-      maps_link: contacts[i] || null,
+      maps_link: `https://www.google.com/maps/search/${encodeURIComponent(nombre)}`,
     }));
 
+    // 🔹 HOTELES (con fallback)
     const hotels = hotelsNames.map((nombre, i) => ({
       nombre,
-      whatsapp_link: contacts[i] || null,
+      whatsapp_link:
+        contacts[i] ||
+        `https://www.google.com/search?q=${encodeURIComponent(nombre + " whatsapp")}`,
     }));
 
     res.json({
