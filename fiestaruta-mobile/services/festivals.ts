@@ -1,111 +1,61 @@
+const BASE_URL = "https://festquest-backend.onrender.com/api";
+
 export type FestivalItem = {
   id: number;
-  nombre: string;
-  municipio_nombre: string;
-  departamento: string;
-  fecha_inicio: string;
-  fecha_fin: string | null;
-};
-
-type BackendFestival = {
-  id: number;
-  nombre: string;
-  municipio?: string;
-  departamento?: string;
-  fecha?: string;
+  nombre?: string | null;
   descripcion?: string | null;
-  municipio_id?: number;
-  habitantes?: string | null;
-  altura?: string | null;
-  lugar_encuentro?: string | null;
-  maps_link?: string | null;
-  whatsapp_link?: string | null;
+
+  fecha?: string | null;
+  fecha_inicio?: string | null;
+  fecha_fin?: string | null;
+
+  municipio_id?: number | null;
+  municipio?: string | null;
+  departamento?: string | null;
+  subregion?: string | null;
+  habitantes?: number | null;
+  altura?: number | null;
+
+  source_type?: string | null;
+  verified?: boolean | null;
+  is_active?: boolean | null;
 };
 
-function mapFestival(item: BackendFestival): FestivalItem {
-  return {
+type ApiResponse = {
+  success?: boolean;
+  data?: any[];
+};
+
+export async function fetchFestivals(): Promise<FestivalItem[]> {
+  const response = await fetch(`${BASE_URL}/festivals`);
+
+  if (!response.ok) {
+    throw new Error("Error cargando festivales");
+  }
+
+  const json: ApiResponse | any[] = await response.json();
+
+  const rawItems = Array.isArray(json) ? json : (json.data || []);
+
+  return rawItems.map((item: any) => ({
     id: item.id,
-    nombre: item.nombre ?? "",
-    municipio_nombre: item.municipio ?? "",
-    departamento: item.departamento ?? "",
-    fecha_inicio: item.fecha ?? "",
-    fecha_fin: null,
-  };
-}
+    nombre: item.nombre ?? null,
+    descripcion: item.descripcion ?? null,
 
-// Función para traer la LISTA
-export async function fetchFestivals(
-  baseUrl: string,
-  params: Record<string, string> = {}
-): Promise<FestivalItem[]> {
-  const cleanParams = Object.fromEntries(
-    Object.entries(params).filter(([_, value]) => value != null && value !== "")
-  );
+    // compatibilidad backend actual
+    fecha: item.fecha ?? null,
+    fecha_inicio: item.fecha_inicio ?? item.fecha ?? null,
+    fecha_fin: item.fecha_fin ?? item.fecha ?? null,
 
-  const queryParams = new URLSearchParams(cleanParams).toString();
-  const url = queryParams
-    ? `${baseUrl}/api/festivals?${queryParams}`
-    : `${baseUrl}/api/festivals`;
+    municipio_id: item.municipio_id ?? null,
+    municipio: item.municipio ?? null,
+    departamento: item.departamento ?? null,
+    subregion: item.subregion ?? null,
+    habitantes: item.habitantes ?? null,
+    altura: item.altura ?? null,
 
-  console.log("Pidiendo lista a:", url);
-
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error en servidor: ${response.status}`);
-    }
-
-    const json: BackendFestival[] = await response.json();
-
-    if (!Array.isArray(json)) {
-      throw new Error("La respuesta de /api/festivals no es una lista válida");
-    }
-
-    return json.map(mapFestival);
-  } catch (error) {
-    console.error("Error en fetchFestivals:", error);
-    throw error;
-  }
-}
-
-// Función para traer el DETALLE (por ahora reutiliza la lista y busca por ID)
-export async function fetchFestivalById(
-  baseUrl: string,
-  id: string | number
-): Promise<FestivalItem | null> {
-  const url = `${baseUrl}/api/festivals`;
-
-  console.log("Pidiendo detalle desde lista a:", url, "ID:", id);
-
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error en detalle: ${response.status}`);
-    }
-
-    const json: BackendFestival[] = await response.json();
-
-    if (!Array.isArray(json)) {
-      throw new Error("La respuesta de /api/festivals no es una lista válida");
-    }
-
-    const found = json.find((item) => String(item.id) === String(id));
-
-    return found ? mapFestival(found) : null;
-  } catch (error) {
-    console.error("Error en fetchFestivalById:", error);
-    throw error;
-  }
+    source_type: item.source_type ?? null,
+    verified: item.verified ?? null,
+    is_active: item.is_active ?? null,
+  }));
 }

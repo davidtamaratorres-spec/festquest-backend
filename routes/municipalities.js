@@ -18,6 +18,14 @@ function clampInt(value, fallback, { min, max }) {
   return Math.max(min, Math.min(max, n));
 }
 
+function splitPipe(value) {
+  if (!value) return [];
+  return String(value)
+    .split("|")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 /**
  * GET /api/municipalities
  */
@@ -37,13 +45,12 @@ router.get("/", async (req, res) => {
     const params = [];
 
     if (departamento) {
-      sql += " WHERE departamento = $1"; // USAMOS $1 para PostgreSQL
+      sql += " WHERE departamento = $1";
       params.push(departamento);
     }
 
     sql += " ORDER BY nombre ASC, id ASC";
 
-    // Usamos await db.query que es lo que definimos en db.js
     const result = await db.query(sql, params);
     let rows = result.rows;
 
@@ -68,7 +75,7 @@ router.get("/", async (req, res) => {
         pageSize: limit,
         total,
         totalPages,
-        signature: "FestQuest municipalities.js v3 (PostgreSQL Fix)",
+        signature: "FestQuest municipalities.js v4 (detail payload fixed)",
         filters: {
           departamento: departamento || null,
           q: hasQ ? String(q) : null,
@@ -87,9 +94,10 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
-    if (!Number.isFinite(id)) return res.status(400).json({ error: "ID inválido" });
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
 
-    // Cambiamos ? por $1 y quitamos el LIMIT conflictivo
     const sql = `
       SELECT
         m.*,
@@ -101,10 +109,29 @@ router.get("/:id", async (req, res) => {
     const result = await db.query(sql, [id]);
     const row = result.rows[0];
 
-    if (!row) return res.status(404).json({ error: "Municipio no encontrado" });
+    if (!row) {
+      return res.status(404).json({ error: "Municipio no encontrado" });
+    }
 
-    // IMPORTANTE: Enviamos el objeto directo para que tu App lo lea bien
-    res.json(row);
+    const placesNames = splitPipe(row.sitios_turisticos);
+    const hotelsNames = splitPipe(row.hoteles);
+    const contacts = splitPipe(row.contacto_hoteles);
+
+    const places = placesNames.map((nombre, i) => ({
+      nombre,
+      maps_link: contacts[i] || null,
+    }));
+
+    const hotels = hotelsNames.map((nombre, i) => ({
+      nombre,
+      whatsapp_link: contacts[i] || null,
+    }));
+
+    res.json({
+      municipio: row,
+      places,
+      hotels,
+    });
   } catch (err) {
     console.error("Error en detalle:", err.message);
     res.status(500).json({ error: err.message });

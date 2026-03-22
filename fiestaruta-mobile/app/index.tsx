@@ -14,18 +14,30 @@ import {
 import { useRouter } from "expo-router";
 import { fetchFestivals, FestivalItem } from "../services/festivals";
 
+function normalizar(texto: string) {
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function fechaSoloDia(fecha?: string | null) {
+  if (!fecha) return "";
+  return fecha.split("T")[0];
+}
+
 export default function Home() {
   const router = useRouter();
-  const BASE_URL = "https://festquest-backend.onrender.com";
 
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<FestivalItem[]>([]);
+  const [errorText, setErrorText] = useState("");
 
   const [departamento, setDepartamento] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
 
-  const calcularDias = (inicio: string, fin: string | null) => {
+  const calcularDias = (inicio?: string | null, fin?: string | null) => {
     if (!inicio) return "1";
     if (!fin) return "1";
 
@@ -39,15 +51,33 @@ export default function Home() {
     }
   };
 
-  const estaEnRango = (fechaEvento: string, desde: string, hasta: string) => {
+  const estaEnRango = (
+    fechaEvento?: string | null,
+    desde?: string,
+    hasta?: string
+  ) => {
     if (!fechaEvento) return false;
 
-    const evento = fechaEvento.split("T")[0];
+    const evento = fechaSoloDia(fechaEvento);
 
     if (desde && evento < desde) return false;
     if (hasta && evento > hasta) return false;
 
     return true;
+  };
+
+  const ordenarPorFecha = (lista: FestivalItem[]) => {
+    return [...lista].sort((a, b) => {
+      const fechaA = a.fecha_inicio
+        ? new Date(fechaSoloDia(a.fecha_inicio)).getTime()
+        : Number.MAX_SAFE_INTEGER;
+
+      const fechaB = b.fecha_inicio
+        ? new Date(fechaSoloDia(b.fecha_inicio)).getTime()
+        : Number.MAX_SAFE_INTEGER;
+
+      return fechaA - fechaB;
+    });
   };
 
   const cargarDatos = async (
@@ -59,19 +89,22 @@ export default function Home() {
   ) => {
     Keyboard.dismiss();
     setLoading(true);
+    setErrorText("");
 
     try {
       const dep = filtros?.departamento ?? departamento;
       const desde = filtros?.fechaInicio ?? fechaInicio;
       const hasta = filtros?.fechaFin ?? fechaFin;
 
-      const params: Record<string, string> = {
-        ...(dep.trim() ? { departamento: dep.trim() } : {}),
-      };
+      const resp = await fetchFestivals();
 
-      const resp = await fetchFestivals(BASE_URL, params);
+      let filtrados = Array.isArray(resp) ? resp : [];
 
-      let filtrados = resp || [];
+      if (dep.trim()) {
+        filtrados = filtrados.filter((item) =>
+          normalizar(item.departamento || "").includes(normalizar(dep.trim()))
+        );
+      }
 
       if (desde.trim() || hasta.trim()) {
         filtrados = filtrados.filter((item) =>
@@ -79,10 +112,12 @@ export default function Home() {
         );
       }
 
+      filtrados = ordenarPorFecha(filtrados);
       setItems(filtrados);
-    } catch (e) {
+    } catch (e: any) {
       console.error("Error cargando datos:", e);
       setItems([]);
+      setErrorText(e?.message || "No se pudieron cargar los festivales.");
     } finally {
       setLoading(false);
     }
@@ -162,6 +197,8 @@ export default function Home() {
         </View>
       </View>
 
+      {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
+
       <FlatList
         data={items}
         keyExtractor={(item) => String(item.id)}
@@ -171,11 +208,11 @@ export default function Home() {
             style={styles.card}
             onPress={() => router.push(`/festival/${item.id}`)}
           >
-            <Text style={styles.cardTitle}>{item.nombre}</Text>
+            <Text style={styles.cardTitle}>{item.nombre || "Sin nombre"}</Text>
 
             <View style={styles.infoRow}>
               <Text style={styles.cardDate}>
-                📅 {item.fecha_inicio || "Sin fecha"}
+                📅 {fechaSoloDia(item.fecha_inicio) || "Sin fecha"}
               </Text>
               <Text style={styles.cardDays}>
                 🎉 {calcularDias(item.fecha_inicio, item.fecha_fin)} Días
@@ -183,7 +220,8 @@ export default function Home() {
             </View>
 
             <Text style={styles.cardDept}>
-              📍 {item.departamento} • {item.municipio_nombre}
+              📍 {item.departamento || "Sin departamento"} •{" "}
+              {item.municipio || `Municipio ${item.municipio_id}`}
             </Text>
 
             <View style={styles.footerCard}>
@@ -280,6 +318,14 @@ const styles = StyleSheet.create({
     color: "#AAA",
     fontWeight: "800",
     fontSize: 12,
+  },
+
+  errorText: {
+    color: "#ff6b6b",
+    textAlign: "center",
+    marginTop: 14,
+    marginHorizontal: 20,
+    fontSize: 13,
   },
 
   listContent: {

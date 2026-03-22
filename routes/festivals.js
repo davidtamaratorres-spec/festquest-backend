@@ -1,25 +1,82 @@
+const express = require("express");
+const router = express.Router();
+const db = require("../db");
+
+// GET /festivals
 router.get("/", async (req, res) => {
-  // 1. Usamos query en lugar de params para que la ruta / sea válida
-  const { municipio_id } = req.query; 
+  const { municipio_id, departamento } = req.query;
 
   try {
-    // 2. Consulta limpia a la tabla 'festivales' (la que vimos en Render)
-    let query = 'SELECT * FROM festivales'; 
-    let params = [];
+    let query = `
+      SELECT
+        f.id,
+        f.nombre,
+        f.fecha,
+        f.descripcion,
+        f.municipio_id,
+        f.source_type,
+        f.verified,
+        f.is_active,
+        m.nombre AS municipio,
+        m.departamento,
+        m.subregion,
+        m.habitantes,
+        m.altura
+      FROM festivals f
+      LEFT JOIN municipalities m ON f.municipio_id = m.id
+      WHERE f.is_active = true
+    `;
 
-    // 3. Si alguien filtra, agregamos el WHERE, si no, traemos los 32
+    let params = [];
+    let conditions = [];
+
     if (municipio_id) {
-      query += ' WHERE "Código_id"::text = $1 OR municipio ILIKE $1';
-      params = [municipio_id];
+      params.push(municipio_id);
+      const p = params.length;
+
+      conditions.push(`
+        f.municipio_id = $${p}
+        AND f.source_type = (
+          CASE
+            WHEN EXISTS (
+              SELECT 1
+              FROM festivals
+              WHERE municipio_id = $${p}
+                AND source_type = 'real'
+                AND is_active = true
+            )
+            THEN 'real'
+            ELSE 'base'
+          END
+        )
+      `);
     }
 
-    const result = await db.query(query, params);
-    
-    // 4. Enviamos siempre el formato que tu App espera
-    res.json({ success: true, data: result.rows });
+    if (departamento) {
+      params.push(departamento);
+      const p = params.length;
+      conditions.push(`m.departamento ILIKE $${p}`);
+    }
 
+    if (conditions.length > 0) {
+      query += ` AND ` + conditions.join(" AND ");
+    }
+
+    query += ` ORDER BY m.departamento ASC, m.nombre ASC, f.id ASC`;
+
+    const result = await db.query(query, params);
+
+    res.json({
+      success: true,
+      data: result.rows,
+    });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ success: false, error: "Error en la tabla festivales" });
+    console.error("Error en festivals:", err.message);
+    res.status(500).json({
+      success: false,
+      error: "Error cargando festivals",
+    });
   }
 });
+
+module.exports = router;

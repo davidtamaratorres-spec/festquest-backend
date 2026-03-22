@@ -9,7 +9,18 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-const csvFilePath = path.join(__dirname, "data", "municipios_de_colombia.csv");
+const csvFilePath = path.join(__dirname, "data", "festivals_master.csv");
+
+function limpiar(valor) {
+  if (valor === undefined || valor === null) return "";
+  return String(valor).replace(/"/g, "").trim();
+}
+
+function limpiarCodigo(valor) {
+  const limpio = limpiar(valor);
+  if (!limpio) return "";
+  return limpio.replace(/^0+/, "");
+}
 
 async function run() {
   try {
@@ -24,26 +35,32 @@ async function run() {
         console.log("Filas leídas:", rows.length);
         console.log("Columnas detectadas:", Object.keys(rows[0] || {}));
 
-        let withFestival = 0;
+        let conCodigo = 0;
         let municipioFound = 0;
         let inserted = 0;
+        let sinMatch = 0;
+
+        await pool.query("TRUNCATE TABLE festivals CASCADE;");
+        console.log("Tabla festivals vaciada");
 
         for (const row of rows) {
-          const codigo = String(parseInt(row.Codigo_id, 10));
-          const nombreFestival = row.festival ? String(row.festival).trim() : "";
-          const fecha = row.fecha ? String(row.fecha).trim() : "";
+          const codigo = limpiarCodigo(row.municipio_codigo_dane);
+          const nombreFestival = limpiar(row.nombre);
+          const fechaInicio = limpiar(row.date_start);
+          const descripcion = limpiar(row.descripcion) || "Base inicial";
 
-          if (!codigo || codigo === "NaN") continue;
+          if (!codigo) continue;
           if (!nombreFestival) continue;
 
-          withFestival++;
+          conCodigo++;
 
           const municipioResult = await pool.query(
-            `SELECT id FROM municipalities WHERE codigo_dane = $1 LIMIT 1`,
+            `SELECT id FROM municipalities WHERE codigo_dane::text = $1 LIMIT 1`,
             [codigo]
           );
 
           if (municipioResult.rowCount === 0) {
+            sinMatch++;
             continue;
           }
 
@@ -51,18 +68,28 @@ async function run() {
 
           await pool.query(
             `
-            INSERT INTO festivals (nombre, fecha, municipio_id)
-            VALUES ($1, $2, $3)
+            INSERT INTO festivals (nombre, fecha, descripcion, municipio_id)
+            VALUES ($1, $2, $3, $4)
             `,
-            [nombreFestival, fecha || null, municipioResult.rows[0].id]
+            [
+              nombreFestival,
+              fechaInicio || null,
+              descripcion,
+              municipioResult.rows[0].id,
+            ]
           );
 
           inserted++;
+
+          if (inserted % 100 === 0) {
+            console.log("Festivales insertados:", inserted);
+          }
         }
 
-        console.log("Filas con festival:", withFestival);
+        console.log("Filas con código y nombre:", conCodigo);
         console.log("Municipios encontrados:", municipioFound);
         console.log("Festivales insertados:", inserted);
+        console.log("Sin match municipio:", sinMatch);
 
         await pool.end();
       })
