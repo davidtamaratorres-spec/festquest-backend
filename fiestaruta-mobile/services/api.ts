@@ -1,10 +1,8 @@
-// Cambia esto en todos tus archivos de la carpeta services
-const BASE_URL = 'https://festquest-backend.onrender.com';
+const BASE_URL = "https://festquest-backend.onrender.com/api";
 
 export async function pingBackend() {
-  // LA RUTA CORRECTA SEGÚN TU BACKEND:
-  const url = `${BASE_URL}/festivales`; 
-  
+  const url = `${BASE_URL}/festivals`;
+
   try {
     const r = await fetch(url);
     const j = await r.json();
