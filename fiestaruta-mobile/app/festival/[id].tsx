@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -20,20 +20,19 @@ type FestivalDetailData = {
   habitantes?: string | number | null;
   temperatura_promedio?: string | number | null;
   altura?: string | number | null;
-  sitio_1?: string | null;
-  maps_1?: string | null;
-  sitio_2?: string | null;
-  maps_2?: string | null;
-  sitio_3?: string | null;
-  maps_3?: string | null;
-  hotel_1?: string | null;
-  wa_1?: string | null;
-  hotel_2?: string | null;
-  wa_2?: string | null;
-  hotel_3?: string | null;
-  wa_3?: string | null;
+  sitios_turisticos?: string | null;
+  hoteles?: string | null;
+  contacto_hoteles?: string | null;
   municipio_id?: number | null;
 };
+
+function splitPipe(value: any) {
+  if (!value) return [];
+  return String(value)
+    .split("|")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
 
 export default function FestivalDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -92,6 +91,35 @@ export default function FestivalDetail() {
     }
   };
 
+  const lugares = useMemo(() => {
+    if (!data) return [];
+
+    const nombres = splitPipe(data.sitios_turisticos);
+
+    return nombres.map((nombre: string) => ({
+      nombre,
+      maps_link: `https://www.google.com/maps/search/${encodeURIComponent(
+        `${nombre}, ${data.municipio || ""}, ${data.departamento || ""}, Colombia`
+      )}`,
+    }));
+  }, [data]);
+
+  const hoteles = useMemo(() => {
+    if (!data) return [];
+
+    const nombres = splitPipe(data.hoteles);
+    const contactos = splitPipe(data.contacto_hoteles);
+
+    return nombres.map((nombre: string, i: number) => ({
+      nombre,
+      whatsapp_link:
+        contactos[i] ||
+        `https://www.google.com/search?q=${encodeURIComponent(
+          `${nombre} ${data.municipio || ""} ${data.departamento || ""} whatsapp`
+        )}`,
+    }));
+  }, [data]);
+
   if (loading) {
     return (
       <View style={styles.center}>
@@ -127,8 +155,7 @@ export default function FestivalDetail() {
       <Text style={styles.title}>{data.nombre || "Festival"}</Text>
 
       <Text style={styles.subtitle}>
-        {data.municipio || "Sin municipio"} ·{" "}
-        {data.departamento || "Sin departamento"}
+        {data.municipio || "Sin municipio"} · {data.departamento || "Sin departamento"}
       </Text>
 
       <Text style={styles.date}>📅 {data.fecha || "Sin fecha"}</Text>
@@ -148,51 +175,27 @@ export default function FestivalDetail() {
 
       <Text style={styles.section}>Sitios recomendados</Text>
 
-      {data.sitio_1 ? (
-        <Pressable onPress={() => abrirLink(data.maps_1)}>
-          <Text style={styles.link}>📍 {data.sitio_1}</Text>
-        </Pressable>
-      ) : null}
-
-      {data.sitio_2 ? (
-        <Pressable onPress={() => abrirLink(data.maps_2)}>
-          <Text style={styles.link}>📍 {data.sitio_2}</Text>
-        </Pressable>
-      ) : null}
-
-      {data.sitio_3 ? (
-        <Pressable onPress={() => abrirLink(data.maps_3)}>
-          <Text style={styles.link}>📍 {data.sitio_3}</Text>
-        </Pressable>
-      ) : null}
-
-      {!data.sitio_1 && !data.sitio_2 && !data.sitio_3 ? (
+      {lugares.length ? (
+        lugares.map((item, index) => (
+          <Pressable key={`lugar-${index}`} onPress={() => abrirLink(item.maps_link)}>
+            <Text style={styles.link}>📍 {item.nombre}</Text>
+          </Pressable>
+        ))
+      ) : (
         <Text style={styles.emptyText}>No hay sitios registrados.</Text>
-      ) : null}
+      )}
 
       <Text style={styles.section}>Hoteles</Text>
 
-      {data.hotel_1 ? (
-        <Pressable onPress={() => abrirLink(data.wa_1)}>
-          <Text style={styles.link}>🏨 {data.hotel_1}</Text>
-        </Pressable>
-      ) : null}
-
-      {data.hotel_2 ? (
-        <Pressable onPress={() => abrirLink(data.wa_2)}>
-          <Text style={styles.link}>🏨 {data.hotel_2}</Text>
-        </Pressable>
-      ) : null}
-
-      {data.hotel_3 ? (
-        <Pressable onPress={() => abrirLink(data.wa_3)}>
-          <Text style={styles.link}>🏨 {data.hotel_3}</Text>
-        </Pressable>
-      ) : null}
-
-      {!data.hotel_1 && !data.hotel_2 && !data.hotel_3 ? (
+      {hoteles.length ? (
+        hoteles.map((item, index) => (
+          <Pressable key={`hotel-${index}`} onPress={() => abrirLink(item.whatsapp_link)}>
+            <Text style={styles.link}>🏨 {item.nombre}</Text>
+          </Pressable>
+        ))
+      ) : (
         <Text style={styles.emptyText}>No hay hoteles registrados.</Text>
-      ) : null}
+      )}
 
       {municipioIdReal ? (
         <Pressable
