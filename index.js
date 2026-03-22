@@ -18,7 +18,10 @@ async function initDB() {
         habitantes TEXT,
         temperatura_promedio TEXT,
         altura TEXT,
-        bandera_url TEXT
+        bandera_url TEXT,
+        sitios_turisticos TEXT,
+        hoteles TEXT,
+        contacto_hoteles TEXT
       );
     `);
 
@@ -42,7 +45,11 @@ async function initDB() {
         hotel_2 TEXT,
         wa_2 TEXT,
         hotel_3 TEXT,
-        wa_3 TEXT
+        wa_3 TEXT,
+
+        sitios_turisticos TEXT,
+        hoteles TEXT,
+        contacto_hoteles TEXT
       );
     `);
 
@@ -70,10 +77,17 @@ async function initDB() {
   }
 }
 
+function splitPipe(value) {
+  if (!value) return [];
+  return String(value)
+    .split("|")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 app.get("/", (req, res) => {
   res.send("Servidor FestQuest funcionando");
 });
-
 
 // =========================
 // MUNICIPALITIES LIST
@@ -92,7 +106,6 @@ app.get("/api/municipalities", async (req, res) => {
   }
 });
 
-
 // =========================
 // MUNICIPALITY DETAIL
 // =========================
@@ -109,28 +122,58 @@ app.get("/api/municipalities/:id", async (req, res) => {
       return res.status(404).json({ error: "Municipio no encontrado" });
     }
 
-    const places = await db.query(
+    const m = municipio.rows[0];
+
+    let places = [];
+    let hotels = [];
+
+    const placesLegacy = await db.query(
       `SELECT * FROM places WHERE municipio_id = $1`,
       [id]
     );
 
-    const hotels = await db.query(
+    const hotelsLegacy = await db.query(
       `SELECT * FROM hotels WHERE municipio_id = $1`,
       [id]
     );
 
-    res.json({
-      municipio: municipio.rows[0],
-      places: places.rows,
-      hotels: hotels.rows,
-    });
+    if (placesLegacy.rows.length > 0) {
+      places = placesLegacy.rows;
+    } else {
+      places = splitPipe(m.sitios_turisticos).map((nombre) => ({
+        nombre,
+        maps_link: `https://www.google.com/maps/search/${encodeURIComponent(
+          `${nombre}, ${m.nombre}, ${m.departamento}, Colombia`
+        )}`,
+      }));
+    }
 
+    if (hotelsLegacy.rows.length > 0) {
+      hotels = hotelsLegacy.rows;
+    } else {
+      const hotelNames = splitPipe(m.hoteles);
+      const hotelContacts = splitPipe(m.contacto_hoteles);
+
+      hotels = hotelNames.map((nombre, i) => ({
+        nombre,
+        whatsapp_link:
+          hotelContacts[i] ||
+          `https://www.google.com/search?q=${encodeURIComponent(
+            `${nombre} ${m.nombre} ${m.departamento} whatsapp`
+          )}`,
+      }));
+    }
+
+    res.json({
+      municipio: m,
+      places,
+      hotels,
+    });
   } catch (err) {
     console.error("❌ Error municipio detalle:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // =========================
 // FESTIVALS
@@ -146,21 +189,9 @@ app.get("/api/festivals", async (req, res) => {
         f.fecha,
         f.descripcion,
         f.municipio_id,
-
-        f.sitio_1,
-        f.maps_1,
-        f.sitio_2,
-        f.maps_2,
-        f.sitio_3,
-        f.maps_3,
-
-        f.hotel_1,
-        f.wa_1,
-        f.hotel_2,
-        f.wa_2,
-        f.hotel_3,
-        f.wa_3,
-
+        f.sitios_turisticos,
+        f.hoteles,
+        f.contacto_hoteles,
         m.codigo_dane,
         m.nombre AS municipio,
         m.departamento,
@@ -195,7 +226,7 @@ app.get("/api/festivals", async (req, res) => {
       paramIndex++;
     }
 
-    query += ` ORDER BY f.fecha ASC, f.id ASC`;
+    query += ` ORDER BY f.fecha ASC NULLS LAST, f.id ASC`;
 
     const result = await db.query(query, params);
     res.json(result.rows);
@@ -204,7 +235,6 @@ app.get("/api/festivals", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // =========================
 // FESTIVAL DETAIL
@@ -221,21 +251,9 @@ app.get("/api/festivals/:id", async (req, res) => {
         f.fecha,
         f.descripcion,
         f.municipio_id,
-
-        f.sitio_1,
-        f.maps_1,
-        f.sitio_2,
-        f.maps_2,
-        f.sitio_3,
-        f.maps_3,
-
-        f.hotel_1,
-        f.wa_1,
-        f.hotel_2,
-        f.wa_2,
-        f.hotel_3,
-        f.wa_3,
-
+        f.sitios_turisticos,
+        f.hoteles,
+        f.contacto_hoteles,
         m.codigo_dane,
         m.nombre AS municipio,
         m.departamento,
@@ -262,7 +280,6 @@ app.get("/api/festivals/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 const PORT = process.env.PORT || 3000;
 
