@@ -17,10 +17,14 @@ router.get("/", async (req, res) => {
         f.source_type,
         f.verified,
         f.is_active,
+        f.sitios_turisticos,
+        f.hoteles,
+        f.contacto_hoteles,
         m.nombre AS municipio,
         m.departamento,
         m.subregion,
         m.habitantes,
+        m.temperatura_promedio,
         m.altura
       FROM festivals f
       LEFT JOIN municipalities m ON f.municipio_id = m.id
@@ -75,6 +79,58 @@ router.get("/", async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Error cargando festivals",
+    });
+  }
+});
+
+// GET /festivals/:id
+router.get("/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
+
+    const query = `
+      SELECT
+        f.id,
+        f.nombre,
+        f.fecha,
+        f.descripcion,
+        f.municipio_id,
+        f.source_type,
+        f.verified,
+        f.is_active,
+        f.sitios_turisticos,
+        f.hoteles,
+        f.contacto_hoteles,
+        m.codigo_dane,
+        m.nombre AS municipio,
+        m.departamento,
+        m.subregion,
+        m.habitantes,
+        m.temperatura_promedio,
+        m.altura,
+        m.bandera_url
+      FROM festivals f
+      LEFT JOIN municipalities m ON f.municipio_id = m.id
+      WHERE f.id = $1
+      LIMIT 1
+    `;
+
+    const result = await db.query(query, [id]);
+    const row = result.rows[0];
+
+    if (!row) {
+      return res.status(404).json({ error: "Festival no encontrado" });
+    }
+
+    res.json(row);
+  } catch (err) {
+    console.error("Error en festival detalle:", err.message);
+    res.status(500).json({
+      error: "Error cargando detalle del festival",
     });
   }
 });

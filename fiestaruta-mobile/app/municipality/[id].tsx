@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,14 @@ import {
   Linking,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+
+function splitPipe(value: any) {
+  if (!value) return [];
+  return String(value)
+    .split("|")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
 
 export default function MunicipalityDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -46,11 +54,53 @@ export default function MunicipalityDetail() {
     load();
   }, [id]);
 
+  const municipio = useMemo(() => {
+    if (!data) return null;
+    return data.municipio || data;
+  }, [data]);
+
+  const places = useMemo(() => {
+    if (!data || !municipio) return [];
+
+    if (Array.isArray(data.places) && data.places.length > 0) {
+      return data.places;
+    }
+
+    const names = splitPipe(municipio.sitios_turisticos);
+
+    return names.map((nombre: string) => ({
+      nombre,
+      maps_link: `https://www.google.com/maps/search/${encodeURIComponent(
+        `${nombre}, ${municipio.nombre}, ${municipio.departamento}, Colombia`
+      )}`,
+    }));
+  }, [data, municipio]);
+
+  const hotels = useMemo(() => {
+    if (!data || !municipio) return [];
+
+    if (Array.isArray(data.hotels) && data.hotels.length > 0) {
+      return data.hotels;
+    }
+
+    const names = splitPipe(municipio.hoteles);
+    const contacts = splitPipe(municipio.contacto_hoteles);
+
+    return names.map((nombre: string, i: number) => ({
+      nombre,
+      whatsapp_link:
+        contacts[i] ||
+        `https://www.google.com/search?q=${encodeURIComponent(
+          `${nombre} ${municipio.nombre} ${municipio.departamento} whatsapp`
+        )}`,
+    }));
+  }, [data, municipio]);
+
   if (loading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color="#FF6A00" />
-        <Text style={{ color: "#fff" }}>Cargando municipio...</Text>
+        <Text style={styles.loadingText}>Cargando municipio...</Text>
       </View>
     );
   }
@@ -58,35 +108,45 @@ export default function MunicipalityDetail() {
   if (error) {
     return (
       <View style={styles.center}>
-        <Text style={{ color: "#fff" }}>{error}</Text>
+        <Text style={styles.loadingText}>{error}</Text>
       </View>
     );
   }
 
-  const m = data?.municipio;
+  if (!municipio) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.loadingText}>No se encontró información</Text>
+      </View>
+    );
+  }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ padding: 20 }}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Pressable onPress={() => router.back()}>
         <Text style={styles.back}>← Volver</Text>
       </Pressable>
 
-      <Text style={styles.title}>{m?.nombre}</Text>
-      <Text style={styles.subtitle}>{m?.departamento}</Text>
+      <Text style={styles.title}>{municipio.nombre}</Text>
+      <Text style={styles.subtitle}>{municipio.departamento}</Text>
 
       <View style={styles.box}>
-        <Text style={styles.text}>🌎 {m?.subregion || "Sin dato"}</Text>
-        <Text style={styles.text}>👥 {m?.habitantes || "Sin dato"}</Text>
+        <Text style={styles.text}>🌎 {municipio.subregion || "Sin dato"}</Text>
+        <Text style={styles.text}>👥 {municipio.habitantes || "Sin dato"}</Text>
         <Text style={styles.text}>
-          🌡 {m?.temperatura_promedio || "Sin dato"}
+          🌡 {municipio.temperatura_promedio || "Sin dato"}
         </Text>
-        <Text style={styles.text}>⛰ {m?.altura || "Sin dato"}</Text>
+        <Text style={styles.text}>⛰ {municipio.altura || "Sin dato"}</Text>
       </View>
 
       <Text style={styles.section}>Lugares</Text>
-      {data?.places?.length ? (
-        data.places.map((p: any, i: number) => (
-          <Pressable key={i} onPress={() => Linking.openURL(p.maps_link)}>
+      {places.length ? (
+        places.map((p: any, i: number) => (
+          <Pressable
+            key={`place-${i}`}
+            onPress={() => p.maps_link && Linking.openURL(p.maps_link)}
+            style={styles.item}
+          >
             <Text style={styles.link}>📍 {p.nombre}</Text>
           </Pressable>
         ))
@@ -95,9 +155,13 @@ export default function MunicipalityDetail() {
       )}
 
       <Text style={styles.section}>Hoteles</Text>
-      {data?.hotels?.length ? (
-        data.hotels.map((h: any, i: number) => (
-          <Pressable key={i} onPress={() => Linking.openURL(h.whatsapp_link)}>
+      {hotels.length ? (
+        hotels.map((h: any, i: number) => (
+          <Pressable
+            key={`hotel-${i}`}
+            onPress={() => h.whatsapp_link && Linking.openURL(h.whatsapp_link)}
+            style={styles.item}
+          >
             <Text style={styles.link}>🏨 {h.nombre}</Text>
           </Pressable>
         ))
@@ -110,12 +174,15 @@ export default function MunicipalityDetail() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#0b0b0b" },
+  content: { padding: 20 },
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#0b0b0b",
+    padding: 20,
   },
+  loadingText: { color: "#fff", marginTop: 10 },
   back: { color: "#FF6A00", marginBottom: 10 },
   title: { color: "#fff", fontSize: 26, fontWeight: "bold" },
   subtitle: { color: "#aaa", marginBottom: 15 },
@@ -131,7 +198,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
     marginBottom: 10,
+    fontSize: 16,
   },
-  link: { color: "#4da3ff", marginBottom: 6 },
+  item: {
+    marginBottom: 8,
+  },
+  link: { color: "#4da3ff" },
   empty: { color: "#777", marginBottom: 10 },
 });
