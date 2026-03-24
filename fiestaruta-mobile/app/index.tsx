@@ -23,7 +23,20 @@ function normalizar(texto: string) {
 
 function fechaSoloDia(fecha?: string | null) {
   if (!fecha) return "";
-  return fecha.split("T")[0];
+  return String(fecha).split("T")[0].trim();
+}
+
+function esFechaValida(fecha?: string | null) {
+  if (!fecha) return false;
+  return /^\d{4}-\d{2}-\d{2}$/.test(fechaSoloDia(fecha));
+}
+
+function obtenerFechaInicio(item: any) {
+  return fechaSoloDia(item?.fecha_inicio || item?.fecha || "");
+}
+
+function obtenerFechaFin(item: any) {
+  return fechaSoloDia(item?.fecha_fin || item?.fecha || "");
 }
 
 export default function Home() {
@@ -38,12 +51,15 @@ export default function Home() {
   const [fechaFin, setFechaFin] = useState("");
 
   const calcularDias = (inicio?: string | null, fin?: string | null) => {
-    if (!inicio) return "1";
-    if (!fin) return "1";
+    const fechaIni = fechaSoloDia(inicio);
+    const fechaFi = fechaSoloDia(fin);
+
+    if (!esFechaValida(fechaIni)) return "1";
+    if (!esFechaValida(fechaFi)) return "1";
 
     try {
-      const d1 = new Date(inicio.split("T")[0]);
-      const d2 = new Date(fin.split("T")[0]);
+      const d1 = new Date(fechaIni);
+      const d2 = new Date(fechaFi);
       const diff = Math.ceil((d2.getTime() - d1.getTime()) / 86400000) + 1;
       return diff > 0 ? String(diff) : "1";
     } catch {
@@ -56,24 +72,35 @@ export default function Home() {
     desde?: string,
     hasta?: string
   ) => {
-    if (!fechaEvento) return false;
-
     const evento = fechaSoloDia(fechaEvento);
+    const desdeLimpia = fechaSoloDia(desde || "");
+    const hastaLimpia = fechaSoloDia(hasta || "");
 
-    if (desde && evento < desde) return false;
-    if (hasta && evento > hasta) return false;
+    // 🔹 si el evento no tiene fecha, NO lo excluimos
+    if (!esFechaValida(evento)) return true;
+
+    if (desdeLimpia && esFechaValida(desdeLimpia) && evento < desdeLimpia) {
+      return false;
+    }
+
+    if (hastaLimpia && esFechaValida(hastaLimpia) && evento > hastaLimpia) {
+      return false;
+    }
 
     return true;
   };
 
   const ordenarPorFecha = (lista: FestivalItem[]) => {
-    return [...lista].sort((a, b) => {
-      const fechaA = a.fecha_inicio
-        ? new Date(fechaSoloDia(a.fecha_inicio)).getTime()
+    return [...lista].sort((a: any, b: any) => {
+      const inicioA = obtenerFechaInicio(a);
+      const inicioB = obtenerFechaInicio(b);
+
+      const fechaA = esFechaValida(inicioA)
+        ? new Date(inicioA).getTime()
         : Number.MAX_SAFE_INTEGER;
 
-      const fechaB = b.fecha_inicio
-        ? new Date(fechaSoloDia(b.fecha_inicio)).getTime()
+      const fechaB = esFechaValida(inicioB)
+        ? new Date(inicioB).getTime()
         : Number.MAX_SAFE_INTEGER;
 
       return fechaA - fechaB;
@@ -97,18 +124,17 @@ export default function Home() {
       const hasta = filtros?.fechaFin ?? fechaFin;
 
       const resp = await fetchFestivals();
-
       let filtrados = Array.isArray(resp) ? resp : [];
 
       if (dep.trim()) {
-        filtrados = filtrados.filter((item) =>
+        filtrados = filtrados.filter((item: any) =>
           normalizar(item.departamento || "").includes(normalizar(dep.trim()))
         );
       }
 
       if (desde.trim() || hasta.trim()) {
-        filtrados = filtrados.filter((item) =>
-          estaEnRango(item.fecha_inicio, desde.trim(), hasta.trim())
+        filtrados = filtrados.filter((item: any) =>
+          estaEnRango(obtenerFechaInicio(item), desde.trim(), hasta.trim())
         );
       }
 
@@ -203,32 +229,37 @@ export default function Home() {
         data={items}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
-          <Pressable
-            style={styles.card}
-            onPress={() => router.push(`/festival/${item.id}`)}
-          >
-            <Text style={styles.cardTitle}>{item.nombre || "Sin nombre"}</Text>
+        renderItem={({ item }: any) => {
+          const fechaInicioReal = obtenerFechaInicio(item);
+          const fechaFinReal = obtenerFechaFin(item);
 
-            <View style={styles.infoRow}>
-              <Text style={styles.cardDate}>
-                📅 {fechaSoloDia(item.fecha_inicio) || "Sin fecha"}
+          return (
+            <Pressable
+              style={styles.card}
+              onPress={() => router.push(`/festival/${item.id}`)}
+            >
+              <Text style={styles.cardTitle}>{item.nombre || "Sin nombre"}</Text>
+
+              <View style={styles.infoRow}>
+                <Text style={styles.cardDate}>
+                  📅 {fechaInicioReal || "Sin fecha"}
+                </Text>
+                <Text style={styles.cardDays}>
+                  🎉 {calcularDias(fechaInicioReal, fechaFinReal)} Días
+                </Text>
+              </View>
+
+              <Text style={styles.cardDept}>
+                📍 {item.departamento || "Sin departamento"} •{" "}
+                {item.municipio || `Municipio ${item.municipio_id}`}
               </Text>
-              <Text style={styles.cardDays}>
-                🎉 {calcularDias(item.fecha_inicio, item.fecha_fin)} Días
-              </Text>
-            </View>
 
-            <Text style={styles.cardDept}>
-              📍 {item.departamento || "Sin departamento"} •{" "}
-              {item.municipio || `Municipio ${item.municipio_id}`}
-            </Text>
-
-            <View style={styles.footerCard}>
-              <Text style={styles.detailLink}>Ver festival →</Text>
-            </View>
-          </Pressable>
-        )}
+              <View style={styles.footerCard}>
+                <Text style={styles.detailLink}>Ver festival →</Text>
+              </View>
+            </Pressable>
+          );
+        }}
         ListEmptyComponent={
           !loading ? (
             <Text style={styles.emptyText}>
