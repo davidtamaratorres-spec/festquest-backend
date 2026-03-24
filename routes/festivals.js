@@ -2,15 +2,18 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+// ===============================
 // GET /festivals
+// ===============================
 router.get("/", async (req, res) => {
-  const { municipio_id, departamento } = req.query;
+  const { municipio_id, departamento, from, to } = req.query;
 
   try {
     let query = `
       SELECT
         f.id,
         f.nombre,
+        f.festival,
         f.fecha,
         f.descripcion,
         f.municipio_id,
@@ -34,6 +37,25 @@ router.get("/", async (req, res) => {
     let params = [];
     let conditions = [];
 
+    // ===============================
+    // 1. FILTRO FECHA (PRIORIDAD)
+    // ===============================
+    if (from && to) {
+      params.push(from);
+      const p1 = params.length;
+
+      params.push(to);
+      const p2 = params.length;
+
+      conditions.push(`
+        f.fecha IS NOT NULL
+        AND f.fecha BETWEEN $${p1} AND $${p2}
+      `);
+    }
+
+    // ===============================
+    // 2. FILTRO MUNICIPIO
+    // ===============================
     if (municipio_id) {
       params.push(municipio_id);
       const p = params.length;
@@ -56,6 +78,9 @@ router.get("/", async (req, res) => {
       `);
     }
 
+    // ===============================
+    // 3. FILTRO DEPARTAMENTO
+    // ===============================
     if (departamento) {
       params.push(departamento);
       const p = params.length;
@@ -66,7 +91,17 @@ router.get("/", async (req, res) => {
       query += ` AND ` + conditions.join(" AND ");
     }
 
-    query += ` ORDER BY m.departamento ASC, m.nombre ASC, f.id ASC`;
+    // ===============================
+    // ORDEN FINAL
+    // ===============================
+    query += `
+      ORDER BY
+        CASE WHEN f.fecha IS NULL THEN 1 ELSE 0 END,
+        f.fecha ASC,
+        m.departamento ASC,
+        m.nombre ASC,
+        f.id ASC
+    `;
 
     const result = await db.query(query, params);
 
@@ -83,7 +118,9 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ===============================
 // GET /festivals/:id
+// ===============================
 router.get("/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
@@ -96,6 +133,7 @@ router.get("/:id", async (req, res) => {
       SELECT
         f.id,
         f.nombre,
+        f.festival,
         f.fecha,
         f.descripcion,
         f.municipio_id,
