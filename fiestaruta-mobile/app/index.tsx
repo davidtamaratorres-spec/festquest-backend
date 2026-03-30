@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -11,32 +11,48 @@ import {
   StatusBar,
   Platform,
 } from "react-native";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { fetchFestivals, FestivalItem } from "../services/festivals";
-
-function normalizar(texto: string) {
-  return texto
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
 
 function fechaSoloDia(fecha?: string | null) {
   if (!fecha) return "";
   return String(fecha).split("T")[0].trim();
 }
 
-function esFechaValida(fecha?: string | null) {
-  if (!fecha) return false;
-  return /^\d{4}-\d{2}-\d{2}$/.test(fechaSoloDia(fecha));
-}
-
 function obtenerFechaInicio(item: any) {
   return fechaSoloDia(item?.fecha_inicio || item?.fecha || "");
 }
 
-function obtenerFechaFin(item: any) {
-  return fechaSoloDia(item?.fecha_fin || item?.fecha || "");
+function normalizarTexto(texto?: string | null) {
+  return String(texto || "")
+    .replace(/\r?\n|\r/g, " ")
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
+function limpiarInput(texto?: string | null) {
+  return String(texto || "")
+    .replace(/\r?\n|\r/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function formatearFechaLocal(date: Date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function esFechaValida(fecha?: string | null) {
+  if (!fecha) return false;
+  return /^\d{4}-\d{2}-\d{2}$/.test(fechaSoloDia(fecha));
 }
 
 export default function Home() {
@@ -47,135 +63,153 @@ export default function Home() {
   const [errorText, setErrorText] = useState("");
 
   const [departamento, setDepartamento] = useState("");
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaFin, setFechaFin] = useState("");
+  const [municipio, setMunicipio] = useState("");
 
-  const calcularDias = (inicio?: string | null, fin?: string | null) => {
-    const fechaIni = fechaSoloDia(inicio);
-    const fechaFi = fechaSoloDia(fin);
+  const [fechaDesde, setFechaDesde] = useState("");
+  const [fechaHasta, setFechaHasta] = useState("");
 
-    if (!esFechaValida(fechaIni)) return "1";
-    if (!esFechaValida(fechaFi)) return "1";
+  const [showPickerDesde, setShowPickerDesde] = useState(false);
+  const [showPickerHasta, setShowPickerHasta] = useState(false);
 
-    try {
-      const d1 = new Date(fechaIni);
-      const d2 = new Date(fechaFi);
-      const diff = Math.ceil((d2.getTime() - d1.getTime()) / 86400000) + 1;
-      return diff > 0 ? String(diff) : "1";
-    } catch {
-      return "1";
-    }
-  };
+  const [departamentoFocus, setDepartamentoFocus] = useState(false);
+  const [municipioFocus, setMunicipioFocus] = useState(false);
 
-  const estaEnRango = (
-    fechaEvento?: string | null,
-    desde?: string,
-    hasta?: string
-  ) => {
-    const evento = fechaSoloDia(fechaEvento);
-    const desdeLimpia = fechaSoloDia(desde || "");
-    const hastaLimpia = fechaSoloDia(hasta || "");
-
-    // 🔹 si el evento no tiene fecha, NO lo excluimos
-    if (!esFechaValida(evento)) return true;
-
-    if (desdeLimpia && esFechaValida(desdeLimpia) && evento < desdeLimpia) {
-      return false;
-    }
-
-    if (hastaLimpia && esFechaValida(hastaLimpia) && evento > hastaLimpia) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const ordenarPorFecha = (lista: FestivalItem[]) => {
-    return [...lista].sort((a: any, b: any) => {
-      const inicioA = obtenerFechaInicio(a);
-      const inicioB = obtenerFechaInicio(b);
-
-      const fechaA = esFechaValida(inicioA)
-        ? new Date(inicioA).getTime()
-        : Number.MAX_SAFE_INTEGER;
-
-      const fechaB = esFechaValida(inicioB)
-        ? new Date(inicioB).getTime()
-        : Number.MAX_SAFE_INTEGER;
-
-      return fechaA - fechaB;
-    });
-  };
-
-  const cargarDatos = async (
-    filtros?: {
-      departamento?: string;
-      fechaInicio?: string;
-      fechaFin?: string;
-    }
-  ) => {
+  const cargarDatos = async (depParam?: string) => {
     Keyboard.dismiss();
     setLoading(true);
     setErrorText("");
 
     try {
-      const dep = filtros?.departamento ?? departamento;
-      const desde = filtros?.fechaInicio ?? fechaInicio;
-      const hasta = filtros?.fechaFin ?? fechaFin;
+      const depLimpio = limpiarInput(depParam ?? departamento);
 
-      const resp = await fetchFestivals();
-      let filtrados = Array.isArray(resp) ? resp : [];
+      const resp = await fetchFestivals({
+        departamento: depLimpio || undefined,
+      });
 
-      if (dep.trim()) {
-        filtrados = filtrados.filter((item: any) =>
-          normalizar(item.departamento || "").includes(normalizar(dep.trim()))
-        );
-      }
-
-      if (desde.trim() || hasta.trim()) {
-        filtrados = filtrados.filter((item: any) =>
-          estaEnRango(obtenerFechaInicio(item), desde.trim(), hasta.trim())
-        );
-      }
-
-      filtrados = ordenarPorFecha(filtrados);
-      setItems(filtrados);
+      setItems(Array.isArray(resp) ? resp : []);
     } catch (e: any) {
-      console.error("Error cargando datos:", e);
+      console.error("Error:", e);
       setItems([]);
-      setErrorText(e?.message || "No se pudieron cargar los festivales.");
+      setErrorText("No se pudieron cargar los festivales.");
     } finally {
       setLoading(false);
     }
   };
 
-  const buscarConFiltros = () => {
-    cargarDatos();
-  };
-
-  const limpiarFiltros = async () => {
-    const dep = "";
-    const desde = "";
-    const hasta = "";
-
-    setDepartamento(dep);
-    setFechaInicio(desde);
-    setFechaFin(hasta);
-
-    await cargarDatos({
-      departamento: dep,
-      fechaInicio: desde,
-      fechaFin: hasta,
-    });
-  };
-
   useEffect(() => {
-    cargarDatos({
-      departamento: "",
-      fechaInicio: "",
-      fechaFin: "",
-    });
+    cargarDatos("");
   }, []);
+
+  const departamentosDisponibles = useMemo(() => {
+    const lista = items
+      .map((i: any) => limpiarInput(i.departamento))
+      .filter(Boolean);
+
+    return Array.from(new Set(lista)).sort((a, b) => a.localeCompare(b));
+  }, [items]);
+
+  const municipiosDisponibles = useMemo(() => {
+    const depFiltro = normalizarTexto(departamento);
+
+    const lista = items
+      .filter((i: any) => {
+        if (!depFiltro) return true;
+        return normalizarTexto(i.departamento) === depFiltro;
+      })
+      .map((i: any) => limpiarInput(i.municipio))
+      .filter(Boolean);
+
+    return Array.from(new Set(lista)).sort((a, b) => a.localeCompare(b));
+  }, [items, departamento]);
+
+  const sugerenciasDepartamento = useMemo(() => {
+    const depFiltro = normalizarTexto(departamento);
+
+    if (!departamentoFocus || !depFiltro) return [];
+
+    return departamentosDisponibles
+      .filter((d) => normalizarTexto(d).includes(depFiltro))
+      .slice(0, 6);
+  }, [departamento, departamentoFocus, departamentosDisponibles]);
+
+  const sugerenciasMunicipio = useMemo(() => {
+    const munFiltro = normalizarTexto(municipio);
+
+    if (!municipioFocus || !munFiltro) return [];
+
+    return municipiosDisponibles
+      .filter((m) => normalizarTexto(m).includes(munFiltro))
+      .slice(0, 6);
+  }, [municipio, municipioFocus, municipiosDisponibles]);
+
+  const buscarConFiltros = () => {
+    const depLimpio = limpiarInput(departamento);
+    const munLimpio = limpiarInput(municipio);
+
+    setDepartamento(depLimpio);
+    setMunicipio(munLimpio);
+    setDepartamentoFocus(false);
+    setMunicipioFocus(false);
+
+    cargarDatos(depLimpio);
+  };
+
+  const limpiarFiltros = () => {
+    setDepartamento("");
+    setMunicipio("");
+    setFechaDesde("");
+    setFechaHasta("");
+    setDepartamentoFocus(false);
+    setMunicipioFocus(false);
+    cargarDatos("");
+  };
+
+  const seleccionarDepartamento = (valor: string) => {
+    const limpio = limpiarInput(valor);
+    setDepartamento(limpio);
+    setMunicipio("");
+    setDepartamentoFocus(false);
+  };
+
+  const seleccionarMunicipio = (valor: string) => {
+    const limpio = limpiarInput(valor);
+    setMunicipio(limpio);
+    setMunicipioFocus(false);
+  };
+
+  const filtrados = useMemo(() => {
+    const depFiltro = normalizarTexto(departamento);
+    const munFiltro = normalizarTexto(municipio);
+
+    const desdeValida = esFechaValida(fechaDesde);
+    const hastaValida = esFechaValida(fechaHasta);
+
+    return items.filter((item: any) => {
+      const depItem = normalizarTexto(item.departamento);
+      const munItem = normalizarTexto(item.municipio);
+      const fechaItem = obtenerFechaInicio(item);
+
+      const depOK = !depFiltro || depItem.includes(depFiltro);
+      const munOK = !munFiltro || munItem.includes(munFiltro);
+
+      let fechaOK = true;
+
+      if (desdeValida || hastaValida) {
+        if (!esFechaValida(fechaItem)) {
+          fechaOK = false;
+        } else {
+          const actual = new Date(`${fechaItem}T00:00:00`);
+          const desde = desdeValida ? new Date(`${fechaDesde}T00:00:00`) : null;
+          const hasta = hastaValida ? new Date(`${fechaHasta}T00:00:00`) : null;
+
+          if (desde && actual < desde) fechaOK = false;
+          if (hasta && actual > hasta) fechaOK = false;
+        }
+      }
+
+      return depOK && munOK && fechaOK;
+    });
+  }, [items, departamento, municipio, fechaDesde, fechaHasta]);
 
   return (
     <View style={styles.container}>
@@ -186,34 +220,157 @@ export default function Home() {
         <Text style={styles.mainTitle}>Festividades</Text>
 
         <View style={styles.filterBox}>
-          <TextInput
-            placeholder="Departamento (ej: Antioquia)"
-            placeholderTextColor="#666"
-            style={styles.inputSmall}
-            value={departamento}
-            onChangeText={setDepartamento}
-          />
+          <View style={styles.autoBox}>
+            <TextInput
+              placeholder="Departamento"
+              placeholderTextColor="#666"
+              style={styles.inputSmall}
+              value={departamento}
+              onFocus={() => setDepartamentoFocus(true)}
+              onChangeText={(text) => setDepartamento(text)}
+              onBlur={() => {
+                setTimeout(() => {
+                  setDepartamento((prev) => limpiarInput(prev));
+                  setDepartamentoFocus(false);
+                }, 150);
+              }}
+              onSubmitEditing={buscarConFiltros}
+              returnKeyType="search"
+              multiline={false}
+              blurOnSubmit={true}
+              autoCapitalize="words"
+            />
 
-          <View style={styles.row}>
+            {sugerenciasDepartamento.length > 0 && (
+              <View style={styles.suggestionsBox}>
+                {sugerenciasDepartamento.map((item, index) => (
+                  <Pressable
+                    key={`${item}-${index}`}
+                    style={[
+                      styles.suggestionItem,
+                      index === sugerenciasDepartamento.length - 1
+                        ? styles.suggestionItemLast
+                        : null,
+                    ]}
+                    onPress={() => seleccionarDepartamento(item)}
+                  >
+                    <Text style={styles.suggestionText}>{item}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            )}
+          </View>
+
+          <View style={styles.autoBox}>
             <TextInput
-              placeholder="Desde: AAAA-MM-DD"
+              placeholder="Municipio"
               placeholderTextColor="#666"
-              style={[styles.inputSmall, { flex: 1 }]}
-              value={fechaInicio}
-              onChangeText={setFechaInicio}
+              style={styles.inputSmall}
+              value={municipio}
+              onFocus={() => setMunicipioFocus(true)}
+              onChangeText={(text) => setMunicipio(text)}
+              onBlur={() => {
+                setTimeout(() => {
+                  setMunicipio((prev) => limpiarInput(prev));
+                  setMunicipioFocus(false);
+                }, 150);
+              }}
+              onSubmitEditing={buscarConFiltros}
+              returnKeyType="search"
+              multiline={false}
+              blurOnSubmit={true}
+              autoCapitalize="words"
             />
-            <TextInput
-              placeholder="Hasta: AAAA-MM-DD"
-              placeholderTextColor="#666"
-              style={[styles.inputSmall, { flex: 1 }]}
-              value={fechaFin}
-              onChangeText={setFechaFin}
-            />
+
+            {sugerenciasMunicipio.length > 0 && (
+              <View style={styles.suggestionsBox}>
+                {sugerenciasMunicipio.map((item, index) => (
+                  <Pressable
+                    key={`${item}-${index}`}
+                    style={[
+                      styles.suggestionItem,
+                      index === sugerenciasMunicipio.length - 1
+                        ? styles.suggestionItemLast
+                        : null,
+                    ]}
+                    onPress={() => seleccionarMunicipio(item)}
+                  >
+                    <Text style={styles.suggestionText}>{item}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            )}
           </View>
 
           <View style={styles.row}>
+            <Pressable
+              style={[styles.inputSmall, styles.dateInput]}
+              onPress={() => {
+                Keyboard.dismiss();
+                setDepartamentoFocus(false);
+                setMunicipioFocus(false);
+                setShowPickerDesde(true);
+              }}
+            >
+              <Text style={{ color: fechaDesde ? "white" : "#999" }}>
+                {fechaDesde || "Fecha desde"}
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={[styles.inputSmall, styles.dateInput]}
+              onPress={() => {
+                Keyboard.dismiss();
+                setDepartamentoFocus(false);
+                setMunicipioFocus(false);
+                setShowPickerHasta(true);
+              }}
+            >
+              <Text style={{ color: fechaHasta ? "white" : "#999" }}>
+                {fechaHasta || "Fecha hasta"}
+              </Text>
+            </Pressable>
+          </View>
+
+          {showPickerDesde && (
+            <DateTimePicker
+              value={
+                esFechaValida(fechaDesde)
+                  ? new Date(`${fechaDesde}T00:00:00`)
+                  : new Date()
+              }
+              mode="date"
+              display="default"
+              onChange={(event: DateTimePickerEvent, date?: Date) => {
+                setShowPickerDesde(false);
+                if (date) {
+                  setFechaDesde(formatearFechaLocal(date));
+                }
+              }}
+            />
+          )}
+
+          {showPickerHasta && (
+            <DateTimePicker
+              value={
+                esFechaValida(fechaHasta)
+                  ? new Date(`${fechaHasta}T00:00:00`)
+                  : new Date()
+              }
+              mode="date"
+              display="default"
+              onChange={(event: DateTimePickerEvent, date?: Date) => {
+                setShowPickerHasta(false);
+                if (date) {
+                  setFechaHasta(formatearFechaLocal(date));
+                }
+              }}
+            />
+          )}
+
+          <View style={styles.row}>
             <Pressable style={styles.btnSearch} onPress={buscarConFiltros}>
-              <Text style={styles.btnSearchText}>BUSCAR EVENTOS</Text>
+              <Text style={styles.btnSearchText}>BUSCAR</Text>
             </Pressable>
 
             <Pressable style={styles.btnClear} onPress={limpiarFiltros}>
@@ -226,45 +383,31 @@ export default function Home() {
       {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
 
       <FlatList
-        data={items}
+        data={filtrados}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContent}
-        renderItem={({ item }: any) => {
-          const fechaInicioReal = obtenerFechaInicio(item);
-          const fechaFinReal = obtenerFechaFin(item);
+        keyboardShouldPersistTaps="handled"
+        renderItem={({ item }: any) => (
+          <Pressable
+            style={styles.card}
+            onPress={() => router.push(`/festival/${item.id}`)}
+          >
+            <Text style={styles.cardTitle}>
+              {item.festival || item.nombre}
+            </Text>
 
-          return (
-            <Pressable
-              style={styles.card}
-              onPress={() => router.push(`/festival/${item.id}`)}
-            >
-              <Text style={styles.cardTitle}>{item.nombre || "Sin nombre"}</Text>
+            <Text style={styles.cardDate}>
+              📅 {obtenerFechaInicio(item)}
+            </Text>
 
-              <View style={styles.infoRow}>
-                <Text style={styles.cardDate}>
-                  📅 {fechaInicioReal || "Sin fecha"}
-                </Text>
-                <Text style={styles.cardDays}>
-                  🎉 {calcularDias(fechaInicioReal, fechaFinReal)} Días
-                </Text>
-              </View>
-
-              <Text style={styles.cardDept}>
-                📍 {item.departamento || "Sin departamento"} •{" "}
-                {item.municipio || `Municipio ${item.municipio_id}`}
-              </Text>
-
-              <View style={styles.footerCard}>
-                <Text style={styles.detailLink}>Ver festival →</Text>
-              </View>
-            </Pressable>
-          );
-        }}
+            <Text style={styles.cardDept}>
+              📍 {item.departamento} • {item.municipio}
+            </Text>
+          </Pressable>
+        )}
         ListEmptyComponent={
           !loading ? (
-            <Text style={styles.emptyText}>
-              No hay fiestas para esos filtros.
-            </Text>
+            <Text style={styles.emptyText}>No hay resultados</Text>
           ) : null
         }
       />
@@ -286,17 +429,14 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "ios" ? 50 : 40,
     paddingHorizontal: 20,
     paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderColor: "#222",
+    zIndex: 20,
+    elevation: 20,
   },
 
   brandTitle: {
     color: "#666",
     fontSize: 10,
-    fontWeight: "700",
     textAlign: "center",
-    marginBottom: 5,
-    letterSpacing: 1,
   },
 
   mainTitle: {
@@ -306,7 +446,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 
-  filterBox: { gap: 8 },
+  filterBox: {
+    gap: 8,
+  },
+
+  autoBox: {
+    position: "relative",
+    zIndex: 30,
+  },
 
   row: {
     flexDirection: "row",
@@ -318,9 +465,37 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     color: "white",
-    fontSize: 12,
     borderWidth: 1,
     borderColor: "#333",
+  },
+
+  dateInput: {
+    flex: 1,
+  },
+
+  suggestionsBox: {
+    backgroundColor: "#111",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#222",
+    marginTop: 4,
+    overflow: "hidden",
+  },
+
+  suggestionItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#222",
+  },
+
+  suggestionItemLast: {
+    borderBottomWidth: 0,
+  },
+
+  suggestionText: {
+    color: "white",
+    fontSize: 13,
   },
 
   btnSearch: {
@@ -342,21 +517,17 @@ const styles = StyleSheet.create({
   btnSearchText: {
     color: "white",
     fontWeight: "800",
-    fontSize: 12,
   },
 
   btnClearText: {
     color: "#AAA",
     fontWeight: "800",
-    fontSize: 12,
   },
 
   errorText: {
     color: "#ff6b6b",
     textAlign: "center",
-    marginTop: 14,
-    marginHorizontal: 20,
-    fontSize: 13,
+    marginTop: 10,
   },
 
   listContent: {
@@ -368,8 +539,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    borderLeftWidth: 3,
-    borderLeftColor: "#FF6A00",
   },
 
   cardTitle: {
@@ -378,47 +547,20 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  infoRow: {
-    flexDirection: "row",
-    gap: 12,
-    marginVertical: 6,
-  },
-
   cardDate: {
     color: "#FF6A00",
     fontSize: 12,
-    fontWeight: "600",
-  },
-
-  cardDays: {
-    color: "#888",
-    fontSize: 11,
   },
 
   cardDept: {
     color: "#666",
     fontSize: 11,
-    marginBottom: 8,
-  },
-
-  footerCard: {
-    borderTopWidth: 1,
-    borderTopColor: "#222",
-    paddingTop: 8,
-    alignItems: "flex-end",
-  },
-
-  detailLink: {
-    color: "#FF6A00",
-    fontSize: 11,
-    fontWeight: "bold",
   },
 
   emptyText: {
     color: "#444",
     textAlign: "center",
     marginTop: 40,
-    fontSize: 13,
   },
 
   loaderOverlay: {

@@ -1,10 +1,13 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const db = require("./db");
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
 async function initDB() {
   try {
@@ -86,7 +89,40 @@ function splitPipe(value) {
 }
 
 app.get("/", (req, res) => {
-  res.send("Servidor FestQuest funcionando");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.get("/health", (req, res) => {
+  res.json({
+    ok: true,
+    service: "FestQuest backend",
+    status: "running",
+  });
+});
+
+app.get("/test-festivals", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT
+        f.id,
+        f.nombre,
+        f.fecha,
+        f.fecha_inicio,
+        f.fecha_fin,
+        m.nombre AS municipio,
+        m.departamento
+      FROM festivals f
+      LEFT JOIN municipalities m ON f.municipio_id = m.id
+      WHERE f.fecha_inicio IS NOT NULL OR f.fecha_fin IS NOT NULL
+      ORDER BY f.id DESC
+      LIMIT 10
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("❌ Error en /test-festivals:", err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // =========================
@@ -180,13 +216,15 @@ app.get("/api/municipalities/:id", async (req, res) => {
 // =========================
 app.get("/api/festivals", async (req, res) => {
   try {
-    const { departamento, municipio, fecha } = req.query;
+    const { departamento, municipio, fecha, from, to } = req.query;
 
     let query = `
       SELECT
         f.id,
         f.nombre,
         f.fecha,
+        f.fecha_inicio,
+        f.fecha_fin,
         f.descripcion,
         f.municipio_id,
         f.sitios_turisticos,
@@ -221,12 +259,34 @@ app.get("/api/festivals", async (req, res) => {
     }
 
     if (fecha) {
-      query += ` AND f.fecha LIKE $${paramIndex}`;
-      params.push(`${fecha}%`);
+      query += ` AND (
+        $${paramIndex}::date BETWEEN f.fecha_inicio::date AND f.fecha_fin::date
+      )`;
+      params.push(fecha);
       paramIndex++;
     }
 
-    query += ` ORDER BY f.fecha ASC NULLS LAST, f.id ASC`;
+    if (from && to) {
+      query += ` AND (
+        $${paramIndex}::date BETWEEN f.fecha_inicio::date AND f.fecha_fin::date
+        OR
+        $${paramIndex + 1}::date BETWEEN f.fecha_inicio::date AND f.fecha_fin::date
+        OR
+        f.fecha_inicio::date BETWEEN $${paramIndex}::date AND $${paramIndex + 1}::date
+      )`;
+      params.push(from, to);
+      paramIndex += 2;
+    } else if (from) {
+      query += ` AND f.fecha_fin::date >= $${paramIndex}::date`;
+      params.push(from);
+      paramIndex++;
+    } else if (to) {
+      query += ` AND f.fecha_inicio::date <= $${paramIndex}::date`;
+      params.push(to);
+      paramIndex++;
+    }
+
+    query += ` ORDER BY f.fecha_inicio ASC NULLS LAST, f.id ASC`;
 
     const result = await db.query(query, params);
     res.json(result.rows);
@@ -249,6 +309,8 @@ app.get("/api/festivals/:id", async (req, res) => {
         f.id,
         f.nombre,
         f.fecha,
+        f.fecha_inicio,
+        f.fecha_fin,
         f.descripcion,
         f.municipio_id,
         f.sitios_turisticos,

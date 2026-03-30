@@ -4,7 +4,7 @@ const { parse } = require("csv-parse/sync");
 const { stringify } = require("csv-stringify/sync");
 
 const DATA_DIR = path.join(__dirname, "..", "data");
-const INPUT_FILE = path.join(DATA_DIR, "municipios_de_colombia.csv");
+const INPUT_FILE = path.join(DATA_DIR, "municipios_master_enriquecido.csv");
 const MASTER_PATH = path.join(DATA_DIR, "municipios_master.csv");
 
 const MASTER_COLUMNS = [
@@ -76,39 +76,39 @@ function mergeExisting(baseRow, existingRow) {
 
 function buildBaseRow(row) {
   return {
-    codigo_dane: norm(row.Codigo_id),
+    codigo_dane: norm(row.codigo_dane),
     departamento: norm(row.departamento),
     municipio: norm(row.municipio),
-    subregion: norm(row.Subregion),
-    provincia: "",
-    categoria_municipal: "",
-    cabecera_municipal: "",
-    poblacion: norm(row.habitantes),
-    altitud_ms_nm: norm(row.altura),
+    subregion: norm(row.subregion),
+    provincia: norm(row.provincia),
+    categoria_municipal: norm(row.categoria_municipal),
+    cabecera_municipal: norm(row.cabecera_municipal),
+    poblacion: norm(row.poblacion),
+    altitud_ms_nm: norm(row.altitud_ms_nm),
     temperatura_promedio: norm(row.temperatura_promedio),
-    superficie_km2: "",
-    latitud: "",
-    longitud: "",
-    anio_fundacion: "",
-    gentilicio: "",
-    alcalde_actual: "",
-    bandera_url: "",
-    sitios_turisticos: joinPipe([row.sitio_1, row.sitio_2, row.sitio_3]),
-    hoteles: joinPipe([row.hotel_1, row.hotel_2, row.hotel_3]),
-    hospedajes: "",
-    contacto_hoteles: joinPipe([row.wa_1, row.wa_2, row.wa_3]),
-    festividad_nombre: norm(row.festival),
-    festividad_fecha_inicio: "",
-    festividad_fecha_fin: "",
-    festividad_fecha_texto: norm(row.fecha),
-    resena_festividad: "",
-    fuente_base: "municipios_de_colombia.csv",
-    fuente_festividad: "",
-    fuente_turismo: "",
-    fuente_hoteles: "",
-    fuente_alcalde: "",
-    observaciones: "",
-    estado_revision: "pendiente",
+    superficie_km2: norm(row.superficie_km2),
+    latitud: norm(row.latitud),
+    longitud: norm(row.longitud),
+    anio_fundacion: norm(row.anio_fundacion),
+    gentilicio: norm(row.gentilicio),
+    alcalde_actual: norm(row.alcalde_actual),
+    bandera_url: norm(row.bandera_url),
+    sitios_turisticos: norm(row.sitios_turisticos),
+    hoteles: norm(row.hoteles),
+    hospedajes: norm(row.hospedajes),
+    contacto_hoteles: norm(row.contacto_hoteles),
+    festividad_nombre: norm(row.festividad_nombre),
+    festividad_fecha_inicio: norm(row.festividad_fecha_inicio),
+    festividad_fecha_fin: norm(row.festividad_fecha_fin),
+    festividad_fecha_texto: norm(row.festividad_fecha_texto),
+    resena_festividad: norm(row.resena_festividad),
+    fuente_base: "municipios_master_enriquecido.csv",
+    fuente_festividad: norm(row.fuente_festividad),
+    fuente_turismo: norm(row.fuente_turismo),
+    fuente_hoteles: norm(row.fuente_hoteles),
+    fuente_alcalde: norm(row.fuente_alcalde),
+    observaciones: norm(row.observaciones),
+    estado_revision: norm(row.estado_revision) || "pendiente",
   };
 }
 
