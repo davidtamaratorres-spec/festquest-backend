@@ -37,6 +37,9 @@ async function initDB() {
         descripcion TEXT,
         municipio_id INTEGER REFERENCES municipalities(id),
 
+        fecha_inicio TIMESTAMP,
+        fecha_fin TIMESTAMP,
+
         sitio_1 TEXT,
         maps_1 TEXT,
         sitio_2 TEXT,
@@ -101,6 +104,29 @@ app.get("/health", (req, res) => {
   });
 });
 
+// 🔴 LIMPIEZA ABRIL-MAYO
+app.get("/__fix/clean-april-may", async (req, res) => {
+  try {
+    await db.query(`
+      DELETE FROM festivals
+      WHERE NOT (
+        fecha_inicio::date <= '2026-05-30'
+        AND fecha_fin::date >= '2026-04-01'
+      );
+    `);
+
+    const count = await db.query(`SELECT COUNT(*) FROM festivals`);
+
+    res.json({
+      ok: true,
+      remaining: count.rows[0].count,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/test-email", async (req, res) => {
   const correos = [
     "davidtamaratorres@gmail.com",
@@ -122,33 +148,8 @@ app.get("/test-email", async (req, res) => {
   res.json({ resultados });
 });
 
-app.get("/test-festivals", async (req, res) => {
-  try {
-    const result = await db.query(`
-      SELECT
-        f.id,
-        f.nombre,
-        f.fecha,
-        f.fecha_inicio,
-        f.fecha_fin,
-        m.nombre AS municipio,
-        m.departamento
-      FROM festivals f
-      LEFT JOIN municipalities m ON f.municipio_id = m.id
-      WHERE f.fecha_inicio IS NOT NULL OR f.fecha_fin IS NOT NULL
-      ORDER BY f.id DESC
-      LIMIT 10
-    `);
-
-    res.json(result.rows);
-  } catch (err) {
-    console.error("❌ Error en /test-festivals:", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // =========================
-// MUNICIPALITIES LIST
+// MUNICIPALITIES
 // =========================
 app.get("/api/municipalities", async (req, res) => {
   try {
@@ -164,9 +165,6 @@ app.get("/api/municipalities", async (req, res) => {
   }
 });
 
-// =========================
-// MUNICIPALITY DETAIL
-// =========================
 app.get("/api/municipalities/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -298,14 +296,6 @@ app.get("/api/festivals", async (req, res) => {
       )`;
       params.push(from, to);
       paramIndex += 2;
-    } else if (from) {
-      query += ` AND f.fecha_fin::date >= $${paramIndex}::date`;
-      params.push(from);
-      paramIndex++;
-    } else if (to) {
-      query += ` AND f.fecha_inicio::date <= $${paramIndex}::date`;
-      params.push(to);
-      paramIndex++;
     }
 
     query += ` ORDER BY f.fecha_inicio ASC NULLS LAST, f.id ASC`;
