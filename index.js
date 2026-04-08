@@ -32,7 +32,7 @@ async function initDB() {
   `);
 }
 
-// 🔴 CARGA DESDE CSV (SIN DUPLICADOS)
+// 🔴 CARGA DESDE CSV (ROBUSTA)
 app.get("/__fix/load-abril-mayo", async (req, res) => {
   try {
     await db.query(`DELETE FROM festivals`);
@@ -47,35 +47,46 @@ app.get("/__fix/load-abril-mayo", async (req, res) => {
         const municipiosMap = {};
 
         for (const r of results) {
-          const codigo = parseInt(r.codigo_dane);
+          const codigo = parseInt(
+            r.codigo_dane || r.CODIGO_DANE || r.dane
+          );
 
-          // 🔴 SI YA EXISTE → NO INSERTA
+          const municipio =
+            r.municipio || r.MUNICIPIO || r.ciudad;
+
+          const departamento =
+            r.departamento || r.DEPARTAMENTO;
+
+          if (!codigo || !municipio) continue;
+
           if (!municipiosMap[codigo]) {
-            const existing = await db.query(
-              `SELECT id FROM municipalities WHERE codigo_dane = $1`,
-              [codigo]
+            const m = await db.query(
+              `INSERT INTO municipalities (nombre, departamento, codigo_dane)
+               VALUES ($1,$2,$3)
+               ON CONFLICT (codigo_dane) DO UPDATE SET nombre=EXCLUDED.nombre
+               RETURNING id`,
+              [municipio, departamento, codigo]
             );
-
-            if (existing.rows.length > 0) {
-              municipiosMap[codigo] = existing.rows[0].id;
-            } else {
-              const m = await db.query(
-                `INSERT INTO municipalities (nombre, departamento, codigo_dane)
-                 VALUES ($1,$2,$3) RETURNING id`,
-                [r.municipio, r.departamento, codigo]
-              );
-              municipiosMap[codigo] = m.rows[0].id;
-            }
+            municipiosMap[codigo] = m.rows[0].id;
           }
 
-          if (r.festival && r.fecha_inicio && r.fecha_fin) {
+          const nombreFestival =
+            r.festival || r.FESTIVAL || r.nombre || r.EVENTO;
+
+          const fechaInicio =
+            r.fecha_inicio || r.FECHA_INICIO || r.inicio || r.fecha;
+
+          const fechaFin =
+            r.fecha_fin || r.FECHA_FIN || r.fin || r.fecha;
+
+          if (nombreFestival && fechaInicio && fechaFin) {
             await db.query(
               `INSERT INTO festivals (nombre, fecha_inicio, fecha_fin, municipio_id)
                VALUES ($1,$2,$3,$4)`,
               [
-                r.festival,
-                r.fecha_inicio,
-                r.fecha_fin,
+                nombreFestival,
+                fechaInicio,
+                fechaFin,
                 municipiosMap[codigo],
               ]
             );
@@ -96,6 +107,7 @@ app.get("/__fix/load-abril-mayo", async (req, res) => {
   }
 });
 
+// API
 app.get("/api/festivals", async (req, res) => {
   const result = await db.query(`
     SELECT f.*, m.nombre as municipio, m.departamento
