@@ -104,15 +104,24 @@ app.get("/health", (req, res) => {
   });
 });
 
-// 🔴 LIMPIEZA SOLO ABRIL–MAYO (CORRECTA)
-app.get("/__fix/clean-april-may", async (req, res) => {
+// 🔴 CARGA CONTROLADA (REEMPLAZA TODO EL MASTER)
+app.get("/__fix/solo-20", async (req, res) => {
   try {
+    // BORRAR TODO
+    await db.query(`DELETE FROM festivals`);
+
+    // INSERTAR SOLO LOS QUE DEFINAS AQUÍ
     await db.query(`
-      DELETE FROM festivals
-      WHERE NOT (
-        fecha_inicio::date >= '2026-04-01'
-        AND fecha_fin::date <= '2026-05-30'
-      );
+      INSERT INTO festivals (nombre, fecha_inicio, fecha_fin, municipio_id)
+      VALUES
+      ('Festival Iberoamericano de Teatro', '2026-03-20', '2026-04-05', 9558),
+      ('Semana Santa de Popayán', '2026-03-29', '2026-04-05', 9770),
+      ('Procesión del Viernes Santo', '2026-04-03', '2026-04-03', 9770),
+      ('Fiestas de San Jorge', '2026-04-23', '2026-04-30', 10424),
+      ('Festival de la Leyenda Vallenata', '2026-04-29', '2026-05-02', 9811),
+      ('Desfile de Piloneras', '2026-04-29', '2026-04-29', 9811),
+      ('Fiestas de San Isidro Labrador Anorí', '2026-05-01', '2026-05-15', 9419),
+      ('Fiestas de San Isidro Labrador Cáceres', '2026-05-01', '2026-05-15', 9434)
     `);
 
     const count = await db.query(`SELECT COUNT(*) FROM festivals`);
@@ -236,9 +245,7 @@ app.get("/api/municipalities/:id", async (req, res) => {
 // =========================
 app.get("/api/festivals", async (req, res) => {
   try {
-    const { departamento, municipio, fecha, from, to } = req.query;
-
-    let query = `
+    const result = await db.query(`
       SELECT
         f.id,
         f.nombre,
@@ -247,60 +254,14 @@ app.get("/api/festivals", async (req, res) => {
         f.fecha_fin,
         f.descripcion,
         f.municipio_id,
-        f.sitios_turisticos,
-        f.hoteles,
-        f.contacto_hoteles,
         m.codigo_dane,
         m.nombre AS municipio,
-        m.departamento,
-        m.subregion,
-        m.habitantes,
-        m.temperatura_promedio,
-        m.altura,
-        m.bandera_url
+        m.departamento
       FROM festivals f
       LEFT JOIN municipalities m ON f.municipio_id = m.id
-      WHERE 1=1
-    `;
+      ORDER BY f.fecha_inicio ASC
+    `);
 
-    const params = [];
-    let paramIndex = 1;
-
-    if (departamento) {
-      query += ` AND LOWER(m.departamento) = LOWER($${paramIndex})`;
-      params.push(departamento);
-      paramIndex++;
-    }
-
-    if (municipio) {
-      query += ` AND LOWER(m.nombre) = LOWER($${paramIndex})`;
-      params.push(municipio);
-      paramIndex++;
-    }
-
-    if (fecha) {
-      query += ` AND (
-        $${paramIndex}::date BETWEEN f.fecha_inicio::date AND f.fecha_fin::date
-      )`;
-      params.push(fecha);
-      paramIndex++;
-    }
-
-    if (from && to) {
-      query += ` AND (
-        $${paramIndex}::date BETWEEN f.fecha_inicio::date AND f.fecha_fin::date
-        OR
-        $${paramIndex + 1}::date BETWEEN f.fecha_inicio::date AND f.fecha_fin::date
-        OR
-        f.fecha_inicio::date BETWEEN $${paramIndex}::date AND $${paramIndex + 1}::date
-      )`;
-      params.push(from, to);
-      paramIndex += 2;
-    }
-
-    query += ` ORDER BY f.fecha_inicio ASC NULLS LAST, f.id ASC`;
-
-    const result = await db.query(query, params);
     res.json(result.rows);
   } catch (err) {
     console.error("❌ Error en /api/festivals:", err.message);
@@ -308,39 +269,12 @@ app.get("/api/festivals", async (req, res) => {
   }
 });
 
-// =========================
-// FESTIVAL DETAIL
-// =========================
 app.get("/api/festivals/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
     const result = await db.query(
-      `
-      SELECT
-        f.id,
-        f.nombre,
-        f.fecha,
-        f.fecha_inicio,
-        f.fecha_fin,
-        f.descripcion,
-        f.municipio_id,
-        f.sitios_turisticos,
-        f.hoteles,
-        f.contacto_hoteles,
-        m.codigo_dane,
-        m.nombre AS municipio,
-        m.departamento,
-        m.subregion,
-        m.habitantes,
-        m.temperatura_promedio,
-        m.altura,
-        m.bandera_url
-      FROM festivals f
-      LEFT JOIN municipalities m ON f.municipio_id = m.id
-      WHERE f.id = $1
-      LIMIT 1
-      `,
+      `SELECT * FROM festivals WHERE id = $1 LIMIT 1`,
       [id]
     );
 
@@ -350,7 +284,7 @@ app.get("/api/festivals/:id", async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (err) {
-    console.error("❌ Error en /api/festivals/:id", err.message);
+    console.error("❌ Error detalle festival:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
