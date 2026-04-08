@@ -32,7 +32,7 @@ async function initDB() {
   `);
 }
 
-// 🔴 CARGA DESDE CSV (ROBUSTA)
+// 🔴 CARGA DESDE CSV
 app.get("/__fix/load-abril-mayo", async (req, res) => {
   try {
     await db.query(`DELETE FROM festivals`);
@@ -107,10 +107,16 @@ app.get("/__fix/load-abril-mayo", async (req, res) => {
   }
 });
 
-// API
+// 🔴 API FESTIVALS (CORREGIDO PARA APP)
 app.get("/api/festivals", async (req, res) => {
   const result = await db.query(`
-    SELECT f.*, m.nombre as municipio, m.departamento
+    SELECT 
+      f.id,
+      f.nombre,
+      f.fecha_inicio AS date_start,
+      f.fecha_fin AS date_end,
+      m.nombre AS municipio,
+      m.departamento
     FROM festivals f
     JOIN municipalities m ON f.municipio_id = m.id
     ORDER BY f.fecha_inicio ASC
@@ -118,6 +124,7 @@ app.get("/api/festivals", async (req, res) => {
   res.json(result.rows);
 });
 
+// API MUNICIPALITIES
 app.get("/api/municipalities", async (req, res) => {
   const result = await db.query(`SELECT * FROM municipalities`);
   res.json(result.rows);
