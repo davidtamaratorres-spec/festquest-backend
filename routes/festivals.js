@@ -38,7 +38,7 @@ router.get("/", async (req, res) => {
     let conditions = [];
 
     // ===============================
-    // 1. FILTRO FECHA (PRIORIDAD)
+    // 1. FILTRO FECHA (CORREGIDO)
     // ===============================
     if (from && to) {
       params.push(from);
@@ -48,8 +48,23 @@ router.get("/", async (req, res) => {
       const p2 = params.length;
 
       conditions.push(`
-        f.fecha IS NOT NULL
-        AND f.fecha BETWEEN $${p1} AND $${p2}
+        CASE
+          WHEN f.fecha ~ '^\\d{4}-\\d{2}-\\d{2}$'
+            THEN f.fecha::date
+          WHEN LOWER(f.fecha) = 'enero' THEN '2026-01-01'::date
+          WHEN LOWER(f.fecha) = 'febrero' THEN '2026-02-01'::date
+          WHEN LOWER(f.fecha) = 'marzo' THEN '2026-03-01'::date
+          WHEN LOWER(f.fecha) = 'abril' THEN '2026-04-01'::date
+          WHEN LOWER(f.fecha) = 'mayo' THEN '2026-05-01'::date
+          WHEN LOWER(f.fecha) = 'junio' THEN '2026-06-01'::date
+          WHEN LOWER(f.fecha) = 'julio' THEN '2026-07-01'::date
+          WHEN LOWER(f.fecha) = 'agosto' THEN '2026-08-01'::date
+          WHEN LOWER(f.fecha) = 'septiembre' THEN '2026-09-01'::date
+          WHEN LOWER(f.fecha) = 'octubre' THEN '2026-10-01'::date
+          WHEN LOWER(f.fecha) = 'noviembre' THEN '2026-11-01'::date
+          WHEN LOWER(f.fecha) = 'diciembre' THEN '2026-12-01'::date
+          ELSE NULL
+        END BETWEEN $${p1} AND $${p2}
       `);
     }
 
@@ -92,12 +107,28 @@ router.get("/", async (req, res) => {
     }
 
     // ===============================
-    // ORDEN FINAL
+    // ORDEN FINAL (CORREGIDO)
     // ===============================
     query += `
       ORDER BY
         CASE WHEN f.fecha IS NULL THEN 1 ELSE 0 END,
-        f.fecha ASC,
+        CASE
+          WHEN f.fecha ~ '^\\d{4}-\\d{2}-\\d{2}$'
+            THEN f.fecha::date
+          WHEN LOWER(f.fecha) = 'enero' THEN '2026-01-01'::date
+          WHEN LOWER(f.fecha) = 'febrero' THEN '2026-02-01'::date
+          WHEN LOWER(f.fecha) = 'marzo' THEN '2026-03-01'::date
+          WHEN LOWER(f.fecha) = 'abril' THEN '2026-04-01'::date
+          WHEN LOWER(f.fecha) = 'mayo' THEN '2026-05-01'::date
+          WHEN LOWER(f.fecha) = 'junio' THEN '2026-06-01'::date
+          WHEN LOWER(f.fecha) = 'julio' THEN '2026-07-01'::date
+          WHEN LOWER(f.fecha) = 'agosto' THEN '2026-08-01'::date
+          WHEN LOWER(f.fecha) = 'septiembre' THEN '2026-09-01'::date
+          WHEN LOWER(f.fecha) = 'octubre' THEN '2026-10-01'::date
+          WHEN LOWER(f.fecha) = 'noviembre' THEN '2026-11-01'::date
+          WHEN LOWER(f.fecha) = 'diciembre' THEN '2026-12-01'::date
+          ELSE NULL
+        END ASC,
         m.departamento ASC,
         m.nombre ASC,
         f.id ASC
