@@ -104,14 +104,14 @@ app.get("/health", (req, res) => {
   });
 });
 
-// 🔴 LIMPIEZA ABRIL-MAYO
+// 🔴 LIMPIEZA SOLO ABRIL–MAYO (CORRECTA)
 app.get("/__fix/clean-april-may", async (req, res) => {
   try {
     await db.query(`
       DELETE FROM festivals
       WHERE NOT (
-        fecha_inicio::date <= '2026-05-30'
-        AND fecha_fin::date >= '2026-04-01'
+        fecha_inicio::date >= '2026-04-01'
+        AND fecha_fin::date <= '2026-05-30'
       );
     `);
 
