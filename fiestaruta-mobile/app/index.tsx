@@ -23,7 +23,7 @@ function fechaSoloDia(fecha?: string | null) {
 }
 
 function obtenerFechaInicio(item: any) {
-  return fechaSoloDia(item?.fecha_inicio || item?.fecha || "");
+  return fechaSoloDia(item?.date_start || item?.fecha_inicio || item?.fecha || "");
 }
 
 function normalizarTexto(texto?: string | null) {
@@ -60,6 +60,7 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<FestivalItem[]>([]);
+  const [allItems, setAllItems] = useState<FestivalItem[]>([]);
   const [errorText, setErrorText] = useState("");
 
   const [departamento, setDepartamento] = useState("");
@@ -74,16 +75,53 @@ export default function Home() {
   const [departamentoFocus, setDepartamentoFocus] = useState(false);
   const [municipioFocus, setMunicipioFocus] = useState(false);
 
-  const cargarDatos = async (depParam?: string) => {
+  const cargarTodos = async () => {
+    setLoading(true);
+    setErrorText("");
+
+    try {
+      const resp = await fetchFestivals({});
+      const data = Array.isArray(resp) ? resp : [];
+      setAllItems(data);
+      setItems(data);
+    } catch (e: any) {
+      console.error("Error:", e);
+      setAllItems([]);
+      setItems([]);
+      setErrorText("No se pudieron cargar los festivales.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const buscarConFiltros = async () => {
     Keyboard.dismiss();
     setLoading(true);
     setErrorText("");
 
     try {
-      const depLimpio = limpiarInput(depParam ?? departamento);
+      const depLimpio = limpiarInput(departamento);
+      const munLimpio = limpiarInput(municipio);
+      const desde = esFechaValida(fechaDesde) ? fechaDesde : undefined;
+      const hasta = esFechaValida(fechaHasta) ? fechaHasta : undefined;
+
+      setDepartamento(depLimpio);
+      setMunicipio(munLimpio);
+      setDepartamentoFocus(false);
+      setMunicipioFocus(false);
+
+      console.log("FILTROS:", {
+        departamento: depLimpio,
+        municipio: munLimpio,
+        fecha_inicio: desde,
+        fecha_fin: hasta,
+      });
 
       const resp = await fetchFestivals({
         departamento: depLimpio || undefined,
+        municipio: munLimpio || undefined,
+        fecha_inicio: desde,
+        fecha_fin: hasta,
       });
 
       setItems(Array.isArray(resp) ? resp : []);
@@ -97,21 +135,21 @@ export default function Home() {
   };
 
   useEffect(() => {
-    cargarDatos("");
+    cargarTodos();
   }, []);
 
   const departamentosDisponibles = useMemo(() => {
-    const lista = items
+    const lista = allItems
       .map((i: any) => limpiarInput(i.departamento))
       .filter(Boolean);
 
     return Array.from(new Set(lista)).sort((a, b) => a.localeCompare(b));
-  }, [items]);
+  }, [allItems]);
 
   const municipiosDisponibles = useMemo(() => {
     const depFiltro = normalizarTexto(departamento);
 
-    const lista = items
+    const lista = allItems
       .filter((i: any) => {
         if (!depFiltro) return true;
         return normalizarTexto(i.departamento) === depFiltro;
@@ -120,7 +158,7 @@ export default function Home() {
       .filter(Boolean);
 
     return Array.from(new Set(lista)).sort((a, b) => a.localeCompare(b));
-  }, [items, departamento]);
+  }, [allItems, departamento]);
 
   const sugerenciasDepartamento = useMemo(() => {
     const depFiltro = normalizarTexto(departamento);
@@ -142,18 +180,6 @@ export default function Home() {
       .slice(0, 6);
   }, [municipio, municipioFocus, municipiosDisponibles]);
 
-  const buscarConFiltros = () => {
-    const depLimpio = limpiarInput(departamento);
-    const munLimpio = limpiarInput(municipio);
-
-    setDepartamento(depLimpio);
-    setMunicipio(munLimpio);
-    setDepartamentoFocus(false);
-    setMunicipioFocus(false);
-
-    cargarDatos(depLimpio);
-  };
-
   const limpiarFiltros = () => {
     setDepartamento("");
     setMunicipio("");
@@ -161,7 +187,7 @@ export default function Home() {
     setFechaHasta("");
     setDepartamentoFocus(false);
     setMunicipioFocus(false);
-    cargarDatos("");
+    cargarTodos();
   };
 
   const seleccionarDepartamento = (valor: string) => {
@@ -176,40 +202,6 @@ export default function Home() {
     setMunicipio(limpio);
     setMunicipioFocus(false);
   };
-
-  const filtrados = useMemo(() => {
-    const depFiltro = normalizarTexto(departamento);
-    const munFiltro = normalizarTexto(municipio);
-
-    const desdeValida = esFechaValida(fechaDesde);
-    const hastaValida = esFechaValida(fechaHasta);
-
-    return items.filter((item: any) => {
-      const depItem = normalizarTexto(item.departamento);
-      const munItem = normalizarTexto(item.municipio);
-      const fechaItem = obtenerFechaInicio(item);
-
-      const depOK = !depFiltro || depItem.includes(depFiltro);
-      const munOK = !munFiltro || munItem.includes(munFiltro);
-
-      let fechaOK = true;
-
-      if (desdeValida || hastaValida) {
-        if (!esFechaValida(fechaItem)) {
-          fechaOK = false;
-        } else {
-          const actual = new Date(`${fechaItem}T00:00:00`);
-          const desde = desdeValida ? new Date(`${fechaDesde}T00:00:00`) : null;
-          const hasta = hastaValida ? new Date(`${fechaHasta}T00:00:00`) : null;
-
-          if (desde && actual < desde) fechaOK = false;
-          if (hasta && actual > hasta) fechaOK = false;
-        }
-      }
-
-      return depOK && munOK && fechaOK;
-    });
-  }, [items, departamento, municipio, fechaDesde, fechaHasta]);
 
   return (
     <View style={styles.container}>
@@ -383,7 +375,7 @@ export default function Home() {
       {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
 
       <FlatList
-        data={filtrados}
+        data={items}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContent}
         keyboardShouldPersistTaps="handled"
