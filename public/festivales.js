@@ -2,18 +2,31 @@ fetch('/api/festivals')
   .then(res => res.json())
   .then(data => {
 
-    const filtrados = data
-      .filter(f => f.fecha && (f.fecha.includes('2026-04') || f.fecha.includes('2026-05')))
-      .slice(0, 6);
-
     const bloque = document.createElement('div');
     bloque.style.marginTop = '20px';
 
+    const filtrados = data.filter(f => {
+      if (!f.fecha) return false;
+
+      const fecha = f.fecha.toLowerCase();
+
+      return (
+        fecha.includes('04') ||
+        fecha.includes('05') ||
+        fecha.includes('abril') ||
+        fecha.includes('mayo')
+      );
+    }).slice(0, 6);
+
     bloque.innerHTML = `
       <strong>Abril y Mayo 2026:</strong>
-      ${filtrados.map(f =>
-        `<div>🎉 ${f.nombre} – ${f.municipio || ''}</div>`
-      ).join('')}
+      ${
+        filtrados.length === 0
+          ? '<div>No hay datos visibles</div>'
+          : filtrados.map(f =>
+              `<div>🎉 ${f.nombre} – ${f.municipio || ''}</div>`
+            ).join('')
+      }
     `;
 
     const hero = document.querySelector('.hero');
