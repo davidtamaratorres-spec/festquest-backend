@@ -401,12 +401,36 @@
       </div>
     </section>
   </main>
-<script src="/festivales.js" defer></script>
   <footer>
     <div class="container footer-row">
       <div>© 2026 FestQuest. Todos los derechos reservados.</div>
       <div>Contacto: gerencia@festquest.app · WhatsApp: +57 315 390 5194</div>
     </div>
   </footer>
+  <script>
+fetch('/api/festivals')
+  .then(res => res.json())
+  .then(data => {
+
+    const filtrados = data.filter(f =>
+      f.date_start &&
+      (f.date_start.startsWith('2026-04') || f.date_start.startsWith('2026-05'))
+    ).slice(0, 20);
+
+    const bloque = document.createElement('div');
+    bloque.style.padding = '20px';
+    bloque.style.background = '#fff';
+
+    bloque.innerHTML = `
+      <h3>Abril y Mayo 2026</h3>
+      ${filtrados.map(f =>
+        `<div>🎉 ${f.nombre} – ${f.municipio}</div>`
+      ).join('')}
+    `;
+
+    document.body.appendChild(bloque);
+
+  });
+</script>
 </body>
 </html>
