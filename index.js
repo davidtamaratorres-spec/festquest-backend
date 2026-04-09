@@ -1,8 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
-const csv = require("csv-parser");
 const db = require("./db");
 
 const app = express();
@@ -32,96 +30,54 @@ async function initDB() {
   `);
 }
 
-// 🔴 CARGA DESDE CSV
-app.get("/__fix/load-abril-mayo", async (req, res) => {
+// 🔴 API CON FILTROS (RANGO CORRECTO)
+app.get("/api/festivals", async (req, res) => {
   try {
-    await db.query(`DELETE FROM festivals`);
-    await db.query(`DELETE FROM municipalities`);
+    const { municipio, departamento, fecha } = req.query;
 
-    const results = [];
+    let query = `
+      SELECT 
+        f.id,
+        f.nombre,
+        f.fecha_inicio AS date_start,
+        f.fecha_fin AS date_end,
+        m.nombre AS municipio,
+        m.departamento
+      FROM festivals f
+      JOIN municipalities m ON f.municipio_id = m.id
+      WHERE 1=1
+    `;
 
-    fs.createReadStream(path.join(__dirname, "data", "master_abril_mayo.csv"))
-      .pipe(csv())
-      .on("data", (row) => results.push(row))
-      .on("end", async () => {
-        const municipiosMap = {};
+    const params = [];
+    let i = 1;
 
-        for (const r of results) {
-          const codigo = parseInt(
-            r.codigo_dane || r.CODIGO_DANE || r.dane
-          );
+    if (municipio) {
+      query += ` AND LOWER(m.nombre) = LOWER($${i})`;
+      params.push(municipio);
+      i++;
+    }
 
-          const municipio =
-            r.municipio || r.MUNICIPIO || r.ciudad;
+    if (departamento) {
+      query += ` AND LOWER(m.departamento) = LOWER($${i})`;
+      params.push(departamento);
+      i++;
+    }
 
-          const departamento =
-            r.departamento || r.DEPARTAMENTO;
+    // 🔴 FILTRO POR FECHA (RANGO)
+    if (fecha) {
+      query += ` AND $${i}::date BETWEEN f.fecha_inicio AND f.fecha_fin`;
+      params.push(fecha);
+      i++;
+    }
 
-          if (!codigo || !municipio) continue;
+    query += ` ORDER BY f.fecha_inicio ASC`;
 
-          if (!municipiosMap[codigo]) {
-            const m = await db.query(
-              `INSERT INTO municipalities (nombre, departamento, codigo_dane)
-               VALUES ($1,$2,$3)
-               ON CONFLICT (codigo_dane) DO UPDATE SET nombre=EXCLUDED.nombre
-               RETURNING id`,
-              [municipio, departamento, codigo]
-            );
-            municipiosMap[codigo] = m.rows[0].id;
-          }
+    const result = await db.query(query, params);
 
-          const nombreFestival =
-            r.festival || r.FESTIVAL || r.nombre || r.EVENTO;
-
-          const fechaInicio =
-            r.fecha_inicio || r.FECHA_INICIO || r.inicio || r.fecha;
-
-          const fechaFin =
-            r.fecha_fin || r.FECHA_FIN || r.fin || r.fecha;
-
-          if (nombreFestival && fechaInicio && fechaFin) {
-            await db.query(
-              `INSERT INTO festivals (nombre, fecha_inicio, fecha_fin, municipio_id)
-               VALUES ($1,$2,$3,$4)`,
-              [
-                nombreFestival,
-                fechaInicio,
-                fechaFin,
-                municipiosMap[codigo],
-              ]
-            );
-          }
-        }
-
-        const f = await db.query(`SELECT COUNT(*) FROM festivals`);
-        const m = await db.query(`SELECT COUNT(*) FROM municipalities`);
-
-        res.json({
-          ok: true,
-          festivals: f.rows[0].count,
-          municipios: m.rows[0].count,
-        });
-      });
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
-
-// 🔴 API FESTIVALS (CORREGIDO PARA APP)
-app.get("/api/festivals", async (req, res) => {
-  const result = await db.query(`
-    SELECT 
-      f.id,
-      f.nombre,
-      f.fecha_inicio AS date_start,
-      f.fecha_fin AS date_end,
-      m.nombre AS municipio,
-      m.departamento
-    FROM festivals f
-    JOIN municipalities m ON f.municipio_id = m.id
-    ORDER BY f.fecha_inicio ASC
-  `);
-  res.json(result.rows);
 });
 
 // API MUNICIPALITIES
