@@ -8,10 +8,13 @@
     name="description"
     content="FestQuest te ayuda a descubrir festivales, municipios, cultura, turismo y experiencias auténticas en Colombia."
   />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: 'DM Sans', Arial, Helvetica, sans-serif;
       background: linear-gradient(135deg, #fff8f0 0%, #ffe7cc 50%, #ffd6a5 100%);
       color: #1f2937;
       line-height: 1.5;
@@ -79,73 +82,184 @@
       border: 1px solid rgba(194,65,12,0.18);
     }
     .btn-secondary:hover { transform: translateY(-1px); }
+
+    /* ── HERO ── */
     .hero {
-      padding: 72px 0 44px;
-    }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 28px;
+      position: relative;
+      min-height: 88vh;
+      display: flex;
       align-items: center;
+      overflow: hidden;
     }
-    .eyebrow {
-      display: inline-block;
-      background: rgba(234,88,12,.1);
-      color: #c2410c;
-      padding: 8px 12px;
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1800&q=80');
+      background-size: cover;
+      background-position: center 40%;
+      transform: scale(1.04);
+      animation: heroZoom 18s ease-in-out infinite alternate;
+    }
+    @keyframes heroZoom {
+      from { transform: scale(1.04); }
+      to   { transform: scale(1.00); }
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(12,10,5,0.72) 0%,
+        rgba(120,40,5,0.55) 50%,
+        rgba(12,10,5,0.80) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 100px 0 80px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      backdrop-filter: blur(10px);
+      color: #fed7aa;
+      padding: 8px 16px;
       border-radius: 999px;
       font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-eyebrow::before {
+      content: '🎉';
+      font-size: 15px;
+    }
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(38px, 6vw, 72px);
       font-weight: 800;
-      margin-bottom: 16px;
+      line-height: 1.03;
+      color: #fff;
+      max-width: 780px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.6s 0.1s ease both;
     }
-    h1 {
-      font-size: 56px;
-      line-height: 1.02;
-      margin-bottom: 18px;
-      color: #111827;
+    .hero h1 em {
+      font-style: normal;
+      color: #fb923c;
     }
-    .hero p {
-      font-size: 20px;
-      color: #4b5563;
-      margin-bottom: 26px;
-      max-width: 680px;
+    .hero-sub {
+      font-size: 19px;
+      color: #e5d5c5;
+      max-width: 560px;
+      margin-bottom: 38px;
+      font-weight: 400;
+      animation: fadeUp 0.6s 0.2s ease both;
     }
-    .hero-actions {
+
+    /* Search bar */
+    .hero-search {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.96);
+      border-radius: 18px;
+      max-width: 660px;
+      padding: 6px 6px 6px 20px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+      margin-bottom: 28px;
+      gap: 8px;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+    .hero-search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 16px;
+      font-family: 'DM Sans', sans-serif;
+      color: #1f2937;
+      padding: 10px 0;
+    }
+    .hero-search input::placeholder { color: #9ca3af; }
+    .search-btn {
+      background: #ea580c;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 22px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .search-btn:hover { background: #c2410c; transform: scale(1.02); }
+    .search-btn svg { flex-shrink: 0; }
+
+    /* App-style CTA buttons */
+    .hero-btns {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 22px;
+      animation: fadeUp 0.6s 0.4s ease both;
     }
-    .hero-note {
-      font-size: 14px;
-      color: #6b7280;
-      font-weight: 600;
+    .app-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 22px;
+      border-radius: 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      transition: transform 0.18s, box-shadow 0.18s;
+      cursor: pointer;
+      border: none;
     }
-    .hero-card {
-      background: rgba(255,255,255,0.92);
-      border: 1px solid rgba(0,0,0,0.06);
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 18px 46px rgba(0,0,0,0.08);
+    .app-btn:hover { transform: translateY(-2px); }
+    .app-btn-whatsapp {
+      background: #25d366;
+      color: #fff;
+      box-shadow: 0 10px 28px rgba(37,211,102,.35);
     }
-    .hero-card h3 {
-      font-size: 24px;
-      margin-bottom: 14px;
-      color: #c2410c;
+    .app-btn-whatsapp:hover { box-shadow: 0 14px 36px rgba(37,211,102,.45); }
+    .app-btn-mail {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.28);
+      backdrop-filter: blur(8px);
     }
-    .hero-card ul {
-      list-style: none;
-      display: grid;
-      gap: 12px;
+    .app-btn-mail:hover { background: rgba(255,255,255,0.22); }
+    .app-btn-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
     }
-    .hero-card li {
-      background: #fff7ed;
-      border: 1px solid #fed7aa;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-weight: 600;
-      color: #7c2d12;
+    .hero-launch-note {
+      margin-top: 20px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.50);
+      font-weight: 500;
+      animation: fadeUp 0.6s 0.5s ease both;
     }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── REST (unchanged) ── */
     section {
       padding: 26px 0 40px;
     }
@@ -226,6 +340,12 @@
       margin-bottom: 22px;
       max-width: 780px;
     }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
     footer {
       padding: 26px 0 40px;
       color: #6b7280;
@@ -240,16 +360,15 @@
       padding-top: 20px;
     }
     @media (max-width: 980px) {
-      .hero-grid, .grid-3, .stats {
+      .grid-3, .stats {
         grid-template-columns: 1fr;
       }
-      h1 { font-size: 42px; }
       .header-row { align-items: flex-start; flex-direction: column; }
     }
     @media (max-width: 640px) {
-      .hero { padding-top: 44px; }
-      h1 { font-size: 34px; }
-      .hero p { font-size: 18px; }
+      .hero-search { flex-direction: column; padding: 12px; border-radius: 16px; }
+      .hero-search input { width: 100%; padding: 8px 4px; }
+      .search-btn { width: 100%; justify-content: center; }
       .section-title { font-size: 28px; }
       .cta-box h2 { font-size: 30px; }
     }
@@ -271,90 +390,54 @@
   </header>
 
   <main>
-    <section style="
-  background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470');
-  background-size: cover;
-  background-position: center;
-  color: white;
-  border-radius: 20px;
-  margin: 20px;
-">
 
-  <div class="container" style="padding: 80px 20px; text-align: center;">
-
-    <h1 style="color:white; font-size:48px;">
-      Descubre, vive y celebra lo mejor de Colombia
-    </h1>
-
-    <p style="color:#e5e7eb; font-size:18px; margin-bottom:25px;">
-      Festividades, cultura, turismo y más en un solo lugar
-    </p>
-
-    <div style="margin-bottom:25px;">
-      <input 
-        type="text"
-        placeholder="Buscar festividades, destinos, eventos..."
-        style="padding:12px; width:60%; border-radius:8px; border:none;"
-      />
-      <button style="
-        padding:12px 20px;
-        border-radius:8px;
-        background:#7c3aed;
-        color:white;
-        border:none;
-        margin-left:10px;
-      ">
-        Buscar
-      </button>
-    </div>
-
-    <p style="margin-top:15px; font-size:14px; color:#d1d5db;">
-      Plataforma en desarrollo · Lanzamiento estimado: finales del segundo trimestre de 2026
-    </p>
-
-  </div>
-</section>
+    <!-- ═══════════════  HERO  ═══════════════ -->
     <section class="hero">
-      <div class="container hero-grid">
-        <div>
-          <span class="eyebrow">Descubre Colombia a través de sus festivales</span>
-          <h1>Una forma más inteligente de explorar municipios, cultura y turismo.</h1>
-          <p>
-            FestQuest reúne festivales, información municipal, sitios turísticos y datos útiles
-            para ayudarte a descubrir experiencias auténticas en Colombia.
-          </p>
-          <div class="hero-actions">
-            <a
-              class="btn btn-primary"
+      <div class="hero-bg"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="container">
+          <div class="hero-eyebrow">Descubre Colombia a través de sus festivales</div>
+          <h1>Descubre, vive<br>y celebra lo <em>mejor</em><br>de Colombia</h1>
+          <p class="hero-sub">Festividades, cultura, turismo y más. Más de 1.100 municipios, un solo lugar.</p>
+
+          <div class="hero-search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Buscar festivales, destinos, municipios…" />
+            <button class="search-btn">
+              <svg class="app-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Buscar
+            </button>
+          </div>
+
+          <div class="hero-btns">
+            
+              class="app-btn app-btn-whatsapp"
               href="https://wa.me/573153905194?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20FestQuest"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Solicitar información
+              <svg class="app-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+              </svg>
+              Solicitar por WhatsApp
             </a>
-            <a
-              class="btn btn-secondary"
+            
+              class="app-btn app-btn-mail"
               href="mailto:gerencia@festquest.app?subject=Informaci%C3%B3n%20FestQuest&body=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20plataforma%20FestQuest."
             >
+              <svg class="app-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
               Contacto por correo
             </a>
           </div>
-          <div class="hero-note">
-            Plataforma en desarrollo · Dominio oficial: festquest.app
-          </div>
-        </div>
 
-        <div class="hero-card">
-          <h3>Qué encontrarás</h3>
-          <ul>
-            <li>Festivales por municipio y fecha</li>
-            <li>Contexto cultural y territorial</li>
-            <li>Sitios turísticos y hospedajes</li>
-            <li>Base estructurada para expansión nacional</li>
-          </ul>
+          <p class="hero-launch-note">Plataforma en desarrollo · Lanzamiento estimado: finales del segundo trimestre de 2026 · festquest.app</p>
         </div>
       </div>
     </section>
+    <!-- ═══════════════  /HERO  ═══════════════ -->
 
     <section id="como-funciona">
       <div class="container">
@@ -425,7 +508,7 @@
             la experiencia pública, los datos enriquecidos y la interfaz de consulta para usuarios y aliados.
           </p>
           <div class="hero-actions">
-            <a
+            
               class="btn btn-primary"
               href="https://wa.me/573153905194?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20FestQuest"
               target="_blank"
@@ -433,7 +516,7 @@
             >
               Escribir por WhatsApp
             </a>
-            <a
+            
               class="btn btn-secondary"
               href="mailto:gerencia@festquest.app?subject=Informaci%C3%B3n%20FestQuest&body=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20FestQuest."
             >
@@ -444,13 +527,15 @@
       </div>
     </section>
   </main>
+
   <footer>
     <div class="container footer-row">
       <div>© 2026 FestQuest. Todos los derechos reservados.</div>
       <div>Contacto: gerencia@festquest.app · WhatsApp: +57 315 390 5194</div>
     </div>
   </footer>
-   <script>
+
+  <script>
 fetch('/api/festivals')
   .then(res => res.json())
   .then(data => {
@@ -481,6 +566,6 @@ fetch('/api/festivals')
 
   })
   .catch(() => {});
-</script>
+  </script>
 </body>
 </html>
