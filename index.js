@@ -38,8 +38,15 @@ app.get("/api/festivals", async (req, res) => {
       SELECT
         f.id,
         f.nombre,
+        f.fecha,
         f.fecha_inicio AS date_start,
         f.fecha_fin AS date_end,
+        f.descripcion,
+        f.habitantes,
+        f.altura,
+        f.lugar_encuentro,
+        f.maps_link,
+        f.whatsapp_link,
         m.nombre AS municipio,
         m.departamento
       FROM festivals f

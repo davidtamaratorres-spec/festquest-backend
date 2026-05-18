@@ -6,7 +6,7 @@
   <title>FestQuest | Explora festivales de Colombia</title>
   <meta
     name="description"
-    content="FestQuest te ayuda a descubrir festivales, municipios, cultura, turismo y experiencias auténticas en Colombia."
+    content="FestQuest te ayuda a descubrir festivales, municipios, cultura, turismo y experiencias autÃ©nticas en Colombia."
   />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -83,7 +83,7 @@
     }
     .btn-secondary:hover { transform: translateY(-1px); }
 
-    /* ── HERO ── */
+    /* â”€â”€ HERO â”€â”€ */
     .hero {
       position: relative;
       min-height: 88vh;
@@ -137,7 +137,7 @@
       animation: fadeUp 0.6s ease both;
     }
     .hero-eyebrow::before {
-      content: '🎉';
+      content: 'ðŸŽ‰';
       font-size: 15px;
     }
     .hero h1 {
@@ -259,7 +259,7 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── REST (unchanged) ── */
+    /* â”€â”€ REST (unchanged) â”€â”€ */
     section {
       padding: 26px 0 40px;
     }
@@ -320,6 +320,146 @@
       font-weight: 700;
       font-size: 14px;
     }
+    .catalog {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 64px 0 72px;
+    }
+    .catalog-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .catalog h2 {
+      color: #fff;
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    .catalog-subtitle {
+      color: #cbd5e1;
+      max-width: 720px;
+      font-size: 17px;
+    }
+    .catalog-counter {
+      min-width: 190px;
+      border: 1px solid rgba(251,146,60,0.32);
+      background: rgba(251,146,60,0.12);
+      border-radius: 18px;
+      padding: 16px 18px;
+      text-align: center;
+    }
+    .catalog-counter strong {
+      display: block;
+      font-size: 34px;
+      color: #fb923c;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .catalog-counter span {
+      color: #fed7aa;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .catalog-status {
+      color: #fed7aa;
+      margin-bottom: 18px;
+      font-weight: 600;
+    }
+    .festival-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .festival-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      background: linear-gradient(180deg, rgba(30,41,59,0.96), rgba(15,23,42,0.98));
+      border: 1px solid rgba(148,163,184,0.22);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+    }
+    .festival-date {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 12px;
+      margin-bottom: 16px;
+      background: rgba(251,146,60,0.16);
+      color: #fed7aa;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+    .festival-card h3 {
+      color: #fff;
+      font-size: 23px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .festival-place {
+      color: #cbd5e1;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .festival-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .festival-meta span {
+      border: 1px solid rgba(148,163,184,0.24);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: #e2e8f0;
+      font-size: 13px;
+      background: rgba(15,23,42,0.45);
+    }
+    .festival-description {
+      color: #cbd5e1;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+    .festival-empty {
+      color: #94a3b8;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+    .festival-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: auto;
+      padding-top: 6px;
+    }
+    .festival-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 14px;
+      transition: transform .18s ease, background .18s ease;
+    }
+    .festival-action:hover { transform: translateY(-1px); }
+    .festival-action-map {
+      color: #fff;
+      background: #ea580c;
+    }
+    .festival-action-whatsapp {
+      color: #fff;
+      background: #16a34a;
+    }
     .cta {
       padding: 40px 0 80px;
     }
@@ -360,9 +500,11 @@
       padding-top: 20px;
     }
     @media (max-width: 980px) {
-      .grid-3, .stats {
+      .grid-3, .stats, .festival-grid {
         grid-template-columns: 1fr;
       }
+      .catalog-head { align-items: stretch; flex-direction: column; }
+      .catalog-counter { text-align: left; }
       .header-row { align-items: flex-start; flex-direction: column; }
     }
     @media (max-width: 640px) {
@@ -382,7 +524,7 @@
         <small>Festivales y cultura de Colombia</small>
       </div>
       <nav class="nav">
-        <a class="btn btn-secondary" href="#como-funciona">Cómo funciona</a>
+        <a class="btn btn-secondary" href="#como-funciona">CÃ³mo funciona</a>
         <a class="btn btn-secondary" href="#ventajas">Ventajas</a>
         <a class="btn btn-primary" href="mailto:gerencia@festquest.app?subject=Informaci%C3%B3n%20FestQuest&body=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20FestQuest.">Contacto</a>
       </nav>
@@ -391,19 +533,19 @@
 
   <main>
 
-    <!-- ═══════════════  HERO  ═══════════════ -->
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•  HERO  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <section class="hero">
       <div class="hero-bg"></div>
       <div class="hero-overlay"></div>
       <div class="hero-content">
         <div class="container">
-          <div class="hero-eyebrow">Descubre Colombia a través de sus festivales</div>
+          <div class="hero-eyebrow">Descubre Colombia a travÃ©s de sus festivales</div>
           <h1>Descubre, vive<br>y celebra lo <em>mejor</em><br>de Colombia</h1>
-          <p class="hero-sub">Festividades, cultura, turismo y más. Más de 1.100 municipios, un solo lugar.</p>
+          <p class="hero-sub">Festividades, cultura, turismo y mÃ¡s. MÃ¡s de 1.100 municipios, un solo lugar.</p>
 
           <div class="hero-search">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="text" placeholder="Buscar festivales, destinos, municipios…" />
+            <input type="text" placeholder="Buscar festivales, destinos, municipiosâ€¦" />
             <button class="search-btn">
               <svg class="app-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               Buscar
@@ -411,7 +553,7 @@
           </div>
 
           <div class="hero-btns">
-            
+            <a
               class="app-btn app-btn-whatsapp"
               href="https://wa.me/573153905194?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20FestQuest"
               target="_blank"
@@ -422,7 +564,7 @@
               </svg>
               Solicitar por WhatsApp
             </a>
-            
+            <a
               class="app-btn app-btn-mail"
               href="mailto:gerencia@festquest.app?subject=Informaci%C3%B3n%20FestQuest&body=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20plataforma%20FestQuest."
             >
@@ -433,18 +575,37 @@
             </a>
           </div>
 
-          <p class="hero-launch-note">Plataforma en desarrollo · Lanzamiento estimado: finales del segundo trimestre de 2026 · festquest.app</p>
+          <p class="hero-launch-note">Plataforma en desarrollo Â· Lanzamiento estimado: finales del segundo trimestre de 2026 Â· festquest.app</p>
         </div>
       </div>
     </section>
-    <!-- ═══════════════  /HERO  ═══════════════ -->
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•  /HERO  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+
+    <section id="catalogo" class="catalog">
+      <div class="container">
+        <div class="catalog-head">
+          <div>
+            <h2>Festivales disponibles</h2>
+            <p class="catalog-subtitle">
+              Explora el cat&aacute;logo activo de festivales cargados en FestQuest, ordenado por fecha para planear mejor cada experiencia.
+            </p>
+          </div>
+          <div class="catalog-counter" aria-live="polite">
+            <strong id="festival-count">0</strong>
+            <span>festivales cargados</span>
+          </div>
+        </div>
+        <p id="festival-status" class="catalog-status">Cargando festivales...</p>
+        <div id="festival-grid" class="festival-grid"></div>
+      </div>
+    </section>
 
     <section id="como-funciona">
       <div class="container">
-        <h2 class="section-title">Cómo funciona FestQuest</h2>
+        <h2 class="section-title">CÃ³mo funciona FestQuest</h2>
         <p class="section-subtitle">
-          Organizamos información territorial y cultural para facilitar la exploración de festividades,
-          municipios y experiencias locales con una lógica más útil para usuarios, aliados y futuras integraciones.
+          Organizamos informaciÃ³n territorial y cultural para facilitar la exploraciÃ³n de festividades,
+          municipios y experiencias locales con una lÃ³gica mÃ¡s Ãºtil para usuarios, aliados y futuras integraciones.
         </p>
 
         <div class="grid-3">
@@ -457,13 +618,13 @@
           <div class="card">
             <h3>Descubre destinos</h3>
             <p>
-              Conecta cada festival con el territorio: sitios turísticos, datos locales y valor cultural.
+              Conecta cada festival con el territorio: sitios turÃ­sticos, datos locales y valor cultural.
             </p>
           </div>
           <div class="card">
             <h3>Planea mejor</h3>
             <p>
-              Usa información organizada para tomar decisiones sobre viajes, turismo, promoción y experiencias.
+              Usa informaciÃ³n organizada para tomar decisiones sobre viajes, turismo, promociÃ³n y experiencias.
             </p>
           </div>
         </div>
@@ -502,10 +663,10 @@
     <section class="cta">
       <div class="container">
         <div class="cta-box">
-          <h2>FestQuest está en construcción activa</h2>
+          <h2>FestQuest estÃ¡ en construcciÃ³n activa</h2>
           <p>
-            El dominio y la infraestructura base ya están operativos. El siguiente paso es consolidar
-            la experiencia pública, los datos enriquecidos y la interfaz de consulta para usuarios y aliados.
+            El dominio y la infraestructura base ya estÃ¡n operativos. El siguiente paso es consolidar
+            la experiencia pÃºblica, los datos enriquecidos y la interfaz de consulta para usuarios y aliados.
           </p>
           <div class="hero-actions">
 
@@ -533,42 +694,163 @@
 
   <footer>
     <div class="container footer-row">
-      <div>© 2026 FestQuest. Todos los derechos reservados.</div>
-      <div>Contacto: gerencia@festquest.app · WhatsApp: +57 315 390 5194</div>
+      <div>Â© 2026 FestQuest. Todos los derechos reservados.</div>
+      <div>Contacto: gerencia@festquest.app Â· WhatsApp: +57 315 390 5194</div>
     </div>
   </footer>
 
   <script>
+const festivalGrid = document.getElementById('festival-grid');
+const festivalCount = document.getElementById('festival-count');
+const festivalStatus = document.getElementById('festival-status');
+const searchInput = document.querySelector('.hero-search input');
+const searchButton = document.querySelector('.search-btn');
+let allFestivals = [];
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function hasValue(value) {
+  return value !== null && value !== undefined && String(value).trim() !== '';
+}
+
+function formatDate(start, end) {
+  if (!hasValue(start)) return 'Fecha por confirmar';
+
+  const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+  const startDate = new Date(start);
+
+  if (Number.isNaN(startDate.getTime())) return escapeHtml(start);
+
+  const formattedStart = startDate.toLocaleDateString('es-CO', dateOptions);
+
+  if (!hasValue(end)) return formattedStart;
+
+  const endDate = new Date(end);
+  if (Number.isNaN(endDate.getTime())) return formattedStart;
+
+  const formattedEnd = endDate.toLocaleDateString('es-CO', dateOptions);
+  return formattedStart === formattedEnd ? formattedStart : `${formattedStart} - ${formattedEnd}`;
+}
+
+function numberFormat(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return escapeHtml(value);
+  return number.toLocaleString('es-CO');
+}
+
+function sortFestivals(festivals) {
+  return [...festivals].sort((a, b) => {
+    const dateA = hasValue(a.date_start) ? new Date(a.date_start).getTime() : Number.MAX_SAFE_INTEGER;
+    const dateB = hasValue(b.date_start) ? new Date(b.date_start).getTime() : Number.MAX_SAFE_INTEGER;
+    return dateA - dateB;
+  });
+}
+
+function buildFestivalCard(festival) {
+  const meta = [];
+
+  if (hasValue(festival.habitantes)) {
+    meta.push(`<span>${numberFormat(festival.habitantes)} habitantes</span>`);
+  }
+
+  if (hasValue(festival.altura)) {
+    meta.push(`<span>${numberFormat(festival.altura)} msnm</span>`);
+  }
+
+  const actions = [];
+
+  if (hasValue(festival.maps_link)) {
+    actions.push(`
+      <a class="festival-action festival-action-map" href="${escapeHtml(festival.maps_link)}" target="_blank" rel="noopener noreferrer">
+        Ver mapa
+      </a>
+    `);
+  }
+
+  if (hasValue(festival.whatsapp_link)) {
+    actions.push(`
+      <a class="festival-action festival-action-whatsapp" href="${escapeHtml(festival.whatsapp_link)}" target="_blank" rel="noopener noreferrer">
+        WhatsApp
+      </a>
+    `);
+  }
+
+  const description = hasValue(festival.descripcion)
+    ? `<p class="festival-description">${escapeHtml(festival.descripcion)}</p>`
+    : `<p class="festival-empty">Informaci&oacute;n tur&iacute;stica en actualizaci&oacute;n</p>`;
+
+  return `
+    <article class="festival-card">
+      <div class="festival-date">${formatDate(festival.date_start, festival.date_end)}</div>
+      <h3>${escapeHtml(festival.nombre || 'Festival por confirmar')}</h3>
+      <p class="festival-place">${escapeHtml(festival.municipio || 'Municipio por confirmar')} &middot; ${escapeHtml(festival.departamento || 'Departamento por confirmar')}</p>
+      ${meta.length ? `<div class="festival-meta">${meta.join('')}</div>` : ''}
+      ${description}
+      ${actions.length ? `<div class="festival-actions">${actions.join('')}</div>` : ''}
+    </article>
+  `;
+}
+
+function renderFestivals(festivals) {
+  const ordered = sortFestivals(festivals);
+  festivalCount.textContent = ordered.length;
+
+  if (ordered.length === 0) {
+    festivalStatus.textContent = 'No hay festivales disponibles para mostrar.';
+    festivalGrid.innerHTML = '';
+    return;
+  }
+
+  festivalStatus.textContent = 'Catalogo actualizado desde /api/festivals.';
+  festivalGrid.innerHTML = ordered.map(buildFestivalCard).join('');
+}
+
+function filterFestivals() {
+  const query = String(searchInput?.value || '').trim().toLowerCase();
+
+  if (!query) {
+    renderFestivals(allFestivals);
+    return;
+  }
+
+  const filtered = allFestivals.filter((festival) => {
+    return [
+      festival.nombre,
+      festival.municipio,
+      festival.departamento,
+      festival.descripcion
+    ].some((value) => String(value || '').toLowerCase().includes(query));
+  });
+
+  renderFestivals(filtered);
+}
+
+if (searchInput) {
+  searchInput.addEventListener('input', filterFestivals);
+}
+
+if (searchButton) {
+  searchButton.addEventListener('click', filterFestivals);
+}
+
 fetch('/api/festivals')
   .then(res => res.json())
   .then(data => {
-
-    if (!data || data.length === 0) return;
-
-    const filtrados = data.filter(f => {
-      if (!f.date_start) return false;
-
-      const mes = f.date_start.substring(5,7); // extrae mes
-
-      return mes === '04' || mes === '05';
-    });
-
-    if (filtrados.length === 0) return;
-
-    const bloque = document.createElement('div');
-    bloque.style.padding = '20px';
-
-    bloque.innerHTML = `
-      <h3>Abril y Mayo 2026</h3>
-      ${filtrados.map(f =>
-        `<div>🎉 ${f.nombre} – ${f.municipio || ''}</div>`
-      ).join('')}
-    `;
-
-    document.body.appendChild(bloque);
-
+    allFestivals = Array.isArray(data) ? data : [];
+    renderFestivals(allFestivals);
   })
-  .catch(() => {});
+  .catch(() => {
+    festivalStatus.textContent = 'No fue posible cargar los festivales en este momento.';
+    festivalCount.textContent = '0';
+  });
+
   </script>
 </body>
 </html>
