@@ -131,21 +131,58 @@ async function festivalExists(nombre, municipioId, fechaInicio) {
     [nombre, municipioId, fechaInicio]
   );
 
-  return existing.rows.length > 0;
+  return existing.rows[0]?.id || null;
 }
 
 async function insertFestival(row, municipioId) {
   const nombre = limpiarTexto(row.festival);
   const fechaInicio = limpiarTexto(row.fecha_inicio);
   const fechaFin = limpiarTexto(row.fecha_fin);
+  const descripcion = limpiarTexto(row.descripcion_festival);
   const habitantes = limpiarEntero(row.habitantes);
   const altura = limpiarEntero(row.altura);
   const lugarEncuentro = limpiarTexto(row.sitio_1);
   const mapsLink = limpiarTexto(row.maps_1);
   const whatsappLink = limpiarTexto(row.wa_1);
 
-  if (await festivalExists(nombre, municipioId, fechaInicio)) {
-    return false;
+  const festivalId = await festivalExists(nombre, municipioId, fechaInicio);
+
+  if (festivalId) {
+    const fields = [];
+    const values = [];
+
+    function addField(column, value) {
+      if (value === null || value === undefined || value === "") {
+        return;
+      }
+
+      values.push(value);
+      fields.push(`${column} = $${values.length}`);
+    }
+
+    addField("descripcion", descripcion);
+    addField("habitantes", habitantes);
+    addField("altura", altura);
+    addField("lugar_encuentro", lugarEncuentro);
+    addField("maps_link", mapsLink);
+    addField("whatsapp_link", whatsappLink);
+
+    if (fields.length === 0) {
+      return "skipped";
+    }
+
+    values.push(festivalId);
+
+    await pool.query(
+      `
+      UPDATE festivals
+      SET ${fields.join(", ")}
+      WHERE id = $${values.length}
+      `,
+      values
+    );
+
+    return "updated";
   }
 
   await pool.query(
@@ -155,6 +192,7 @@ async function insertFestival(row, municipioId) {
       fecha,
       fecha_inicio,
       fecha_fin,
+      descripcion,
       municipio_id,
       habitantes,
       altura,
@@ -162,13 +200,14 @@ async function insertFestival(row, municipioId) {
       maps_link,
       whatsapp_link
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
     `,
     [
       nombre,
       fechaInicio,
       fechaInicio,
       fechaFin,
+      descripcion,
       municipioId,
       habitantes,
       altura,
@@ -178,7 +217,7 @@ async function insertFestival(row, municipioId) {
     ]
   );
 
-  return true;
+  return "inserted";
 }
 
 async function run() {
@@ -197,6 +236,7 @@ async function run() {
 
         let municipalitiesUpserted = 0;
         let festivalsInserted = 0;
+        let festivalsUpdated = 0;
         let festivalsSkipped = 0;
         const processedMunicipalities = new Map();
 
@@ -223,10 +263,12 @@ async function run() {
             municipalitiesUpserted++;
           }
 
-          const inserted = await insertFestival(row, municipioId);
+          const result = await insertFestival(row, municipioId);
 
-          if (inserted) {
+          if (result === "inserted") {
             festivalsInserted++;
+          } else if (result === "updated") {
+            festivalsUpdated++;
           } else {
             festivalsSkipped++;
           }
@@ -235,6 +277,7 @@ async function run() {
         console.log("Resumen de carga:");
         console.log(`Municipios insertados/actualizados: ${municipalitiesUpserted}`);
         console.log(`Festivales insertados: ${festivalsInserted}`);
+        console.log(`Festivales actualizados: ${festivalsUpdated}`);
         console.log(`Festivales saltados: ${festivalsSkipped}`);
         process.exit(0);
       })
