@@ -2,176 +2,185 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-const isPostgres = !!db._pool; // en tu wrapper pg exportas _pool
+// GET /dishes
+router.get("/", async (req, res) => {
+  try {
+    const { codigo_dane, municipio, categoria, q } = req.query;
 
-// Helpers para ejecutar queries en ambos motores
-function dbGet(sqliteSql, pgSql, params, cb) {
-  const sql = isPostgres ? pgSql : sqliteSql;
-  db.get(sql, params, cb);
-}
-function dbAll(sqliteSql, pgSql, params, cb) {
-  const sql = isPostgres ? pgSql : sqliteSql;
-  db.all(sql, params, cb);
-}
-function dbRun(sqliteSql, pgSql, params, cb) {
-  const sql = isPostgres ? pgSql : sqliteSql;
-  db.run(sql, params, cb);
-}
+    let query = `
+      SELECT
+        d.id,
+        d.restaurante_id,
+        d.nombre,
+        d.descripcion,
+        d.precio,
+        d.categoria,
+        d.imagen_url,
+        d.disponible,
+        d.es_tipico,
+        r.nombre AS restaurante,
+        r.municipio,
+        r.departamento,
+        r.codigo_dane,
+        r.whatsapp,
+        r.maps_url
+      FROM dishes d
+      LEFT JOIN restaurants r
+        ON r.id = d.restaurante_id
+      WHERE d.disponible IS NULL
+         OR d.disponible = 1
+    `;
 
-// GET /dishes (lista)
-router.get("/", (req, res) => {
-  const sqliteSql = `
-    SELECT
-      d.id,
-      d.restaurante_id,
-      d.nombre,
-      d.descripcion,
-      d.precio,
-      d.categoria,
-      d.imagen_url,
-      d.disponible,
-      r.ciudad
-    FROM dishes d
-    LEFT JOIN restaurants r ON r.id = d.restaurante_id
-    ORDER BY d.id DESC
-  `;
+    const params = [];
 
-  const pgSql = `
-    SELECT
-      d.id,
-      d.restaurante_id,
-      d.nombre,
-      d.descripcion,
-      d.precio,
-      d.categoria,
-      d.imagen_url,
-      d.disponible,
-      r.ciudad
-    FROM dishes d
-    LEFT JOIN restaurants r ON r.id = d.restaurante_id
-    ORDER BY d.id DESC
-  `;
+    if (codigo_dane) {
+      params.push(String(codigo_dane));
+      query += ` AND r.codigo_dane = $${params.length}`;
+    }
 
-  dbAll(sqliteSql, pgSql, [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows || []);
-  });
+    if (municipio) {
+      params.push(`%${municipio}%`);
+      query += ` AND r.municipio ILIKE $${params.length}`;
+    }
+
+    if (categoria) {
+      params.push(`%${categoria}%`);
+      query += ` AND d.categoria ILIKE $${params.length}`;
+    }
+
+    if (q) {
+      params.push(`%${q}%`);
+      query += `
+        AND (
+          d.nombre ILIKE $${params.length}
+          OR d.descripcion ILIKE $${params.length}
+        )
+      `;
+    }
+
+    query += ` ORDER BY d.nombre ASC`;
+
+    const result = await db.query(query, params);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error listando platos:", err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// ✅ GET /dishes/:id (detalle)
-router.get("/:id", (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isFinite(id) || id <= 0) {
-    return res.status(400).json({ error: "id inválido" });
+// GET /dishes/:id
+router.get("/:id", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isFinite(id) || id <= 0) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
+
+    const result = await db.query(
+      `
+      SELECT
+        d.*,
+        r.nombre AS restaurante,
+        r.municipio,
+        r.departamento,
+        r.codigo_dane,
+        r.whatsapp,
+        r.maps_url
+      FROM dishes d
+      LEFT JOIN restaurants r
+        ON r.id = d.restaurante_id
+      WHERE d.id = $1
+      LIMIT 1
+      `,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Plato no encontrado",
+      });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error consultando plato:", err.message);
+    res.status(500).json({ error: err.message });
   }
-
-  const sqliteSql = `
-    SELECT
-      d.id,
-      d.restaurante_id,
-      d.nombre,
-      d.descripcion,
-      d.precio,
-      d.categoria,
-      d.imagen_url,
-      d.disponible,
-      r.ciudad
-    FROM dishes d
-    LEFT JOIN restaurants r ON r.id = d.restaurante_id
-    WHERE d.id = ?
-    LIMIT 1
-  `;
-
-  const pgSql = `
-    SELECT
-      d.id,
-      d.restaurante_id,
-      d.nombre,
-      d.descripcion,
-      d.precio,
-      d.categoria,
-      d.imagen_url,
-      d.disponible,
-      r.ciudad
-    FROM dishes d
-    LEFT JOIN restaurants r ON r.id = d.restaurante_id
-    WHERE d.id = $1
-    LIMIT 1
-  `;
-
-  dbGet(sqliteSql, pgSql, [id], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: "Plato no encontrado" });
-    res.json(row);
-  });
 });
 
 // POST /dishes
-router.post("/", (req, res) => {
-  const {
-    restaurante_id,
-    nombre,
-    descripcion = "",
-    precio,
-    categoria = "",
-    imagen_url = "",
-    disponible = 1,
-  } = req.body || {};
+router.post("/", async (req, res) => {
+  try {
+    const {
+      restaurante_id,
+      nombre,
+      descripcion,
+      precio,
+      categoria,
+      imagen_url,
+      disponible,
+      es_tipico,
+    } = req.body;
 
-  if (!restaurante_id || !nombre || precio === undefined || precio === null) {
-    return res.status(400).json({
-      error: "Faltan campos requeridos: restaurante_id, nombre, precio",
-    });
-  }
+    if (!restaurante_id || !nombre) {
+      return res.status(400).json({
+        error: "restaurante_id y nombre son obligatorios",
+      });
+    }
 
-  const precioNum = Number(precio);
-  if (Number.isNaN(precioNum) || precioNum < 0) {
-    return res.status(400).json({ error: "precio inválido" });
-  }
+    const restaurant = await db.query(
+      `
+      SELECT id
+      FROM restaurants
+      WHERE id = $1
+      LIMIT 1
+      `,
+      [restaurante_id]
+    );
 
-  // 1) Verificar restaurante existe
-  const sqliteCheck = "SELECT id FROM restaurants WHERE id = ?";
-  const pgCheck = "SELECT id FROM restaurants WHERE id = $1";
+    if (restaurant.rows.length === 0) {
+      return res.status(404).json({
+        error: "Restaurante no encontrado",
+      });
+    }
 
-  dbGet(sqliteCheck, pgCheck, [restaurante_id], (err, r) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!r) return res.status(404).json({ error: "Restaurante no existe" });
-
-    // 2) Insertar dish
-    const sqliteInsert = `
-      INSERT INTO dishes
-        (restaurante_id, nombre, descripcion, precio, categoria, imagen_url, disponible)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    // En Postgres devolvemos id con RETURNING
-    const pgInsert = `
-      INSERT INTO dishes
-        (restaurante_id, nombre, descripcion, precio, categoria, imagen_url, disponible)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING id
-    `;
-
-    dbRun(
-      sqliteInsert,
-      pgInsert,
-      [
+    const result = await db.query(
+      `
+      INSERT INTO dishes (
         restaurante_id,
         nombre,
         descripcion,
-        precioNum,
+        precio,
         categoria,
         imagen_url,
-        disponible ? 1 : 0,
-      ],
-      function (err2, result) {
-        if (err2) return res.status(500).json({ error: err2.message });
-
-        const newId = isPostgres ? result?.rows?.[0]?.id : this.lastID;
-        res.status(201).json({ ok: true, id: newId ?? null });
-      }
+        disponible,
+        es_tipico
+      )
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+      RETURNING id
+      `,
+      [
+        restaurante_id,
+        nombre,
+        descripcion || "",
+        precio || 0,
+        categoria || "",
+        imagen_url || "",
+        disponible !== false,
+        es_tipico === true,
+      ]
     );
-  });
+
+    res.status(201).json({
+      ok: true,
+      id: result.rows[0].id,
+    });
+  } catch (err) {
+    console.error("Error creando plato:", err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
