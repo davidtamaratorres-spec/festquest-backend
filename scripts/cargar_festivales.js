@@ -9,11 +9,181 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-const filePath = path.join(__dirname, "..", "data", "festivales_maestro_2026.csv");
+const filePath = path.join(__dirname, "..", "data", "master_alimentacion.csv");
+
+function limpiarTexto(valor) {
+  const texto = String(valor ?? "").trim();
+  return texto === "" ? null : texto;
+}
+
+function limpiarCodigoDane(valor) {
+  const codigo = String(valor ?? "").replace(/\D/g, "");
+  return codigo === "" ? null : Number(codigo);
+}
+
+function limpiarEntero(valor) {
+  const texto = String(valor ?? "").trim();
+  if (!texto) return null;
+
+  let normalizado = texto.replace(/[^\d.,-]/g, "");
+
+  const puntos = (normalizado.match(/\./g) || []).length;
+  const comas = (normalizado.match(/,/g) || []).length;
+
+  if (puntos > 1) {
+    normalizado = normalizado.replace(/\./g, "");
+  } else if (puntos === 1 && comas === 0) {
+    const decimales = normalizado.split(".")[1] || "";
+    if (decimales.length === 3) {
+      normalizado = normalizado.replace(".", "");
+    }
+  }
+
+  normalizado = normalizado.replace(",", ".");
+
+  const numero = Number.parseFloat(normalizado);
+  return Number.isFinite(numero) ? Math.round(numero) : null;
+}
+
+async function upsertMunicipality(row) {
+  const codigoDane = limpiarCodigoDane(row.codigo_dane);
+  const nombre = limpiarTexto(row.municipio);
+  const departamento = limpiarTexto(row.departamento);
+
+  if (!codigoDane || !nombre) {
+    return null;
+  }
+
+  const existing = await pool.query(
+    "SELECT id FROM municipalities WHERE codigo_dane = $1 LIMIT 1",
+    [codigoDane]
+  );
+
+  if (existing.rows.length > 0) {
+    const id = existing.rows[0].id;
+
+    await pool.query(
+      `
+      UPDATE municipalities
+      SET nombre = $1,
+          departamento = $2
+      WHERE id = $3
+      `,
+      [nombre, departamento, id]
+    );
+
+    return id;
+  }
+
+  const byName = await pool.query(
+    `
+    SELECT id
+    FROM municipalities
+    WHERE LOWER(nombre) = LOWER($1)
+    LIMIT 1
+    `,
+    [nombre]
+  );
+
+  if (byName.rows.length > 0) {
+    const id = byName.rows[0].id;
+
+    await pool.query(
+      `
+      UPDATE municipalities
+      SET codigo_dane = $1,
+          nombre = $2,
+          departamento = $3
+      WHERE id = $4
+      `,
+      [codigoDane, nombre, departamento, id]
+    );
+
+    return id;
+  }
+
+  const inserted = await pool.query(
+    `
+    INSERT INTO municipalities (
+      codigo_dane,
+      nombre,
+      departamento
+    )
+    VALUES ($1, $2, $3)
+    RETURNING id
+    `,
+    [codigoDane, nombre, departamento]
+  );
+
+  return inserted.rows[0].id;
+}
+
+async function festivalExists(nombre, municipioId, fechaInicio) {
+  const existing = await pool.query(
+    `
+    SELECT id
+    FROM festivals
+    WHERE nombre = $1
+      AND municipio_id = $2
+      AND fecha_inicio IS NOT DISTINCT FROM $3::date
+    LIMIT 1
+    `,
+    [nombre, municipioId, fechaInicio]
+  );
+
+  return existing.rows.length > 0;
+}
+
+async function insertFestival(row, municipioId) {
+  const nombre = limpiarTexto(row.festival);
+  const fechaInicio = limpiarTexto(row.fecha_inicio);
+  const fechaFin = limpiarTexto(row.fecha_fin);
+  const habitantes = limpiarEntero(row.habitantes);
+  const altura = limpiarEntero(row.altura);
+  const lugarEncuentro = limpiarTexto(row.sitio_1);
+  const mapsLink = limpiarTexto(row.maps_1);
+  const whatsappLink = limpiarTexto(row.wa_1);
+
+  if (await festivalExists(nombre, municipioId, fechaInicio)) {
+    return false;
+  }
+
+  await pool.query(
+    `
+    INSERT INTO festivals (
+      nombre,
+      fecha,
+      fecha_inicio,
+      fecha_fin,
+      municipio_id,
+      habitantes,
+      altura,
+      lugar_encuentro,
+      maps_link,
+      whatsapp_link
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    `,
+    [
+      nombre,
+      fechaInicio,
+      fechaInicio,
+      fechaFin,
+      municipioId,
+      habitantes,
+      altura,
+      lugarEncuentro,
+      mapsLink,
+      whatsappLink,
+    ]
+  );
+
+  return true;
+}
 
 async function run() {
   try {
-    console.log("🚀 Iniciando carga de festivales...");
+    console.log("Iniciando carga de festivales...");
 
     const rows = [];
 
@@ -23,55 +193,57 @@ async function run() {
         rows.push(row);
       })
       .on("end", async () => {
-        console.log(`📊 Filas leídas: ${rows.length}`);
+        console.log(`Filas leidas: ${rows.length}`);
 
-        let inserted = 0;
+        let municipalitiesUpserted = 0;
+        let festivalsInserted = 0;
+        let festivalsSkipped = 0;
+        const processedMunicipalities = new Map();
 
         for (const row of rows) {
-          const codigo = String(row.codigo_dane).padStart(5, "0");
-          const departamento = row.departamento?.trim();
-          const municipio = row.municipio?.trim();
-          const nombre = row.festival?.trim();
-          const fecha_inicio = row.fecha_inicio || null;
-          const fecha_fin = row.fecha_fin || null;
+          const codigoDane = limpiarCodigoDane(row.codigo_dane);
+          const nombreFestival = limpiarTexto(row.festival);
 
-          if (!codigo || !nombre) continue;
-
-          // Buscar municipio
-          const muniRes = await pool.query(
-            "SELECT id FROM municipalities WHERE codigo_dane = $1",
-            [codigo]
-          );
-
-          if (muniRes.rows.length === 0) {
-            console.log(`⚠️ Municipio no encontrado: ${codigo} - ${municipio}`);
+          if (!codigoDane || !nombreFestival) {
+            festivalsSkipped++;
             continue;
           }
 
-          const municipio_id = muniRes.rows[0].id;
+          let municipioId = processedMunicipalities.get(codigoDane);
 
-          // Insertar festival
-          await pool.query(
-            `
-            INSERT INTO festivals (
-              nombre,
-              fecha_inicio,
-              fecha_fin,
-              municipio_id
-            )
-            VALUES ($1, $2, $3, $4)
-            `,
-            [nombre, fecha_inicio, fecha_fin, municipio_id]
-          );
+          if (!municipioId) {
+            municipioId = await upsertMunicipality(row);
 
-          inserted++;
+            if (!municipioId) {
+              festivalsSkipped++;
+              continue;
+            }
+
+            processedMunicipalities.set(codigoDane, municipioId);
+            municipalitiesUpserted++;
+          }
+
+          const inserted = await insertFestival(row, municipioId);
+
+          if (inserted) {
+            festivalsInserted++;
+          } else {
+            festivalsSkipped++;
+          }
         }
 
-        console.log(`✅ Insertados: ${inserted}`);
-        process.exit();
+        console.log("Resumen de carga:");
+        console.log(`Municipios insertados/actualizados: ${municipalitiesUpserted}`);
+        console.log(`Festivales insertados: ${festivalsInserted}`);
+        console.log(`Festivales saltados: ${festivalsSkipped}`);
+        process.exit(0);
+      })
+      .on("error", (error) => {
+        console.error("Error leyendo CSV:", error.message);
+        process.exit(1);
       });
   } catch (error) {
-    console.error("❌ Error:", error.message);
+    console.error("Error:", error.message);
     process.exit(1);
   }
 }

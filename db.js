@@ -11,13 +11,16 @@ const crearTablas = async () => {
     CREATE TABLE IF NOT EXISTS municipalities (
       id SERIAL PRIMARY KEY,
       nombre VARCHAR(255) UNIQUE NOT NULL,
-      departamento VARCHAR(255)
+      departamento VARCHAR(255),
+      codigo_dane INTEGER
     );
 
     CREATE TABLE IF NOT EXISTS festivals (
       id SERIAL PRIMARY KEY,
       nombre VARCHAR(255) NOT NULL,
       fecha VARCHAR(100),
+      fecha_inicio DATE,
+      fecha_fin DATE,
       descripcion TEXT,
       municipio_id INTEGER REFERENCES municipalities(id),
       habitantes INTEGER,
@@ -26,6 +29,24 @@ const crearTablas = async () => {
       maps_link TEXT,
       whatsapp_link TEXT
     );
+
+    ALTER TABLE municipalities
+      ADD COLUMN IF NOT EXISTS nombre VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS departamento VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS codigo_dane INTEGER;
+
+    ALTER TABLE festivals
+      ADD COLUMN IF NOT EXISTS nombre VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS fecha VARCHAR(100),
+      ADD COLUMN IF NOT EXISTS fecha_inicio DATE,
+      ADD COLUMN IF NOT EXISTS fecha_fin DATE,
+      ADD COLUMN IF NOT EXISTS descripcion TEXT,
+      ADD COLUMN IF NOT EXISTS municipio_id INTEGER REFERENCES municipalities(id),
+      ADD COLUMN IF NOT EXISTS habitantes INTEGER,
+      ADD COLUMN IF NOT EXISTS altura INTEGER,
+      ADD COLUMN IF NOT EXISTS lugar_encuentro TEXT,
+      ADD COLUMN IF NOT EXISTS maps_link TEXT,
+      ADD COLUMN IF NOT EXISTS whatsapp_link TEXT;
   `;
   try {
     await pool.query(queryText);
