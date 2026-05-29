@@ -19,8 +19,8 @@ app.get("/api/festivals", async (req, res) => {
         f.id,
         f.nombre,
         f.fecha,
-        f.fecha_inicio AS date_start,
-        f.fecha_fin AS date_end,
+        TO_CHAR(f.fecha_inicio, 'YYYY-MM-DD') AS date_start,
+        TO_CHAR(f.fecha_fin,    'YYYY-MM-DD') AS date_end,
         f.descripcion,
         f.lugar_encuentro,
         f.maps_link,
@@ -86,6 +86,7 @@ app.use("/api/restaurants", require("./routes/restaurants"));
 app.use("/api/dishes", require("./routes/dishes"));
 app.use("/api/promotions", require("./routes/promotions"));
 app.use("/api/analytics", require("./routes/analytics"));
+app.use("/api/partners", require("./routes/partners"));
 
 const PORT = process.env.PORT || 3000;
 

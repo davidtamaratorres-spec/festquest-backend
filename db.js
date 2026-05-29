@@ -56,6 +56,7 @@ const crearTablas = async () => {
       ADD COLUMN IF NOT EXISTS codigo_dane VARCHAR(5),
       ADD COLUMN IF NOT EXISTS departamento VARCHAR(255),
       ADD COLUMN IF NOT EXISTS municipio VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS ciudad VARCHAR(255),
       ADD COLUMN IF NOT EXISTS direccion TEXT,
       ADD COLUMN IF NOT EXISTS maps_url TEXT,
       ADD COLUMN IF NOT EXISTS whatsapp TEXT,
@@ -117,12 +118,76 @@ const crearTablas = async () => {
       created_at TIMESTAMP DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS partner_users (
+      id SERIAL PRIMARY KEY,
+      nombre VARCHAR(255) NOT NULL,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      password VARCHAR(255) NOT NULL,
+      telefono VARCHAR(50),
+      role VARCHAR(50) DEFAULT 'partner',
+      activo BOOLEAN DEFAULT true,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS partner_restaurants (
+      id SERIAL PRIMARY KEY,
+
+      user_id INTEGER REFERENCES partner_users(id) ON DELETE CASCADE,
+
+      nombre VARCHAR(255) NOT NULL,
+      descripcion TEXT,
+
+      ciudad VARCHAR(255),
+      municipio VARCHAR(255),
+      departamento VARCHAR(255),
+      codigo_dane VARCHAR(5),
+
+      direccion TEXT,
+      whatsapp TEXT,
+      telefono TEXT,
+
+      logo_url TEXT,
+      portada_url TEXT,
+
+      categoria VARCHAR(255),
+
+      activo BOOLEAN DEFAULT true,
+      verificado BOOLEAN DEFAULT false,
+
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS partner_dishes (
+      id SERIAL PRIMARY KEY,
+
+      restaurant_id INTEGER REFERENCES partner_restaurants(id) ON DELETE CASCADE,
+      user_id INTEGER REFERENCES partner_users(id) ON DELETE CASCADE,
+
+      nombre VARCHAR(255) NOT NULL,
+      descripcion TEXT,
+      ingredientes TEXT,
+      precio NUMERIC,
+      categoria VARCHAR(255),
+
+      imagen_url TEXT,
+
+      disponible BOOLEAN DEFAULT true,
+      activo BOOLEAN DEFAULT true,
+      verificado BOOLEAN DEFAULT false,
+
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+
     CREATE INDEX IF NOT EXISTS idx_municipalities_codigo_dane ON municipalities(codigo_dane);
     CREATE INDEX IF NOT EXISTS idx_festivals_codigo_dane ON festivals(codigo_dane);
     CREATE INDEX IF NOT EXISTS idx_restaurants_codigo_dane ON restaurants(codigo_dane);
     CREATE INDEX IF NOT EXISTS idx_demand_codigo_dane ON demand_logs(codigo_dane);
     CREATE INDEX IF NOT EXISTS idx_analytics_restaurant ON analytics_events(restaurant_id);
     CREATE INDEX IF NOT EXISTS idx_analytics_dish ON analytics_events(dish_id);
+
+    CREATE INDEX IF NOT EXISTS idx_partner_restaurants_user ON partner_restaurants(user_id);
+    CREATE INDEX IF NOT EXISTS idx_partner_dishes_user ON partner_dishes(user_id);
+    CREATE INDEX IF NOT EXISTS idx_partner_dishes_restaurant ON partner_dishes(restaurant_id);
   `;
 
   try {
