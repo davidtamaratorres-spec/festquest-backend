@@ -19,7 +19,8 @@ router.get("/", async (req, res) => {
         d.disponible,
         d.es_tipico,
         r.nombre AS restaurante,
-        r.municipio,
+        COALESCE(r.municipio, r.ciudad) AS municipio,
+        r.ciudad,
         r.departamento,
         r.codigo_dane,
         r.whatsapp,
@@ -27,8 +28,7 @@ router.get("/", async (req, res) => {
       FROM dishes d
       LEFT JOIN restaurants r
         ON r.id = d.restaurante_id
-      WHERE d.disponible IS NULL
-         OR d.disponible = 1
+      WHERE (d.disponible IS NULL OR d.disponible = 1)
     `;
 
     const params = [];
@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
 
     if (municipio) {
       params.push(`%${municipio}%`);
-      query += ` AND r.municipio ILIKE $${params.length}`;
+      query += ` AND COALESCE(r.municipio, r.ciudad) ILIKE $${params.length}`;
     }
 
     if (categoria) {
@@ -61,7 +61,6 @@ router.get("/", async (req, res) => {
     query += ` ORDER BY d.nombre ASC`;
 
     const result = await db.query(query, params);
-
     res.json(result.rows);
   } catch (err) {
     console.error("Error listando platos:", err.message);
@@ -83,7 +82,8 @@ router.get("/:id", async (req, res) => {
       SELECT
         d.*,
         r.nombre AS restaurante,
-        r.municipio,
+        COALESCE(r.municipio, r.ciudad) AS municipio,
+        r.ciudad,
         r.departamento,
         r.codigo_dane,
         r.whatsapp,
