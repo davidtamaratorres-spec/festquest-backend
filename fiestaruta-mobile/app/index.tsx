@@ -4,6 +4,7 @@ import {
   FlatList,
   Keyboard,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -16,6 +17,8 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { fetchFestivals, FestivalItem } from "../services/festivals";
+
+const MESES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 
 function fechaSoloDia(fecha?: string | null) {
   if (!fecha) return "";
@@ -71,6 +74,7 @@ export default function Home() {
 
   const [showPickerDesde, setShowPickerDesde] = useState(false);
   const [showPickerHasta, setShowPickerHasta] = useState(false);
+  const [mes, setMes] = useState<number | null>(null);
 
   const [departamentoFocus, setDepartamentoFocus] = useState(false);
   const [municipioFocus, setMunicipioFocus] = useState(false);
@@ -180,11 +184,44 @@ export default function Home() {
       .slice(0, 6);
   }, [municipio, municipioFocus, municipiosDisponibles]);
 
+  const seleccionarMes = async (numMes: number | null) => {
+    setMes(numMes);
+    if (numMes === null) {
+      setFechaDesde("");
+      setFechaHasta("");
+      cargarTodos();
+      return;
+    }
+    const ultimoDia = new Date(2026, numMes, 0).getDate();
+    const mm = String(numMes).padStart(2, "0");
+    const inicio = `2026-${mm}-01`;
+    const fin = `2026-${mm}-${String(ultimoDia).padStart(2, "0")}`;
+    setFechaDesde(inicio);
+    setFechaHasta(fin);
+    setLoading(true);
+    setErrorText("");
+    try {
+      const resp = await fetchFestivals({
+        departamento: limpiarInput(departamento) || undefined,
+        municipio: limpiarInput(municipio) || undefined,
+        fecha_inicio: inicio,
+        fecha_fin: fin,
+      });
+      setItems(Array.isArray(resp) ? resp : []);
+    } catch {
+      setItems([]);
+      setErrorText("No se pudieron cargar los festivales.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const limpiarFiltros = () => {
     setDepartamento("");
     setMunicipio("");
     setFechaDesde("");
     setFechaHasta("");
+    setMes(null);
     setDepartamentoFocus(false);
     setMunicipioFocus(false);
     cargarTodos();
@@ -294,6 +331,29 @@ export default function Home() {
             )}
           </View>
 
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.mesesScroll}
+            keyboardShouldPersistTaps="handled"
+          >
+            {MESES.map((nombre, i) => {
+              const numMes = i + 1;
+              const activo = mes === numMes;
+              return (
+                <Pressable
+                  key={numMes}
+                  style={[styles.mesChip, activo && styles.mesChipActivo]}
+                  onPress={() => seleccionarMes(activo ? null : numMes)}
+                >
+                  <Text style={[styles.mesChipText, activo && styles.mesChipTextActivo]}>
+                    {nombre}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+
           <View style={styles.row}>
             <Pressable
               style={[styles.inputSmall, styles.dateInput]}
@@ -337,6 +397,7 @@ export default function Home() {
                 setShowPickerDesde(false);
                 if (date) {
                   setFechaDesde(formatearFechaLocal(date));
+                  setMes(null);
                 }
               }}
             />
@@ -355,6 +416,7 @@ export default function Home() {
                 setShowPickerHasta(false);
                 if (date) {
                   setFechaHasta(formatearFechaLocal(date));
+                  setMes(null);
                 }
               }}
             />
@@ -379,6 +441,13 @@ export default function Home() {
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContent}
         keyboardShouldPersistTaps="handled"
+        ListHeaderComponent={
+          !loading ? (
+            <Text style={styles.counter}>
+              {items.length} {items.length === 1 ? "festival encontrado" : "festivales encontrados"}
+            </Text>
+          ) : null
+        }
         renderItem={({ item }: any) => (
           <Pressable
             style={styles.card}
@@ -560,5 +629,42 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  mesesScroll: {
+    flexDirection: "row",
+    paddingVertical: 2,
+    gap: 8,
+  },
+
+  mesChip: {
+    paddingHorizontal: 13,
+    paddingVertical: 7,
+    borderRadius: 20,
+    backgroundColor: "#111",
+    borderWidth: 1,
+    borderColor: "#333",
+  },
+
+  mesChipActivo: {
+    backgroundColor: "#FF6A00",
+    borderColor: "#FF6A00",
+  },
+
+  mesChipText: {
+    color: "#777",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+
+  mesChipTextActivo: {
+    color: "white",
+  },
+
+  counter: {
+    color: "#555",
+    fontSize: 12,
+    fontWeight: "600",
+    marginBottom: 10,
   },
 });
