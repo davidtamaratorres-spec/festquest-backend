@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, ActivityIndicator, Pressable, ScrollView } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
+import { BASE_URL } from "../../services/backendApi";
 
 type Municipio = {
   id: number;
@@ -33,12 +34,7 @@ export default function MunicipioDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
-  // ✅ IMPORTANTE: en celular NO uses localhost
-  // Tu PC (según tu ipconfig) es:
-  // 192.168.1.6
-  const BASE_URL = "http://192.168.1.6:3002";
-
-  const url = useMemo(() => `${BASE_URL}/api/v1/municipalities/${id}`, [id]);
+  const url = useMemo(() => `${BASE_URL}/municipalities/${id}`, [id]);
 
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
@@ -55,7 +51,7 @@ export default function MunicipioDetail() {
         return j;
       })
       .then((j) => {
-        setData(j?.data ?? null);
+        setData(j ?? null);
       })
       .catch((e: any) => {
         setErr(e?.message || "Error cargando municipio");
@@ -86,9 +82,6 @@ export default function MunicipioDetail() {
           <Text style={styles.btnText}>Reintentar</Text>
         </Pressable>
 
-        <Text style={styles.hint}>
-          Nota: si estás en Expo Go, el backend debe estar corriendo en tu PC y ambos en la misma WiFi.
-        </Text>
       </View>
     );
   }

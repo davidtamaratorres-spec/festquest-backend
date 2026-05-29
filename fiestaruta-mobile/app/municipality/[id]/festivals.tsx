@@ -10,6 +10,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { fetchFestivalsByMunicipalityId } from "../../../services/festivalsByMunicipalityId";
+import { BASE_URL } from "../../../services/backendApi";
 
 type Festival = {
   id: number;
@@ -25,7 +26,6 @@ type Festival = {
 export default function MunicipalityFestivals() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const BASE_URL = "http://192.168.1.6:3002";
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
