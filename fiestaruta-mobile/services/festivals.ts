@@ -1,4 +1,4 @@
-const BASE_URL = "https://festquest-backend.onrender.com/api";
+import { BASE_URL } from "./backendApi";
 
 export type FestivalItem = {
   id: number;
