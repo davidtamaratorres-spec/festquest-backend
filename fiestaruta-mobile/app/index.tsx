@@ -12,9 +12,6 @@ import {
   StatusBar,
   Platform,
 } from "react-native";
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { fetchFestivals, FestivalItem } from "../services/festivals";
 
@@ -46,17 +43,6 @@ function limpiarInput(texto?: string | null) {
     .trim();
 }
 
-function formatearFechaLocal(date: Date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
-function esFechaValida(fecha?: string | null) {
-  if (!fecha) return false;
-  return /^\d{4}-\d{2}-\d{2}$/.test(fechaSoloDia(fecha));
-}
 
 export default function Home() {
   const router = useRouter();
@@ -69,11 +55,6 @@ export default function Home() {
   const [departamento, setDepartamento] = useState("");
   const [municipio, setMunicipio] = useState("");
 
-  const [fechaDesde, setFechaDesde] = useState("");
-  const [fechaHasta, setFechaHasta] = useState("");
-
-  const [showPickerDesde, setShowPickerDesde] = useState(false);
-  const [showPickerHasta, setShowPickerHasta] = useState(false);
   const [mes, setMes] = useState<number | null>(null);
 
   const [departamentoFocus, setDepartamentoFocus] = useState(false);
@@ -106,26 +87,15 @@ export default function Home() {
     try {
       const depLimpio = limpiarInput(departamento);
       const munLimpio = limpiarInput(municipio);
-      const desde = esFechaValida(fechaDesde) ? fechaDesde : undefined;
-      const hasta = esFechaValida(fechaHasta) ? fechaHasta : undefined;
 
       setDepartamento(depLimpio);
       setMunicipio(munLimpio);
       setDepartamentoFocus(false);
       setMunicipioFocus(false);
 
-      console.log("FILTROS:", {
-        departamento: depLimpio,
-        municipio: munLimpio,
-        fecha_inicio: desde,
-        fecha_fin: hasta,
-      });
-
       const resp = await fetchFestivals({
         departamento: depLimpio || undefined,
         municipio: munLimpio || undefined,
-        fecha_inicio: desde,
-        fecha_fin: hasta,
       });
 
       setItems(Array.isArray(resp) ? resp : []);
@@ -187,8 +157,6 @@ export default function Home() {
   const seleccionarMes = async (numMes: number | null) => {
     setMes(numMes);
     if (numMes === null) {
-      setFechaDesde("");
-      setFechaHasta("");
       cargarTodos();
       return;
     }
@@ -196,8 +164,6 @@ export default function Home() {
     const mm = String(numMes).padStart(2, "0");
     const inicio = `2026-${mm}-01`;
     const fin = `2026-${mm}-${String(ultimoDia).padStart(2, "0")}`;
-    setFechaDesde(inicio);
-    setFechaHasta(fin);
     setLoading(true);
     setErrorText("");
     try {
@@ -219,8 +185,6 @@ export default function Home() {
   const limpiarFiltros = () => {
     setDepartamento("");
     setMunicipio("");
-    setFechaDesde("");
-    setFechaHasta("");
     setMes(null);
     setDepartamentoFocus(false);
     setMunicipioFocus(false);
@@ -245,7 +209,7 @@ export default function Home() {
       <StatusBar barStyle="light-content" />
 
       <View style={styles.fixedHeader}>
-        <Text style={styles.brandTitle}>FiestaRuta</Text>
+        <Text style={styles.brandTitle}>FestQuest</Text>
         <Text style={styles.mainTitle}>Festividades</Text>
 
         <View style={styles.filterBox}>
@@ -353,74 +317,6 @@ export default function Home() {
               );
             })}
           </ScrollView>
-
-          <View style={styles.row}>
-            <Pressable
-              style={[styles.inputSmall, styles.dateInput]}
-              onPress={() => {
-                Keyboard.dismiss();
-                setDepartamentoFocus(false);
-                setMunicipioFocus(false);
-                setShowPickerDesde(true);
-              }}
-            >
-              <Text style={{ color: fechaDesde ? "white" : "#999" }}>
-                {fechaDesde || "Fecha desde"}
-              </Text>
-            </Pressable>
-
-            <Pressable
-              style={[styles.inputSmall, styles.dateInput]}
-              onPress={() => {
-                Keyboard.dismiss();
-                setDepartamentoFocus(false);
-                setMunicipioFocus(false);
-                setShowPickerHasta(true);
-              }}
-            >
-              <Text style={{ color: fechaHasta ? "white" : "#999" }}>
-                {fechaHasta || "Fecha hasta"}
-              </Text>
-            </Pressable>
-          </View>
-
-          {showPickerDesde && (
-            <DateTimePicker
-              value={
-                esFechaValida(fechaDesde)
-                  ? new Date(`${fechaDesde}T00:00:00`)
-                  : new Date()
-              }
-              mode="date"
-              display="default"
-              onChange={(event: DateTimePickerEvent, date?: Date) => {
-                setShowPickerDesde(false);
-                if (date) {
-                  setFechaDesde(formatearFechaLocal(date));
-                  setMes(null);
-                }
-              }}
-            />
-          )}
-
-          {showPickerHasta && (
-            <DateTimePicker
-              value={
-                esFechaValida(fechaHasta)
-                  ? new Date(`${fechaHasta}T00:00:00`)
-                  : new Date()
-              }
-              mode="date"
-              display="default"
-              onChange={(event: DateTimePickerEvent, date?: Date) => {
-                setShowPickerHasta(false);
-                if (date) {
-                  setFechaHasta(formatearFechaLocal(date));
-                  setMes(null);
-                }
-              }}
-            />
-          )}
 
           <View style={styles.row}>
             <Pressable style={styles.btnSearch} onPress={buscarConFiltros}>
@@ -538,9 +434,6 @@ const styles = StyleSheet.create({
     borderColor: "#333",
   },
 
-  dateInput: {
-    flex: 1,
-  },
 
   suggestionsBox: {
     backgroundColor: "#111",
