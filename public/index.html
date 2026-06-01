@@ -4,14 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FestQuest | Explora festivales de Colombia</title>
-  <meta
-    name="description"
-    content="FestQuest te ayuda a descubrir festivales, municipios, cultura, turismo y experiencias auténticas en Colombia."
-  />
+  <meta name="description" content="FestQuest te ayuda a descubrir festivales, municipios, cultura, turismo y experiencias auténticas en Colombia." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
+    [hidden] { display: none !important; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'DM Sans', Arial, Helvetica, sans-serif;
@@ -54,11 +52,7 @@
       letter-spacing: 1px;
       text-transform: uppercase;
     }
-    .nav {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+    .nav { display: flex; gap: 12px; flex-wrap: wrap; }
     .nav a, .btn {
       text-decoration: none;
       padding: 12px 18px;
@@ -83,7 +77,7 @@
     }
     .btn-secondary:hover { transform: translateY(-1px); }
 
-    /* HERO */
+    /* ── HERO ── */
     .hero {
       position: relative;
       min-height: 88vh;
@@ -107,12 +101,7 @@
     .hero-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        160deg,
-        rgba(12,10,5,0.72) 0%,
-        rgba(120,40,5,0.55) 50%,
-        rgba(12,10,5,0.80) 100%
-      );
+      background: linear-gradient(160deg, rgba(12,10,5,0.72) 0%, rgba(120,40,5,0.55) 50%, rgba(12,10,5,0.80) 100%);
     }
     .hero-content {
       position: relative;
@@ -136,10 +125,7 @@
       margin-bottom: 24px;
       animation: fadeUp 0.6s ease both;
     }
-    .hero-eyebrow::before {
-      content: '🎉';
-      font-size: 15px;
-    }
+    .hero-eyebrow::before { content: '🎉'; font-size: 15px; }
     .hero h1 {
       font-family: 'Syne', sans-serif;
       font-size: clamp(38px, 6vw, 72px);
@@ -150,10 +136,7 @@
       margin-bottom: 20px;
       animation: fadeUp 0.6s 0.1s ease both;
     }
-    .hero h1 em {
-      font-style: normal;
-      color: #fb923c;
-    }
+    .hero h1 em { font-style: normal; color: #fb923c; }
     .hero-sub {
       font-size: 19px;
       color: #e5d5c5;
@@ -162,8 +145,6 @@
       font-weight: 400;
       animation: fadeUp 0.6s 0.2s ease both;
     }
-
-    /* Search bar */
     .hero-search {
       display: flex;
       align-items: center;
@@ -205,8 +186,6 @@
     }
     .search-btn:hover { background: #c2410c; transform: scale(1.02); }
     .search-btn svg { flex-shrink: 0; }
-
-    /* App-style CTA buttons */
     .hero-btns {
       display: flex;
       gap: 12px;
@@ -241,11 +220,7 @@
       backdrop-filter: blur(8px);
     }
     .app-btn-mail:hover { background: rgba(255,255,255,0.22); }
-    .app-btn-icon {
-      width: 22px;
-      height: 22px;
-      flex-shrink: 0;
-    }
+    .app-btn-icon { width: 22px; height: 22px; flex-shrink: 0; }
     .hero-launch-note {
       margin-top: 20px;
       font-size: 13px;
@@ -253,32 +228,16 @@
       font-weight: 500;
       animation: fadeUp 0.6s 0.5s ease both;
     }
-
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(22px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* REST (unchanged) */
-    section {
-      padding: 26px 0 40px;
-    }
-    .section-title {
-      font-size: 34px;
-      margin-bottom: 12px;
-      color: #111827;
-    }
-    .section-subtitle {
-      color: #6b7280;
-      margin-bottom: 24px;
-      max-width: 820px;
-      font-size: 17px;
-    }
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
+    /* ── GENERAL SECTIONS ── */
+    section { padding: 26px 0 40px; }
+    .section-title { font-size: 34px; margin-bottom: 12px; color: #111827; }
+    .section-subtitle { color: #6b7280; margin-bottom: 24px; max-width: 820px; font-size: 17px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
     .card {
       background: rgba(255,255,255,0.92);
       border: 1px solid rgba(0,0,0,0.06);
@@ -286,21 +245,9 @@
       padding: 24px;
       box-shadow: 0 14px 35px rgba(0,0,0,0.06);
     }
-    .card h3 {
-      font-size: 22px;
-      margin-bottom: 10px;
-      color: #111827;
-    }
-    .card p {
-      color: #6b7280;
-      font-size: 16px;
-    }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-top: 12px;
-    }
+    .card h3 { font-size: 22px; margin-bottom: 10px; color: #111827; }
+    .card p { color: #6b7280; font-size: 16px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 12px; }
     .stat {
       background: #fff;
       border-radius: 18px;
@@ -309,39 +256,20 @@
       text-align: center;
       box-shadow: 0 10px 24px rgba(0,0,0,0.05);
     }
-    .stat strong {
-      display: block;
-      font-size: 32px;
-      color: #c2410c;
-      margin-bottom: 8px;
-    }
-    .stat span {
-      color: #6b7280;
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .catalog {
-      background: #0f172a;
-      color: #f8fafc;
-      padding: 64px 0 72px;
-    }
+    .stat strong { display: block; font-size: 32px; color: #c2410c; margin-bottom: 8px; }
+    .stat span { color: #6b7280; font-weight: 700; font-size: 14px; }
+
+    /* ── CATALOG ── */
+    .catalog { background: #0f172a; color: #f8fafc; padding: 64px 0 72px; }
     .catalog-head {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       gap: 24px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
-    .catalog h2 {
-      color: #fff;
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-    .catalog-subtitle {
-      color: #cbd5e1;
-      max-width: 720px;
-      font-size: 17px;
-    }
+    .catalog h2 { color: #fff; font-size: 36px; margin-bottom: 10px; }
+    .catalog-subtitle { color: #cbd5e1; max-width: 720px; font-size: 17px; }
     .catalog-counter {
       min-width: 190px;
       border: 1px solid rgba(251,146,60,0.32);
@@ -350,44 +278,105 @@
       padding: 16px 18px;
       text-align: center;
     }
-    .catalog-counter strong {
-      display: block;
-      font-size: 34px;
-      color: #fb923c;
-      line-height: 1;
-      margin-bottom: 6px;
+    .catalog-counter strong { display: block; font-size: 34px; color: #fb923c; line-height: 1; margin-bottom: 6px; }
+    .catalog-counter span { color: #fed7aa; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+
+    /* ── FILTERS ── */
+    .catalog-filters {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
     }
-    .catalog-counter span {
-      color: #fed7aa;
-      font-size: 13px;
+    .filter-select {
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(148,163,184,0.22);
+      border-radius: 10px;
+      color: #e2e8f0;
+      padding: 9px 14px;
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      outline: none;
+      min-width: 210px;
+    }
+    .filter-select:focus { border-color: #fb923c; }
+    .filter-select option { background: #1e293b; }
+    .mes-chips { display: flex; gap: 5px; flex-wrap: wrap; flex: 1; }
+    .mes-chip {
+      padding: 7px 11px;
+      border-radius: 20px;
+      border: 1px solid rgba(148,163,184,0.18);
+      background: transparent;
+      color: #64748b;
+      font-size: 12px;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
     }
+    .mes-chip:hover { border-color: #fb923c; color: #fb923c; }
+    .mes-chip.active { background: #fb923c; border-color: #fb923c; color: #fff; }
+    .filter-clear {
+      background: transparent;
+      border: 1px solid rgba(148,163,184,0.18);
+      color: #64748b;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .filter-clear:hover { border-color: #ef4444; color: #ef4444; }
+
     .catalog-status {
-      color: #fed7aa;
+      color: #64748b;
       margin-bottom: 18px;
+      font-size: 13px;
       font-weight: 600;
+      min-height: 20px;
     }
-    .festival-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
+
+    /* ── FESTIVAL CARDS ── */
+    .festival-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
     .festival-card {
       display: flex;
       flex-direction: column;
-      min-height: 100%;
       background: linear-gradient(180deg, rgba(30,41,59,0.96), rgba(15,23,42,0.98));
       border: 1px solid rgba(148,163,184,0.22);
       border-radius: 20px;
       padding: 22px;
       box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .festival-card:hover {
+      border-color: rgba(251,146,60,0.45);
+      transform: translateY(-3px);
+      box-shadow: 0 28px 56px rgba(0,0,0,0.34);
+    }
+    .festival-card:focus-visible { outline: 2px solid #fb923c; outline-offset: 2px; }
+    .festival-past-badge {
+      align-self: flex-start;
+      background: rgba(100,116,139,0.2);
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
     }
     .festival-date {
       align-self: flex-start;
-      display: inline-flex;
-      align-items: center;
       border-radius: 999px;
       padding: 7px 12px;
       margin-bottom: 16px;
@@ -395,74 +384,128 @@
       color: #fed7aa;
       font-size: 13px;
       font-weight: 800;
-      letter-spacing: 0.3px;
     }
-    .festival-card h3 {
-      color: #fff;
-      font-size: 23px;
-      line-height: 1.15;
-      margin-bottom: 12px;
-    }
-    .festival-place {
-      color: #cbd5e1;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-    .festival-meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-    .festival-meta span {
-      border: 1px solid rgba(148,163,184,0.24);
-      border-radius: 999px;
-      padding: 7px 10px;
-      color: #e2e8f0;
-      font-size: 13px;
-      background: rgba(15,23,42,0.45);
-    }
+    .festival-card h3 { color: #fff; font-size: 21px; line-height: 1.2; margin-bottom: 10px; }
+    .festival-place { color: #94a3b8; font-weight: 600; font-size: 14px; margin-bottom: 14px; }
     .festival-description {
       color: #cbd5e1;
-      font-size: 15px;
-      margin-bottom: 16px;
+      font-size: 14px;
+      line-height: 1.65;
+      margin-bottom: 14px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
     }
-    .festival-empty {
-      color: #94a3b8;
-      font-size: 15px;
-      margin-bottom: 16px;
-    }
-    .festival-actions {
+    .festival-empty { color: #475569; font-size: 14px; margin-bottom: 14px; flex: 1; }
+    .festival-hint { margin-top: auto; padding-top: 10px; font-size: 12px; color: #334155; font-weight: 600; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.80);
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: auto;
-      padding-top: 6px;
-    }
-    .festival-action {
-      display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 42px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      text-decoration: none;
+      z-index: 200;
+      padding: 16px;
+      backdrop-filter: blur(6px);
+      animation: fadeIn 0.15s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-box {
+      background: #1e293b;
+      border: 1px solid rgba(148,163,184,0.2);
+      border-radius: 24px;
+      padding: 36px;
+      max-width: 620px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      animation: slideUp 0.2s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(18px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #94a3b8;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .modal-past-badge {
+      display: inline-flex;
+      background: rgba(100,116,139,0.2);
+      color: #64748b;
+      font-size: 10px;
       font-weight: 800;
-      font-size: 14px;
-      transition: transform .18s ease, background .18s ease;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
     }
-    .festival-action:hover { transform: translateY(-1px); }
-    .festival-action-map {
+    .modal-date-badge {
+      display: inline-flex;
+      background: rgba(251,146,60,0.16);
+      color: #fed7aa;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 7px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    .modal-title {
       color: #fff;
-      background: #ea580c;
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      padding-right: 32px;
     }
-    .festival-action-whatsapp {
-      color: #fff;
-      background: #16a34a;
+    .modal-location { color: #94a3b8; font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .modal-lugar { color: #cbd5e1; font-size: 14px; margin-bottom: 4px; }
+    .modal-divider { border: none; border-top: 1px solid rgba(148,163,184,0.1); margin: 20px 0; }
+    .modal-label { color: #fb923c; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+    .modal-description { color: #cbd5e1; font-size: 15px; line-height: 1.7; }
+    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .modal-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: none;
+      transition: transform 0.15s, opacity 0.15s;
+      border: none;
+      cursor: pointer;
     }
-    .cta {
-      padding: 40px 0 80px;
-    }
+    .modal-btn:hover { transform: translateY(-1px); opacity: 0.9; }
+    .modal-btn-map { background: #ea580c; color: #fff; }
+    .modal-btn-whatsapp { background: #16a34a; color: #fff; }
+
+    /* ── CTA ── */
+    .cta { padding: 40px 0 80px; }
     .cta-box {
       background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
       color: white;
@@ -470,27 +513,11 @@
       padding: 38px;
       box-shadow: 0 20px 52px rgba(0,0,0,0.18);
     }
-    .cta-box h2 {
-      font-size: 36px;
-      margin-bottom: 14px;
-    }
-    .cta-box p {
-      color: #d1d5db;
-      font-size: 17px;
-      margin-bottom: 22px;
-      max-width: 780px;
-    }
-    .hero-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 22px;
-    }
-    footer {
-      padding: 26px 0 40px;
-      color: #6b7280;
-      font-size: 14px;
-    }
+    .cta-box h2 { font-size: 36px; margin-bottom: 14px; }
+    .cta-box p { color: #d1d5db; font-size: 17px; margin-bottom: 22px; max-width: 780px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+
+    footer { padding: 26px 0 40px; color: #6b7280; font-size: 14px; }
     .footer-row {
       display: flex;
       justify-content: space-between;
@@ -499,10 +526,9 @@
       border-top: 1px solid rgba(0,0,0,0.08);
       padding-top: 20px;
     }
+
     @media (max-width: 980px) {
-      .grid-3, .stats, .festival-grid {
-        grid-template-columns: 1fr;
-      }
+      .grid-3, .stats, .festival-grid { grid-template-columns: 1fr; }
       .catalog-head { align-items: stretch; flex-direction: column; }
       .catalog-counter { text-align: left; }
       .header-row { align-items: flex-start; flex-direction: column; }
@@ -513,10 +539,15 @@
       .search-btn { width: 100%; justify-content: center; }
       .section-title { font-size: 28px; }
       .cta-box h2 { font-size: 30px; }
+      .modal-box { padding: 24px 18px; border-radius: 20px; }
+      .modal-title { font-size: 22px; }
+      .catalog-filters { gap: 8px; }
+      .filter-select { min-width: 100%; }
     }
   </style>
 </head>
 <body>
+
   <header>
     <div class="container header-row">
       <div class="brand">
@@ -545,49 +576,38 @@
 
           <div class="hero-search">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="text" placeholder="Buscar festivales, destinos, municipios…" />
-            <button class="search-btn">
+            <input type="text" id="hero-search-input" placeholder="Buscar festivales, destinos, municipios…" aria-label="Buscar festivales" />
+            <button class="search-btn" id="hero-search-btn">
               <svg class="app-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               Buscar
             </button>
           </div>
 
           <div class="hero-btns">
-            <a
-              class="app-btn app-btn-whatsapp"
-              href="https://wa.me/573153905194?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20FestQuest"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <svg class="app-btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
-              </svg>
+            <a class="app-btn app-btn-whatsapp" href="https://wa.me/573153905194?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20FestQuest" target="_blank" rel="noopener noreferrer">
+              <svg class="app-btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
               Solicitar por WhatsApp
             </a>
-            <a
-              class="app-btn app-btn-mail"
-              href="mailto:gerencia@festquest.app?subject=Informaci%C3%B3n%20FestQuest&body=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20plataforma%20FestQuest."
-            >
-              <svg class="app-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-              </svg>
+            <a class="app-btn app-btn-mail" href="mailto:gerencia@festquest.app?subject=Informaci%C3%B3n%20FestQuest&body=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20plataforma%20FestQuest.">
+              <svg class="app-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
               Contacto por correo
             </a>
           </div>
 
-          <p class="hero-launch-note">Plataforma en desarrollo · Lanzamiento estimado: finales del segundo trimestre de 2026 · festquest.app</p>
+          <p class="hero-launch-note">Plataforma activa · festquest.app · gerencia@festquest.app</p>
         </div>
       </div>
     </section>
-    <!-- /HERO -->
 
+    <!-- CATÁLOGO -->
     <section id="catalogo" class="catalog">
       <div class="container">
         <div class="catalog-head">
           <div>
             <h2>Festivales disponibles</h2>
             <p class="catalog-subtitle">
-              Explora el cat&aacute;logo activo de festivales cargados en FestQuest, ordenado por fecha para planear mejor cada experiencia.
+              Explora el catálogo activo de festivales en Colombia, ordenado del más próximo al más lejano.
+              Usa los filtros o el buscador para encontrar tu destino. Haz clic en cualquier festival para ver el detalle.
             </p>
           </div>
           <div class="catalog-counter" aria-live="polite">
@@ -595,6 +615,28 @@
             <span>festivales cargados</span>
           </div>
         </div>
+
+        <div class="catalog-filters">
+          <select id="filter-departamento" class="filter-select" aria-label="Filtrar por departamento">
+            <option value="">Todos los departamentos</option>
+          </select>
+          <div class="mes-chips" id="mes-chips" role="group" aria-label="Filtrar por mes">
+            <button class="mes-chip" data-mes="1">Ene</button>
+            <button class="mes-chip" data-mes="2">Feb</button>
+            <button class="mes-chip" data-mes="3">Mar</button>
+            <button class="mes-chip" data-mes="4">Abr</button>
+            <button class="mes-chip" data-mes="5">May</button>
+            <button class="mes-chip" data-mes="6">Jun</button>
+            <button class="mes-chip" data-mes="7">Jul</button>
+            <button class="mes-chip" data-mes="8">Ago</button>
+            <button class="mes-chip" data-mes="9">Sep</button>
+            <button class="mes-chip" data-mes="10">Oct</button>
+            <button class="mes-chip" data-mes="11">Nov</button>
+            <button class="mes-chip" data-mes="12">Dic</button>
+          </div>
+          <button class="filter-clear" id="clear-filters">Limpiar filtros</button>
+        </div>
+
         <p id="festival-status" class="catalog-status">Cargando festivales...</p>
         <div id="festival-grid" class="festival-grid"></div>
       </div>
@@ -607,25 +649,18 @@
           Organizamos información territorial y cultural para facilitar la exploración de festividades,
           municipios y experiencias locales con una lógica más útil para usuarios, aliados y futuras integraciones.
         </p>
-
         <div class="grid-3">
           <div class="card">
             <h3>Explora festivales</h3>
-            <p>
-              Consulta celebraciones y eventos por municipio, departamento y fechas, con una estructura pensada para crecer.
-            </p>
+            <p>Consulta celebraciones y eventos por municipio, departamento y fechas, con una estructura pensada para crecer.</p>
           </div>
           <div class="card">
             <h3>Descubre destinos</h3>
-            <p>
-              Conecta cada festival con el territorio: sitios turísticos, datos locales y valor cultural.
-            </p>
+            <p>Conecta cada festival con el territorio: sitios turísticos, datos locales y valor cultural.</p>
           </div>
           <div class="card">
             <h3>Planea mejor</h3>
-            <p>
-              Usa información organizada para tomar decisiones sobre viajes, turismo, promoción y experiencias.
-            </p>
+            <p>Usa información organizada para tomar decisiones sobre viajes, turismo, promoción y experiencias.</p>
           </div>
         </div>
       </div>
@@ -638,24 +673,11 @@
           FestQuest no es solo un listado de fiestas. Es una base digital estructurada para visibilizar
           cultura, turismo y oportunidades regionales.
         </p>
-
         <div class="stats">
-          <div class="stat">
-            <strong>1.100+</strong>
-            <span>municipios objetivo</span>
-          </div>
-          <div class="stat">
-            <strong>32</strong>
-            <span>departamentos</span>
-          </div>
-          <div class="stat">
-            <strong>Web</strong>
-            <span>dominio oficial activo</span>
-          </div>
-          <div class="stat">
-            <strong>Escalable</strong>
-            <span>modelo listo para crecer</span>
-          </div>
+          <div class="stat"><strong>1.100+</strong><span>municipios objetivo</span></div>
+          <div class="stat"><strong>32</strong><span>departamentos</span></div>
+          <div class="stat"><strong>Web</strong><span>dominio oficial activo</span></div>
+          <div class="stat"><strong>Escalable</strong><span>modelo listo para crecer</span></div>
         </div>
       </div>
     </section>
@@ -663,33 +685,23 @@
     <section class="cta">
       <div class="container">
         <div class="cta-box">
-          <h2>FestQuest está en construcción activa</h2>
+          <h2>Explora Colombia, festival a festival</h2>
           <p>
-            El dominio y la infraestructura base ya están operativos. El siguiente paso es consolidar
-            la experiencia pública, los datos enriquecidos y la interfaz de consulta para usuarios y aliados.
+            FestQuest ya está disponible con información actualizada de festividades en todo el territorio colombiano.
+            Usa el catálogo, los filtros y el buscador para descubrir destinos únicos y planear tus próximas experiencias culturales.
           </p>
           <div class="hero-actions">
-
-  <a
-    class="btn btn-primary"
-    href="https://wa.me/573153905194?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20FestQuest"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    Escribir por WhatsApp
-  </a>
-
-  <a
-    class="btn btn-secondary"
-    href="mailto:gerencia@festquest.app?subject=Informaci%C3%B3n%20FestQuest&body=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20FestQuest."
-  >
-    Escribir por correo
-  </a>
-
-</div>
+            <a class="btn btn-primary" href="https://wa.me/573153905194?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20FestQuest" target="_blank" rel="noopener noreferrer">
+              Escribir por WhatsApp
+            </a>
+            <a class="btn btn-secondary" href="mailto:gerencia@festquest.app?subject=Informaci%C3%B3n%20FestQuest&body=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20FestQuest.">
+              Escribir por correo
+            </a>
+          </div>
         </div>
       </div>
     </section>
+
   </main>
 
   <footer>
@@ -699,158 +711,278 @@
     </div>
   </footer>
 
+  <!-- MODAL DETALLE -->
+  <div id="festival-modal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title-el">
+    <div class="modal-box">
+      <button class="modal-close" aria-label="Cerrar">×</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
   <script>
-const festivalGrid = document.getElementById('festival-grid');
-const festivalCount = document.getElementById('festival-count');
-const festivalStatus = document.getElementById('festival-status');
-const searchInput = document.querySelector('.hero-search input');
-const searchButton = document.querySelector('.search-btn');
-let allFestivals = [];
+  // ── STATE ──────────────────────────────────────────────────────────────
+  let allFestivals = [];
+  let activeMes    = null;
+  const festivalsById = new Map();
 
-function escapeHtml(value) {
-  return String(value ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
-}
+  // ── ELEMENTS ───────────────────────────────────────────────────────────
+  const festivalGrid   = document.getElementById('festival-grid');
+  const festivalCount  = document.getElementById('festival-count');
+  const festivalStatus = document.getElementById('festival-status');
+  const deptSelect     = document.getElementById('filter-departamento');
+  const clearBtn       = document.getElementById('clear-filters');
+  const modal          = document.getElementById('festival-modal');
+  const modalContent   = document.getElementById('modal-content');
+  const modalClose     = modal.querySelector('.modal-close');
+  const searchInput    = document.getElementById('hero-search-input');
+  const searchBtn      = document.getElementById('hero-search-btn');
 
-function hasValue(value) {
-  return value !== null && value !== undefined && String(value).trim() !== '';
-}
+  // ── HELPERS ────────────────────────────────────────────────────────────
+  function escapeHtml(v) {
+    return String(v ?? '')
+      .replaceAll('&', '&amp;').replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+  }
 
-function formatDate(start, end) {
-  if (!hasValue(start)) return 'Fecha por confirmar';
+  function hasValue(v) {
+    return v !== null && v !== undefined && String(v).trim() !== '';
+  }
 
-  const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-  const startDate = new Date(start);
+  function formatDate(start, end) {
+    if (!hasValue(start)) return 'Fecha por confirmar';
+    const opts = { day: 'numeric', month: 'short', year: 'numeric' };
+    const s = new Date(start);
+    if (isNaN(s.getTime())) return escapeHtml(start);
+    const fs = s.toLocaleDateString('es-CO', opts);
+    if (!hasValue(end)) return fs;
+    const e = new Date(end);
+    if (isNaN(e.getTime())) return fs;
+    const fe = e.toLocaleDateString('es-CO', opts);
+    return fs === fe ? fs : `${fs} – ${fe}`;
+  }
 
-  if (Number.isNaN(startDate.getTime())) return escapeHtml(start);
+  function safeUrl(raw) {
+    if (!raw) return null;
+    const u = raw.trim();
+    return /^https?:\/\//i.test(u) ? u : 'https://' + u;
+  }
 
-  const formattedStart = startDate.toLocaleDateString('es-CO', dateOptions);
+  // ── SORT: próximos ASC → pasados DESC → sin fecha ──────────────────────
+  function sortFestivals(list) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const upcoming = [], past = [], noDate = [];
 
-  if (!hasValue(end)) return formattedStart;
+    for (const f of list) {
+      if (!hasValue(f.date_start)) { noDate.push(f); continue; }
+      const start = new Date(f.date_start);
+      if (isNaN(start.getTime())) { noDate.push(f); continue; }
+      const end = hasValue(f.date_end) ? new Date(f.date_end) : start;
+      (end < today ? past : upcoming).push(f);
+    }
 
-  const endDate = new Date(end);
-  if (Number.isNaN(endDate.getTime())) return formattedStart;
+    upcoming.sort((a, b) => new Date(a.date_start) - new Date(b.date_start));
+    // most recently passed first
+    past.sort((a, b) => new Date(b.date_end || b.date_start) - new Date(a.date_end || a.date_start));
+    return [...upcoming, ...past, ...noDate];
+  }
 
-  const formattedEnd = endDate.toLocaleDateString('es-CO', dateOptions);
-  return formattedStart === formattedEnd ? formattedStart : `${formattedStart} - ${formattedEnd}`;
-}
+  function isPast(f) {
+    if (!hasValue(f.date_start)) return false;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const d = hasValue(f.date_end) ? new Date(f.date_end) : new Date(f.date_start);
+    return !isNaN(d.getTime()) && d < today;
+  }
 
-function numberFormat(value) {
-  const number = Number(value);
-  if (!Number.isFinite(number)) return escapeHtml(value);
-  return number.toLocaleString('es-CO');
-}
+  // ── FILTER ─────────────────────────────────────────────────────────────
+  function getFiltered() {
+    const q    = (searchInput?.value || '').trim().toLowerCase();
+    const dept = deptSelect?.value || '';
+    return allFestivals.filter(f => {
+      if (q && ![f.nombre, f.municipio, f.departamento, f.descripcion]
+              .some(v => String(v || '').toLowerCase().includes(q))) return false;
+      if (dept && f.departamento !== dept) return false;
+      if (activeMes !== null) {
+        if (!hasValue(f.date_start)) return false;
+        const d = new Date(f.date_start);
+        if (isNaN(d.getTime()) || d.getMonth() + 1 !== activeMes) return false;
+      }
+      return true;
+    });
+  }
 
-function sortFestivals(festivals) {
-  return [...festivals].sort((a, b) => {
-    const dateA = hasValue(a.date_start) ? new Date(a.date_start).getTime() : Number.MAX_SAFE_INTEGER;
-    const dateB = hasValue(b.date_start) ? new Date(b.date_start).getTime() : Number.MAX_SAFE_INTEGER;
-    return dateA - dateB;
+  // ── BUILD CARD ─────────────────────────────────────────────────────────
+  function buildFestivalCard(f) {
+    const past = isPast(f);
+    const desc = hasValue(f.descripcion)
+      ? `<p class="festival-description">${escapeHtml(f.descripcion)}</p>`
+      : `<p class="festival-empty">Información turística en actualización</p>`;
+    return `
+      <article class="festival-card" data-festival-id="${escapeHtml(String(f.id))}"
+               role="button" tabindex="0" aria-label="${escapeHtml(f.nombre || 'Festival')}">
+        ${past ? '<span class="festival-past-badge">Pasado</span>' : ''}
+        <div class="festival-date">${formatDate(f.date_start, f.date_end)}</div>
+        <h3>${escapeHtml(f.nombre || 'Festival por confirmar')}</h3>
+        <p class="festival-place">📍 ${escapeHtml(f.municipio || '—')} · ${escapeHtml(f.departamento || '—')}</p>
+        ${desc}
+        <p class="festival-hint">Ver detalle →</p>
+      </article>`;
+  }
+
+  // ── RENDER ─────────────────────────────────────────────────────────────
+  function renderFestivals(list) {
+    const ordered = sortFestivals(list);
+    festivalCount.textContent = allFestivals.length;
+    festivalStatus.textContent = ordered.length === allFestivals.length
+      ? `${ordered.length} festivales`
+      : `${ordered.length} de ${allFestivals.length} festivales`;
+
+    if (!ordered.length) {
+      festivalGrid.innerHTML = `
+        <div style="grid-column:1/-1;color:#475569;padding:48px 0;text-align:center;font-size:16px;">
+          No se encontraron festivales con los filtros seleccionados.
+        </div>`;
+      return;
+    }
+    festivalGrid.innerHTML = ordered.map(buildFestivalCard).join('');
+  }
+
+  function filterAndRender() { renderFestivals(getFiltered()); }
+
+  // ── POPULATE DEPARTAMENTOS ──────────────────────────────────────────────
+  function populateDepartamentos() {
+    const depts = [...new Set(allFestivals.map(f => f.departamento).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, 'es'));
+    deptSelect.innerHTML = '<option value="">Todos los departamentos</option>' +
+      depts.map(d => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join('');
+  }
+
+  // ── MODAL ──────────────────────────────────────────────────────────────
+  function openModal(f) {
+    const past = isPast(f);
+    const actions = [];
+
+    const mapUrl = safeUrl(f.maps_link);
+    if (mapUrl) {
+      actions.push(`
+        <a class="modal-btn modal-btn-map" href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener noreferrer">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+          Ver en mapa
+        </a>`);
+    }
+
+    const waUrl = safeUrl(f.whatsapp_link);
+    if (waUrl) {
+      actions.push(`
+        <a class="modal-btn modal-btn-whatsapp" href="${escapeHtml(waUrl)}" target="_blank" rel="noopener noreferrer">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+          WhatsApp
+        </a>`);
+    }
+
+    const lugar = hasValue(f.lugar_encuentro)
+      ? `<p class="modal-lugar">📌 ${escapeHtml(f.lugar_encuentro)}</p>` : '';
+    const desc  = hasValue(f.descripcion)
+      ? `<hr class="modal-divider"><p class="modal-label">Descripción</p>
+         <p class="modal-description">${escapeHtml(f.descripcion)}</p>` : '';
+    const actHtml = actions.length
+      ? `<hr class="modal-divider"><div class="modal-actions">${actions.join('')}</div>` : '';
+
+    modalContent.innerHTML = `
+      ${past ? '<span class="modal-past-badge">Festival pasado</span>' : ''}
+      <div class="modal-date-badge">${formatDate(f.date_start, f.date_end)}</div>
+      <h2 class="modal-title" id="modal-title-el">${escapeHtml(f.nombre || 'Festival')}</h2>
+      <p class="modal-location">📍 ${escapeHtml(f.municipio || '—')} · ${escapeHtml(f.departamento || '—')}</p>
+      ${lugar}${desc}${actHtml}`;
+
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    modalClose.focus();
+  }
+
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  // ── EVENTS ─────────────────────────────────────────────────────────────
+  searchInput?.addEventListener('input', filterAndRender);
+
+  searchBtn?.addEventListener('click', () => {
+    document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
+    filterAndRender();
   });
-}
 
-function buildFestivalCard(festival) {
-  const meta = [];
-
-  if (hasValue(festival.habitantes)) {
-    meta.push(`<span>${numberFormat(festival.habitantes)} habitantes</span>`);
-  }
-
-  if (hasValue(festival.altura)) {
-    meta.push(`<span>${numberFormat(festival.altura)} msnm</span>`);
-  }
-
-  const actions = [];
-
-  if (hasValue(festival.maps_link)) {
-    actions.push(`
-      <a class="festival-action festival-action-map" href="${escapeHtml(festival.maps_link)}" target="_blank" rel="noopener noreferrer">
-        Ver mapa
-      </a>
-    `);
-  }
-
-  if (hasValue(festival.whatsapp_link)) {
-    actions.push(`
-      <a class="festival-action festival-action-whatsapp" href="${escapeHtml(festival.whatsapp_link)}" target="_blank" rel="noopener noreferrer">
-        WhatsApp
-      </a>
-    `);
-  }
-
-  const description = hasValue(festival.descripcion)
-    ? `<p class="festival-description">${escapeHtml(festival.descripcion)}</p>`
-    : `<p class="festival-empty">Informaci&oacute;n tur&iacute;stica en actualizaci&oacute;n</p>`;
-
-  return `
-    <article class="festival-card">
-      <div class="festival-date">${formatDate(festival.date_start, festival.date_end)}</div>
-      <h3>${escapeHtml(festival.nombre || 'Festival por confirmar')}</h3>
-      <p class="festival-place">${escapeHtml(festival.municipio || 'Municipio por confirmar')} &middot; ${escapeHtml(festival.departamento || 'Departamento por confirmar')}</p>
-      ${meta.length ? `<div class="festival-meta">${meta.join('')}</div>` : ''}
-      ${description}
-      ${actions.length ? `<div class="festival-actions">${actions.join('')}</div>` : ''}
-    </article>
-  `;
-}
-
-function renderFestivals(festivals) {
-  const ordered = sortFestivals(festivals);
-  festivalCount.textContent = ordered.length;
-
-  if (ordered.length === 0) {
-    festivalStatus.textContent = 'No hay festivales disponibles para mostrar.';
-    festivalGrid.innerHTML = '';
-    return;
-  }
-
-  festivalStatus.textContent = 'Catalogo actualizado desde /api/festivals.';
-  festivalGrid.innerHTML = ordered.map(buildFestivalCard).join('');
-}
-
-function filterFestivals() {
-  const query = String(searchInput?.value || '').trim().toLowerCase();
-
-  if (!query) {
-    renderFestivals(allFestivals);
-    return;
-  }
-
-  const filtered = allFestivals.filter((festival) => {
-    return [
-      festival.nombre,
-      festival.municipio,
-      festival.departamento,
-      festival.descripcion
-    ].some((value) => String(value || '').toLowerCase().includes(query));
+  searchInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
+      filterAndRender();
+    }
   });
 
-  renderFestivals(filtered);
-}
+  deptSelect?.addEventListener('change', filterAndRender);
 
-if (searchInput) {
-  searchInput.addEventListener('input', filterFestivals);
-}
-
-if (searchButton) {
-  searchButton.addEventListener('click', filterFestivals);
-}
-
-fetch('/api/festivals')
-  .then(res => res.json())
-  .then(data => {
-    allFestivals = Array.isArray(data) ? data : [];
-    renderFestivals(allFestivals);
-  })
-  .catch(() => {
-    festivalStatus.textContent = 'No fue posible cargar los festivales en este momento.';
-    festivalCount.textContent = '0';
+  document.querySelectorAll('.mes-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const mes = parseInt(chip.dataset.mes, 10);
+      if (activeMes === mes) {
+        activeMes = null;
+        chip.classList.remove('active');
+      } else {
+        document.querySelectorAll('.mes-chip').forEach(c => c.classList.remove('active'));
+        activeMes = mes;
+        chip.classList.add('active');
+      }
+      filterAndRender();
+    });
   });
 
+  clearBtn?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    if (deptSelect)  deptSelect.value  = '';
+    activeMes = null;
+    document.querySelectorAll('.mes-chip').forEach(c => c.classList.remove('active'));
+    filterAndRender();
+  });
+
+  // Card clicks via event delegation
+  festivalGrid.addEventListener('click', (e) => {
+    const card = e.target.closest('[data-festival-id]');
+    if (card) {
+      const f = festivalsById.get(card.dataset.festivalId);
+      if (f) openModal(f);
+    }
+  });
+
+  festivalGrid.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const card = e.target.closest('[data-festival-id]');
+      if (card) {
+        e.preventDefault();
+        const f = festivalsById.get(card.dataset.festivalId);
+        if (f) openModal(f);
+      }
+    }
+  });
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+  // ── LOAD DATA ──────────────────────────────────────────────────────────
+  fetch('/api/festivals')
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(data => {
+      allFestivals = Array.isArray(data) ? data : [];
+      allFestivals.forEach(f => festivalsById.set(String(f.id), f));
+      populateDepartamentos();
+      filterAndRender();
+    })
+    .catch(() => {
+      festivalStatus.textContent = 'No fue posible cargar los festivales en este momento.';
+      festivalCount.textContent  = '0';
+    });
   </script>
 </body>
 </html>

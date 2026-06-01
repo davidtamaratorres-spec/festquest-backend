@@ -434,7 +434,14 @@ export default function Home() {
         </View>
       </View>
 
-      {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
+      {errorText ? (
+        <View style={styles.errorBlock}>
+          <Text style={styles.errorText}>{errorText}</Text>
+          <Pressable onPress={cargarTodos} style={styles.retryBtn}>
+            <Text style={styles.retryBtnText}>Reintentar</Text>
+          </Pressable>
+        </View>
+      ) : null}
 
       <FlatList
         data={items}
@@ -476,6 +483,7 @@ export default function Home() {
       {loading && (
         <View style={styles.loaderOverlay}>
           <ActivityIndicator size="large" color="#FF6A00" />
+          <Text style={styles.loadingText}>Cargando festivales...</Text>
         </View>
       )}
     </View>
@@ -585,12 +593,6 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
 
-  errorText: {
-    color: "#ff6b6b",
-    textAlign: "center",
-    marginTop: 10,
-  },
-
   listContent: {
     padding: 15,
   },
@@ -626,9 +628,41 @@ const styles = StyleSheet.create({
 
   loaderOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(0,0,0,0.7)",
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  loadingText: {
+    color: "#aaa",
+    marginTop: 12,
+    fontSize: 13,
+  },
+
+  errorBlock: {
+    alignItems: "center",
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+
+  errorText: {
+    color: "#ff6b6b",
+    textAlign: "center",
+    fontSize: 13,
+  },
+
+  retryBtn: {
+    marginTop: 10,
+    backgroundColor: "#FF6A00",
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 9,
+  },
+
+  retryBtnText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 13,
   },
 
   mesesScroll: {

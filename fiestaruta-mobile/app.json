@@ -5,10 +5,10 @@
     "scheme": "festquest",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#FF6600"
     },
@@ -18,8 +18,9 @@
     },
     "android": {
       "package": "com.festquest.app",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FF6600"
       }
     },
@@ -28,7 +29,12 @@
       "@react-native-community/datetimepicker"
     ],
     "extra": {
-      "baseUrl": "https://festquest-backend.onrender.com"
-    }
+      "baseUrl": "https://festquest-backend.onrender.com",
+      "router": {},
+      "eas": {
+        "projectId": "370a3637-cf18-49da-80fc-2d799c20c726"
+      }
+    },
+    "owner": "mechquest"
   }
 }
