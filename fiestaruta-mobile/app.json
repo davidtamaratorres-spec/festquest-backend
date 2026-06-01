@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "FestQuest",
-    "slug": "festquest-app",
+    "slug": "festquest",
     "scheme": "festquest",
     "version": "1.0.0",
     "orientation": "portrait",
