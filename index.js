@@ -67,6 +67,30 @@ app.get("/api/festivals", async (req, res) => {
   }
 });
 
+app.get("/api/festivals/:id", async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT
+        f.id, f.nombre,
+        TO_CHAR(f.fecha_inicio, 'YYYY-MM-DD') AS fecha_inicio,
+        TO_CHAR(f.fecha_fin,    'YYYY-MM-DD') AS fecha_fin,
+        f.descripcion, f.lugar_encuentro, f.maps_link, f.whatsapp_link,
+        f.codigo_dane,
+        m.nombre AS municipio, m.departamento
+       FROM festivals f
+       LEFT JOIN municipalities m ON f.municipio_id = m.id
+       WHERE f.id = $1`,
+      [req.params.id]
+    );
+    if (result.rows.length === 0)
+      return res.status(404).json({ error: "Festival no encontrado" });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error /api/festivals/:id:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/api/municipalities", async (req, res) => {
   try {
     const result = await db.query(`

@@ -9,88 +9,67 @@ import {
   Linking,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { fetchFestivalById } from "../../services/festivals";
+import { BASE_URL } from "../../services/backendApi";
 
-type FestivalDetailData = {
+type FestivalDetail = {
   id: number;
-  nombre?: string | null;
-  municipio?: string | null;
-  departamento?: string | null;
-  fecha?: string | null;
-  fecha_inicio?: string | null;
-  fecha_fin?: string | null;
-  subregion?: string | null;
-  habitantes?: string | number | null;
-  temperatura_promedio?: string | number | null;
-  altura?: string | number | null;
-  sitios_turisticos?: string | null;
-  hoteles?: string | null;
-  contacto_hoteles?: string | null;
-  municipio_id?: number | null;
+  nombre: string | null;
+  municipio: string | null;
+  departamento: string | null;
+  fecha_inicio: string | null;
+  fecha_fin: string | null;
+  descripcion: string | null;
+  lugar_encuentro: string | null;
+  maps_link: string | null;
+  whatsapp_link: string | null;
 };
 
-function valorTexto(value: any, fallback = "Sin dato") {
-  if (value === null || value === undefined) return fallback;
-  const txt = String(value).trim();
-  return txt ? txt : fallback;
+const MESES = [
+  "ene","feb","mar","abr","may","jun",
+  "jul","ago","sep","oct","nov","dic",
+];
+
+function formatFecha(fecha: string | null): string | null {
+  if (!fecha) return null;
+  const parts = fecha.split("-");
+  if (parts.length !== 3) return fecha;
+  const [year, month, day] = parts;
+  return `${Number(day)} ${MESES[Number(month) - 1]} ${year}`;
 }
 
-function fechaTexto(data: FestivalDetailData | null) {
-  if (!data) return "Sin fecha";
-  return data.fecha_inicio || data.fecha || "Sin fecha";
-}
-
-function splitPipe(value: any) {
-  if (!value) return [];
-  return String(value)
-    .split("|")
-    .map((s) => s.trim())
-    .filter(Boolean);
+async function abrirURL(url: string | null) {
+  if (!url) return;
+  let finalUrl = url.trim();
+  if (!/^https?:\/\//i.test(finalUrl)) finalUrl = `https://${finalUrl}`;
+  try {
+    await Linking.openURL(finalUrl);
+  } catch {}
 }
 
 export default function FestivalDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
-  const [data, setData] = useState<FestivalDetailData | null>(null);
+  const [data, setData] = useState<FestivalDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [errorText, setErrorText] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!id) {
-      setErrorText("ID inválido");
+      setError("ID inválido");
       setLoading(false);
       return;
     }
 
-    async function loadFestival() {
-      try {
-        const json = await fetchFestivalById(id);
-        const detalle = json?.data ? json.data : json;
-        setData(detalle);
-      } catch (error) {
-        setErrorText("Error cargando festival");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadFestival();
+    fetch(`${BASE_URL}/festivals/${id}`)
+      .then((r) => {
+        if (!r.ok) throw new Error(`Error ${r.status}`);
+        return r.json();
+      })
+      .then((json) => setData(json))
+      .catch(() => setError("No se pudo cargar el festival"))
+      .finally(() => setLoading(false));
   }, [id]);
-
-  const abrirLink = async (url?: string | null) => {
-    if (!url) return;
-    let finalUrl = String(url).trim();
-    if (!/^https?:\/\//i.test(finalUrl)) {
-      finalUrl = `https://${finalUrl}`;
-    }
-    try {
-      await Linking.openURL(finalUrl);
-    } catch {}
-  };
-
-  const lugares = splitPipe(data?.sitios_turisticos);
-  const hoteles = splitPipe(data?.hoteles);
 
   if (loading) {
     return (
@@ -101,13 +80,25 @@ export default function FestivalDetail() {
     );
   }
 
-  if (!data) {
+  if (error || !data) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>{errorText}</Text>
+        <Text style={styles.errorText}>{error || "Festival no encontrado"}</Text>
+        <Pressable onPress={() => router.back()} style={styles.backBtn}>
+          <Text style={styles.backBtnText}>← Volver</Text>
+        </Pressable>
       </View>
     );
   }
+
+  const fechaInicio = formatFecha(data.fecha_inicio);
+  const fechaFin = formatFecha(data.fecha_fin);
+  const fechaTexto =
+    fechaInicio && fechaFin
+      ? `${fechaInicio} – ${fechaFin}`
+      : fechaInicio || fechaFin || "Fecha por confirmar";
+
+  const ubicacion = [data.municipio, data.departamento].filter(Boolean).join(", ");
 
   return (
     <ScrollView style={styles.page} contentContainerStyle={styles.content}>
@@ -117,33 +108,108 @@ export default function FestivalDetail() {
 
       <Text style={styles.title}>{data.nombre}</Text>
 
-      <Text style={styles.section}>Sitios recomendados</Text>
-      {lugares.map((item, i) => (
-        <Text key={i} style={styles.link}>📍 {item}</Text>
-      ))}
+      <View style={styles.pill}>
+        <Text style={styles.pillText}>📅 {fechaTexto}</Text>
+      </View>
 
-      <Text style={styles.section}>Hoteles</Text>
-      {hoteles.map((item, i) => (
-        <Text key={i} style={styles.link}>🏨 {item}</Text>
-      ))}
+      {ubicacion ? (
+        <View style={styles.pill}>
+          <Text style={styles.pillText}>📍 {ubicacion}</Text>
+        </View>
+      ) : null}
 
-      <Text style={styles.section}>Contacto hoteles</Text>
-      <Text style={styles.blockText}>
-        {data?.contacto_hoteles || "No hay contacto"}
-      </Text>
+      {data.descripcion ? (
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>DESCRIPCIÓN</Text>
+          <Text style={styles.body}>{data.descripcion}</Text>
+        </View>
+      ) : null}
+
+      {data.lugar_encuentro ? (
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>LUGAR</Text>
+          <Text style={styles.body}>{data.lugar_encuentro}</Text>
+        </View>
+      ) : null}
+
+      <View style={styles.actions}>
+        {data.maps_link ? (
+          <Pressable
+            style={styles.btnPrimary}
+            onPress={() => abrirURL(data.maps_link)}
+          >
+            <Text style={styles.btnPrimaryText}>Ver en mapa</Text>
+          </Pressable>
+        ) : null}
+
+        {data.whatsapp_link ? (
+          <Pressable
+            style={styles.btnSecondary}
+            onPress={() => abrirURL(data.whatsapp_link)}
+          >
+            <Text style={styles.btnSecondaryText}>WhatsApp</Text>
+          </Pressable>
+        ) : null}
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: "#000" },
-  content: { padding: 16 },
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { color: "#fff", marginTop: 10 },
-  errorText: { color: "#fff" },
-  back: { color: "#FF6A00", marginBottom: 10 },
-  title: { color: "#fff", fontSize: 22, marginBottom: 10 },
-  section: { color: "#FF6A00", marginTop: 15 },
-  link: { color: "#4da3ff", marginTop: 5 },
-  blockText: { color: "#ccc", marginTop: 5 },
+  content: { padding: 20, paddingBottom: 48 },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#000",
+    gap: 16,
+    padding: 24,
+  },
+  loadingText: { color: "#888", marginTop: 10 },
+  errorText: { color: "#ff6b6b", fontSize: 15, textAlign: "center" },
+  backBtn: { marginTop: 4 },
+  backBtnText: { color: "#FF6A00", fontSize: 15 },
+  back: { color: "#FF6A00", marginBottom: 20, fontSize: 15 },
+  title: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 14,
+    lineHeight: 30,
+  },
+  pill: {
+    backgroundColor: "#161616",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 8,
+  },
+  pillText: { color: "#ccc", fontSize: 13 },
+  section: { marginTop: 22 },
+  sectionLabel: {
+    color: "#FF6A00",
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 1,
+    marginBottom: 6,
+  },
+  body: { color: "#ccc", fontSize: 14, lineHeight: 22 },
+  actions: { marginTop: 28, gap: 12 },
+  btnPrimary: {
+    backgroundColor: "#FF6A00",
+    borderRadius: 10,
+    padding: 14,
+    alignItems: "center",
+  },
+  btnPrimaryText: { color: "#fff", fontWeight: "800", fontSize: 15 },
+  btnSecondary: {
+    backgroundColor: "#161616",
+    borderRadius: 10,
+    padding: 14,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#333",
+  },
+  btnSecondaryText: { color: "#25D366", fontWeight: "700", fontSize: 15 },
 });
