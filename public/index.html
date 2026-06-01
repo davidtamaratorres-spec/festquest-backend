@@ -80,7 +80,7 @@
     /* ── HERO ── */
     .hero {
       position: relative;
-      min-height: 88vh;
+      min-height: 70vh;
       display: flex;
       align-items: center;
       overflow: hidden;
@@ -145,47 +145,27 @@
       font-weight: 400;
       animation: fadeUp 0.6s 0.2s ease both;
     }
-    .hero-search {
-      display: flex;
+    .hero-cta-btn {
+      display: inline-flex;
       align-items: center;
-      background: rgba(255,255,255,0.96);
-      border-radius: 18px;
-      max-width: 660px;
-      padding: 6px 6px 6px 20px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
-      margin-bottom: 28px;
-      gap: 8px;
-      animation: fadeUp 0.6s 0.3s ease both;
-    }
-    .hero-search input {
-      flex: 1;
-      border: none;
-      outline: none;
-      background: transparent;
-      font-size: 16px;
-      font-family: 'DM Sans', sans-serif;
-      color: #1f2937;
-      padding: 10px 0;
-    }
-    .hero-search input::placeholder { color: #9ca3af; }
-    .search-btn {
+      gap: 10px;
+      padding: 16px 30px;
       background: #ea580c;
       color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 13px 22px;
-      font-size: 15px;
-      font-weight: 700;
+      text-decoration: none;
+      border-radius: 16px;
+      font-size: 17px;
+      font-weight: 800;
       font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.2s, transform 0.15s;
-      white-space: nowrap;
+      box-shadow: 0 12px 32px rgba(234,88,12,0.38);
+      transition: transform 0.18s, box-shadow 0.18s;
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s 0.3s ease both;
     }
-    .search-btn:hover { background: #c2410c; transform: scale(1.02); }
-    .search-btn svg { flex-shrink: 0; }
+    .hero-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(234,88,12,0.46);
+    }
     .hero-btns {
       display: flex;
       gap: 12px;
@@ -574,14 +554,10 @@
           <h1>Descubre, vive<br>y celebra lo <em>mejor</em><br>de Colombia</h1>
           <p class="hero-sub">Festividades, cultura, turismo y más. Más de 1.100 municipios, un solo lugar.</p>
 
-          <div class="hero-search">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="text" id="hero-search-input" placeholder="Buscar festivales, destinos, municipios…" aria-label="Buscar festivales" />
-            <button class="search-btn" id="hero-search-btn">
-              <svg class="app-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              Buscar
-            </button>
-          </div>
+          <a class="hero-cta-btn" href="#catalogo">
+            Ver festivales
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
 
           <div class="hero-btns">
             <a class="app-btn app-btn-whatsapp" href="https://wa.me/573153905194?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20FestQuest" target="_blank" rel="noopener noreferrer">
@@ -734,8 +710,6 @@
   const modal          = document.getElementById('festival-modal');
   const modalContent   = document.getElementById('modal-content');
   const modalClose     = modal.querySelector('.modal-close');
-  const searchInput    = document.getElementById('hero-search-input');
-  const searchBtn      = document.getElementById('hero-search-btn');
 
   // ── HELPERS ────────────────────────────────────────────────────────────
   function escapeHtml(v) {
@@ -907,20 +881,6 @@
   }
 
   // ── EVENTS ─────────────────────────────────────────────────────────────
-  searchInput?.addEventListener('input', filterAndRender);
-
-  searchBtn?.addEventListener('click', () => {
-    document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
-    filterAndRender();
-  });
-
-  searchInput?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
-      filterAndRender();
-    }
-  });
-
   deptSelect?.addEventListener('change', filterAndRender);
 
   document.querySelectorAll('.mes-chip').forEach(chip => {
