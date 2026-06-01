@@ -75,8 +75,10 @@ app.get("/api/festivals/:id", async (req, res) => {
         TO_CHAR(f.fecha_inicio, 'YYYY-MM-DD') AS fecha_inicio,
         TO_CHAR(f.fecha_fin,    'YYYY-MM-DD') AS fecha_fin,
         f.descripcion, f.lugar_encuentro, f.maps_link, f.whatsapp_link,
-        f.codigo_dane,
-        m.nombre AS municipio, m.departamento
+        f.municipio_id,
+        m.nombre AS municipio, m.departamento,
+        m.subregion, m.habitantes, m.temperatura_promedio, m.altura,
+        m.sitios_turisticos, m.hoteles
        FROM festivals f
        LEFT JOIN municipalities m ON f.municipio_id = m.id
        WHERE f.id = $1`,
