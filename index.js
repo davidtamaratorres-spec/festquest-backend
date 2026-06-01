@@ -5,7 +5,16 @@ const db = require("./db");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://festquest.app',
+    'https://www.festquest.app',
+    'http://localhost:3000',
+    'http://localhost:8081'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
