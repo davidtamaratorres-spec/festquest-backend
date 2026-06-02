@@ -507,69 +507,25 @@
       padding-top: 20px;
     }
 
-    /* ── APP PROMO ── */
-    .app-promo {
-      background: linear-gradient(135deg, #fff8f0 0%, #fff0e0 100%);
-      padding: 72px 0 80px;
-      overflow: hidden;
-    }
-    .app-promo-inner {
+    /* ── HERO TWO-COL ── */
+    .hero-two-col {
       display: flex;
       align-items: center;
-      gap: 64px;
+      gap: 56px;
     }
-    .app-promo-text {
+    .hero-left {
       flex: 1;
       min-width: 0;
     }
-    .app-promo-eyebrow {
-      display: inline-block;
-      background: rgba(255,102,0,0.12);
-      color: #c2410c;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      padding: 5px 12px;
-      border-radius: 999px;
-      margin-bottom: 16px;
+    .hero-right {
+      flex-shrink: 0;
+      animation: fadeUp 0.6s 0.55s ease both;
     }
-    .app-promo-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 42px;
-      font-weight: 800;
-      color: #111827;
-      line-height: 1.1;
-      margin-bottom: 16px;
-    }
-    .app-promo-sub {
-      font-size: 18px;
-      color: #6b7280;
-      max-width: 420px;
-      line-height: 1.65;
-      margin-bottom: 28px;
-    }
-    .app-promo-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: #FF6600;
-      color: #fff;
-      text-decoration: none;
-      padding: 14px 26px;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: 800;
-      font-family: 'DM Sans', sans-serif;
-      box-shadow: 0 10px 28px rgba(255,102,0,0.32);
-      transition: transform 0.18s, box-shadow 0.18s;
-    }
-    .app-promo-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(255,102,0,0.4); }
-    .app-promo-soon {
-      margin-top: 12px;
-      font-size: 13px;
-      color: #9ca3af;
-      font-weight: 500;
+    .app-empty {
+      color: #444;
+      font-size: 11px;
+      text-align: center;
+      padding: 20px 12px;
     }
 
     /* Mockup celular */
@@ -585,8 +541,9 @@
       border-radius: 38px;
       border: 3px solid #2a2a3a;
       box-shadow:
-        0 0 0 6px #1a1a2e,
-        0 32px 64px rgba(0,0,0,0.45),
+        0 0 0 6px rgba(26,26,46,0.9),
+        0 32px 72px rgba(0,0,0,0.65),
+        0 0 80px rgba(255,102,0,0.18),
         inset 0 1px 0 rgba(255,255,255,0.06);
       display: flex;
       flex-direction: column;
@@ -688,10 +645,7 @@
       .hero h1 { font-size: 30px; }
       .hero-sub { font-size: 15px; margin-bottom: 24px; }
       .hero-content { padding: 60px 0 50px; }
-      .app-promo-inner { flex-direction: column; gap: 40px; text-align: center; }
-      .app-promo-sub { max-width: 100%; }
-      .app-promo-title { font-size: 32px; }
-      .phone-wrap { order: -1; }
+      .hero-right { display: none; }
     }
     @media (max-width: 980px) {
       .grid-3, .stats, .festival-grid { grid-template-columns: 1fr; }
@@ -732,90 +686,54 @@
       <div class="hero-bg"></div>
       <div class="hero-overlay"></div>
       <div class="hero-content">
-        <div class="container">
-          <div class="hero-eyebrow">Descubre Colombia a través de sus festivales</div>
-          <h1>Descubre, vive<br>y celebra lo <em>mejor</em><br>de Colombia</h1>
-          <p class="hero-sub">Festividades, cultura, turismo y más. Más de 1.100 municipios, un solo lugar.</p>
+        <div class="container hero-two-col">
 
-          <a class="hero-cta-btn" href="#catalogo">
-            Explorar festivales
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </a>
+          <!-- IZQUIERDA: texto -->
+          <div class="hero-left">
+            <div class="hero-eyebrow">Descubre Colombia a través de sus festivales</div>
+            <h1>Descubre, vive<br>y celebra lo <em>mejor</em><br>de Colombia</h1>
+            <p class="hero-sub">Festividades, cultura, turismo y más. Más de 1.100 municipios, un solo lugar.</p>
 
-          <div class="hero-btns">
-            <a class="app-btn app-btn-whatsapp" href="https://wa.me/573153905194?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20FestQuest" target="_blank" rel="noopener noreferrer">
-              <svg class="app-btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-              Solicitar por WhatsApp
+            <a class="hero-cta-btn" href="#catalogo">
+              Explorar festivales
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>
-            <a class="app-btn app-btn-mail" href="mailto:gerencia@festquest.app?subject=Informaci%C3%B3n%20FestQuest&body=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20plataforma%20FestQuest.">
-              <svg class="app-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-              Contacto por correo
-            </a>
-          </div>
 
-          <p class="hero-launch-note">Plataforma activa · festquest.app · gerencia@festquest.app</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- APP PROMO -->
-    <section class="app-promo">
-      <div class="container app-promo-inner">
-
-        <!-- Texto izquierdo -->
-        <div class="app-promo-text">
-          <p class="app-promo-eyebrow">Aplicación móvil</p>
-          <h2 class="app-promo-title">FestQuest en tu bolsillo</h2>
-          <p class="app-promo-sub">
-            Explora festivales, filtra por departamento y mes, y descubre Colombia desde tu celular.
-          </p>
-          <a href="#" class="app-promo-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18H12.01M8 21h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2z"/></svg>
-            Descargar app
-          </a>
-          <p class="app-promo-soon">Disponible próximamente en Android</p>
-        </div>
-
-        <!-- Mockup celular -->
-        <div class="phone-wrap">
-          <div class="phone-shell">
-            <!-- Notch -->
-            <div class="phone-notch"></div>
-            <!-- Pantalla -->
-            <div class="phone-screen">
-              <!-- Header app -->
-              <div class="app-header">
-                <span class="app-header-brand">FestQuest</span>
-              </div>
-              <!-- Chips de filtro -->
-              <div class="app-chips">
-                <span class="app-chip app-chip-active">Antioquia</span>
-                <span class="app-chip app-chip-active">Jun</span>
-                <span class="app-chip">Jul</span>
-                <span class="app-chip">Ago</span>
-              </div>
-              <!-- Cards simuladas -->
-              <div class="app-card">
-                <div class="app-card-date">📅 14 jun – 22 jun 2026</div>
-                <div class="app-card-title">Festival de las Flores</div>
-                <div class="app-card-place">📍 Medellín · Antioquia</div>
-              </div>
-              <div class="app-card">
-                <div class="app-card-date">📅 20 jun – 28 jun 2026</div>
-                <div class="app-card-title">Feria de Manizales</div>
-                <div class="app-card-place">📍 Manizales · Caldas</div>
-              </div>
-              <div class="app-card app-card-dim">
-                <div class="app-card-date">📅 Jul 2026</div>
-                <div class="app-card-title">Carnaval del Diablo</div>
-                <div class="app-card-place">📍 Riosucio · Caldas</div>
-              </div>
+            <div class="hero-btns">
+              <a class="app-btn app-btn-whatsapp" href="https://wa.me/573153905194?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20FestQuest" target="_blank" rel="noopener noreferrer">
+                <svg class="app-btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                Solicitar por WhatsApp
+              </a>
+              <a class="app-btn app-btn-mail" href="mailto:gerencia@festquest.app?subject=Informaci%C3%B3n%20FestQuest&body=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20plataforma%20FestQuest.">
+                <svg class="app-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                Contacto por correo
+              </a>
             </div>
-            <!-- Home bar -->
-            <div class="phone-bar"></div>
-          </div>
-        </div>
 
+            <p class="hero-launch-note">Plataforma activa · festquest.app · gerencia@festquest.app</p>
+          </div>
+
+          <!-- DERECHA: mockup celular con datos reales -->
+          <div class="hero-right">
+            <div class="phone-shell">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div class="app-header">
+                  <span class="app-header-brand">FestQuest</span>
+                </div>
+                <div class="app-chips" id="phone-dept-chips">
+                  <span class="app-chip app-chip-active" data-pdept="">Todos</span>
+                </div>
+                <div class="app-chips" id="phone-mes-chips"></div>
+                <div id="phone-cards">
+                  <div class="app-empty">Cargando...</div>
+                </div>
+              </div>
+              <div class="phone-bar"></div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -1173,6 +1091,94 @@
   modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
 
+  // ── PHONE MOCKUP ───────────────────────────────────────────────────────
+  let phoneActiveDept = '';
+  let phoneActiveMes  = null;
+
+  function getPhoneFiltered() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    return allFestivals
+      .filter(f => {
+        const endD = hasValue(f.date_end)   ? new Date(f.date_end)
+                   : hasValue(f.date_start) ? new Date(f.date_start) : null;
+        if (endD && !isNaN(endD) && endD < today) return false;
+        if (phoneActiveDept && f.departamento !== phoneActiveDept) return false;
+        if (phoneActiveMes !== null) {
+          if (!hasValue(f.date_start)) return false;
+          const d = new Date(f.date_start);
+          if (isNaN(d.getTime()) || d.getMonth() + 1 !== phoneActiveMes) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        const da = hasValue(a.date_start) ? new Date(a.date_start).getTime() : Infinity;
+        const db = hasValue(b.date_start) ? new Date(b.date_start).getTime() : Infinity;
+        return da - db;
+      })
+      .slice(0, 3);
+  }
+
+  function updatePhoneCards() {
+    const el = document.getElementById('phone-cards');
+    if (!el) return;
+    const list = getPhoneFiltered();
+    if (!list.length) {
+      el.innerHTML = '<div class="app-empty">Sin festivales</div>';
+      return;
+    }
+    el.innerHTML = list.map(f => `
+      <div class="app-card">
+        <div class="app-card-date">📅 ${formatDate(f.date_start, f.date_end)}</div>
+        <div class="app-card-title">${escapeHtml(f.nombre || 'Festival')}</div>
+        <div class="app-card-place">📍 ${escapeHtml(f.municipio || '—')}${f.departamento ? ' · ' + escapeHtml(f.departamento) : ''}</div>
+      </div>`).join('');
+  }
+
+  function initPhoneChips() {
+    const MSHORT = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+    // Dept chips: top 3 departamentos por número de festivales
+    const counts = {};
+    allFestivals.forEach(f => { if (f.departamento) counts[f.departamento] = (counts[f.departamento]||0)+1; });
+    const top3 = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([d])=>d);
+
+    const deptEl = document.getElementById('phone-dept-chips');
+    if (deptEl) {
+      deptEl.innerHTML = ['Todos',...top3].map(d =>
+        `<span class="app-chip${d==='Todos'?' app-chip-active':''}" data-pdept="${d==='Todos'?'':escapeHtml(d)}">${escapeHtml(d)}</span>`
+      ).join('');
+      deptEl.addEventListener('click', e => {
+        const c = e.target.closest('[data-pdept]');
+        if (!c) return;
+        phoneActiveDept = c.dataset.pdept;
+        deptEl.querySelectorAll('.app-chip').forEach(x => x.classList.remove('app-chip-active'));
+        c.classList.add('app-chip-active');
+        updatePhoneCards();
+      });
+    }
+
+    // Mes chips: mes actual + próximos 3
+    const now = new Date();
+    const mesEl = document.getElementById('phone-mes-chips');
+    if (mesEl) {
+      const months = [0,1,2,3].map(i => (now.getMonth()+i)%12);
+      mesEl.innerHTML = ['Todo',...months.map(m=>MSHORT[m])].map((label,i) => {
+        const num = i===0 ? '' : String(months[i-1]+1);
+        return `<span class="app-chip${i===0?' app-chip-active':''}" data-pmes="${num}">${label}</span>`;
+      }).join('');
+      mesEl.addEventListener('click', e => {
+        const c = e.target.closest('[data-pmes]');
+        if (!c) return;
+        phoneActiveMes = c.dataset.pmes ? parseInt(c.dataset.pmes) : null;
+        mesEl.querySelectorAll('.app-chip').forEach(x => x.classList.remove('app-chip-active'));
+        c.classList.add('app-chip-active');
+        updatePhoneCards();
+      });
+    }
+
+    updatePhoneCards();
+  }
+
   // ── LOAD DATA ──────────────────────────────────────────────────────────
   // Render free tier puede tardar hasta 60s en despertar — timeout generoso
   festivalStatus.textContent = 'Cargando festivales... (puede tardar hasta 60 segundos la primera vez)';
@@ -1187,6 +1193,7 @@
       allFestivals.forEach(f => festivalsById.set(String(f.id), f));
       populateDepartamentos();
       filterAndRender();
+      initPhoneChips();
     })
     .catch(err => {
       clearTimeout(loadTimeout);
