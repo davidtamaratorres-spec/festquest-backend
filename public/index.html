@@ -572,6 +572,90 @@
       padding: 28px 0 0;
       overflow: hidden;
     }
+    /* Slider interno del celular */
+    .phone-views {
+      display: flex;
+      width: 200%;
+      flex: 1;
+      min-height: 0;
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .phone-views.show-detail { transform: translateX(-50%); }
+    .phone-view {
+      flex: 0 0 50%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      scrollbar-width: none;
+    }
+    .phone-view::-webkit-scrollbar { display: none; }
+    /* Estilos del detalle */
+    .app-back-btn {
+      display: block;
+      color: #FF6600;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 8px 12px 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      text-align: left;
+    }
+    .app-back-btn:hover { color: #ff8833; }
+    .app-detail-date {
+      font-size: 9px;
+      color: #FF6600;
+      font-weight: 700;
+      padding: 0 12px 4px;
+    }
+    .app-detail-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      padding: 2px 12px 6px;
+      line-height: 1.3;
+    }
+    .app-detail-place {
+      font-size: 9px;
+      color: #888;
+      font-weight: 600;
+      padding: 0 12px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 8px;
+    }
+    .app-detail-label {
+      font-size: 8px;
+      color: #FF6600;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 0 12px 3px;
+    }
+    .app-detail-body {
+      font-size: 9px;
+      color: #aaa;
+      line-height: 1.55;
+      padding: 0 12px 8px;
+    }
+    .app-detail-btn {
+      display: block;
+      margin: 3px 12px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .app-detail-btn:hover { opacity: 0.85; }
+    .app-detail-btn-map { background: #FF6600; color: #fff; }
+    .app-detail-btn-wa  { background: #16a34a; color: #fff; }
     .app-header {
       display: flex;
       align-items: center;
@@ -611,7 +695,10 @@
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px;
       padding: 10px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s;
     }
+    .app-card:hover { border-color: rgba(255,102,0,0.45); }
     .app-card-dim { opacity: 0.45; }
     .app-card-date {
       font-size: 9px;
@@ -721,12 +808,22 @@
                 <div class="app-header">
                   <span class="app-header-brand">FestQuest</span>
                 </div>
-                <div class="app-chips" id="phone-dept-chips">
-                  <span class="app-chip app-chip-active" data-pdept="">Todos</span>
-                </div>
-                <div class="app-chips" id="phone-mes-chips"></div>
-                <div id="phone-cards">
-                  <div class="app-empty">Cargando...</div>
+                <!-- Contenedor deslizable: lista | detalle -->
+                <div class="phone-views" id="phone-views">
+                  <!-- VISTA LISTA -->
+                  <div class="phone-view" id="phone-list-view">
+                    <div class="app-chips" id="phone-dept-chips">
+                      <span class="app-chip app-chip-active" data-pdept="">Todos</span>
+                    </div>
+                    <div class="app-chips" id="phone-mes-chips"></div>
+                    <div id="phone-cards">
+                      <div class="app-empty">Cargando...</div>
+                    </div>
+                  </div>
+                  <!-- VISTA DETALLE -->
+                  <div class="phone-view" id="phone-detail-view">
+                    <div id="phone-detail-content"></div>
+                  </div>
                 </div>
               </div>
               <div class="phone-bar"></div>
@@ -1127,11 +1224,44 @@
       return;
     }
     el.innerHTML = list.map(f => `
-      <div class="app-card">
+      <div class="app-card" data-fid="${escapeHtml(String(f.id))}">
         <div class="app-card-date">📅 ${formatDate(f.date_start, f.date_end)}</div>
         <div class="app-card-title">${escapeHtml(f.nombre || 'Festival')}</div>
         <div class="app-card-place">📍 ${escapeHtml(f.municipio || '—')}${f.departamento ? ' · ' + escapeHtml(f.departamento) : ''}</div>
       </div>`).join('');
+  }
+
+  function showPhoneDetail(festival) {
+    const el = document.getElementById('phone-detail-content');
+    if (!el) return;
+    const dateStr  = formatDate(festival.date_start, festival.date_end);
+    const ubicacion = [festival.municipio, festival.departamento].filter(Boolean).join(' · ');
+    const desc  = hasValue(festival.descripcion)
+      ? `<div class="app-detail-label">Descripción</div><div class="app-detail-body">${escapeHtml(festival.descripcion)}</div>` : '';
+    const lugar = hasValue(festival.lugar_encuentro)
+      ? `<div class="app-detail-label">Lugar</div><div class="app-detail-body">${escapeHtml(festival.lugar_encuentro)}</div>` : '';
+    const mapBtn = hasValue(festival.maps_link)
+      ? `<a class="app-detail-btn app-detail-btn-map" href="${escapeHtml(safeUrl(festival.maps_link))}" target="_blank" rel="noopener noreferrer">Ver en mapa</a>` : '';
+    const waBtn  = hasValue(festival.whatsapp_link)
+      ? `<a class="app-detail-btn app-detail-btn-wa" href="${escapeHtml(safeUrl(festival.whatsapp_link))}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : '';
+
+    el.innerHTML = `
+      <button class="app-back-btn" id="phone-back-btn">← Volver</button>
+      <div class="app-detail-date">📅 ${dateStr}</div>
+      <div class="app-detail-title">${escapeHtml(festival.nombre || 'Festival')}</div>
+      ${ubicacion ? `<div class="app-detail-place">📍 ${escapeHtml(ubicacion)}</div>` : ''}
+      ${desc}${lugar}${mapBtn}${waBtn}`;
+
+    document.getElementById('phone-back-btn').addEventListener('click', showPhoneList);
+    const views = document.getElementById('phone-views');
+    if (views) views.classList.add('show-detail');
+    const detailView = document.getElementById('phone-detail-view');
+    if (detailView) detailView.scrollTop = 0;
+  }
+
+  function showPhoneList() {
+    const views = document.getElementById('phone-views');
+    if (views) views.classList.remove('show-detail');
   }
 
   function initPhoneChips() {
@@ -1177,6 +1307,17 @@
     }
 
     updatePhoneCards();
+
+    // Click en cards → detalle
+    const cardsEl = document.getElementById('phone-cards');
+    if (cardsEl) {
+      cardsEl.addEventListener('click', e => {
+        const card = e.target.closest('[data-fid]');
+        if (!card) return;
+        const f = festivalsById.get(card.dataset.fid);
+        if (f) showPhoneDetail(f);
+      });
+    }
   }
 
   // ── LOAD DATA ──────────────────────────────────────────────────────────
