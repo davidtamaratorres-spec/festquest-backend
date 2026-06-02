@@ -27,8 +27,6 @@ type FestivalDetail = {
   habitantes: number | null;
   temperatura_promedio: number | null;
   altura: number | null;
-  sitios_turisticos: string | null;
-  hoteles: string | null;
 };
 
 const MESES = [
@@ -44,19 +42,6 @@ function formatFecha(fecha: string | null): string | null {
   return `${Number(day)} ${MESES[Number(month) - 1]} ${year}`;
 }
 
-function isCleanValue(value: string | null | undefined): boolean {
-  if (!value || !value.trim()) return false;
-  if (value.includes("google.com/search")) return false;
-  return true;
-}
-
-function parsePipeList(value: string | null | undefined): string[] {
-  if (!isCleanValue(value)) return [];
-  return value!
-    .split("|")
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0 && !s.includes("google.com/search"));
-}
 
 async function abrirURL(url: string | null) {
   if (!url) return;
@@ -120,8 +105,6 @@ export default function FestivalDetail() {
       : fechaInicio || fechaFin || "Sin fecha";
 
   const ubicacion = [data.municipio, data.departamento].filter(Boolean).join(", ");
-  const sitios = parsePipeList(data.sitios_turisticos);
-  const hoteles = parsePipeList(data.hoteles);
 
   return (
     <ScrollView style={styles.page} contentContainerStyle={styles.content}>
@@ -187,26 +170,6 @@ export default function FestivalDetail() {
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>LUGAR</Text>
           <Text style={styles.body}>{data.lugar_encuentro}</Text>
-        </View>
-      ) : null}
-
-      {/* Sitios recomendados — solo si hay datos limpios */}
-      {sitios.length > 0 ? (
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>SITIOS RECOMENDADOS</Text>
-          {sitios.map((s, i) => (
-            <Text key={i} style={styles.listItem}>📍 {s}</Text>
-          ))}
-        </View>
-      ) : null}
-
-      {/* Hoteles — solo si hay datos limpios */}
-      {hoteles.length > 0 ? (
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>HOTELES</Text>
-          {hoteles.map((h, i) => (
-            <Text key={i} style={styles.listItem}>🏨 {h}</Text>
-          ))}
         </View>
       ) : null}
 
@@ -296,7 +259,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   body: { color: "#ccc", fontSize: 14, lineHeight: 22 },
-  listItem: { color: "#ccc", fontSize: 14, marginBottom: 6 },
   actions: { marginTop: 28, gap: 12 },
   btnPrimary: {
     backgroundColor: "#FF6A00",
