@@ -5,7 +5,7 @@ export default function RootLayout() {
     <Stack screenOptions={{ headerTitleAlign: "center" }}>
       <Stack.Screen name="index" options={{ title: "FestQuest" }} />
       <Stack.Screen name="festival/[id]" options={{ title: "Festival" }} />
-      <Stack.Screen name="municipio/[id]" options={{ title: "Municipio" }} />
+      <Stack.Screen name="municipality/[id]" options={{ title: "Municipio" }} />
     </Stack>
   );
 }
