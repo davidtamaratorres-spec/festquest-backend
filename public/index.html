@@ -772,7 +772,7 @@
 
   // ── FILTER ─────────────────────────────────────────────────────────────
   function getFiltered() {
-    const q    = (searchInput?.value || '').trim().toLowerCase();
+    const q    = '';
     const dept = deptSelect?.value || '';
     return allFestivals.filter(f => {
       if (q && ![f.nombre, f.municipio, f.departamento, f.descripcion]
@@ -902,7 +902,6 @@
   });
 
   clearBtn?.addEventListener('click', () => {
-    if (searchInput) searchInput.value = '';
     if (deptSelect)  deptSelect.value  = '';
     activeMes = null;
     document.querySelectorAll('.mes-chip').forEach(c => c.classList.remove('active'));
