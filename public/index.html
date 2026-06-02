@@ -656,6 +656,27 @@
     .app-detail-btn:hover { opacity: 0.85; }
     .app-detail-btn-map { background: #FF6600; color: #fff; }
     .app-detail-btn-wa  { background: #16a34a; color: #fff; }
+    .app-muni-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 2px 12px 10px;
+    }
+    .app-muni-chip {
+      background: rgba(255,102,0,0.12);
+      border: 1px solid rgba(255,102,0,0.25);
+      color: #ffb380;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 20px;
+    }
+    .app-detail-loading {
+      font-size: 9px;
+      color: #444;
+      padding: 4px 12px 8px;
+      font-style: italic;
+    }
     .app-header {
       display: flex;
       align-items: center;
@@ -1231,32 +1252,70 @@
       </div>`).join('');
   }
 
-  function showPhoneDetail(festival) {
+  async function showPhoneDetail(festival) {
     const el = document.getElementById('phone-detail-content');
     if (!el) return;
+
     const dateStr  = formatDate(festival.date_start, festival.date_end);
     const ubicacion = [festival.municipio, festival.departamento].filter(Boolean).join(' · ');
-    const desc  = hasValue(festival.descripcion)
-      ? `<div class="app-detail-label">Descripción</div><div class="app-detail-body">${escapeHtml(festival.descripcion)}</div>` : '';
-    const lugar = hasValue(festival.lugar_encuentro)
-      ? `<div class="app-detail-label">Lugar</div><div class="app-detail-body">${escapeHtml(festival.lugar_encuentro)}</div>` : '';
-    const mapBtn = hasValue(festival.maps_link)
-      ? `<a class="app-detail-btn app-detail-btn-map" href="${escapeHtml(safeUrl(festival.maps_link))}" target="_blank" rel="noopener noreferrer">Ver en mapa</a>` : '';
-    const waBtn  = hasValue(festival.whatsapp_link)
-      ? `<a class="app-detail-btn app-detail-btn-wa" href="${escapeHtml(safeUrl(festival.whatsapp_link))}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : '';
 
+    // Render básico inmediato + placeholder para datos del municipio
     el.innerHTML = `
       <button class="app-back-btn" id="phone-back-btn">← Volver</button>
       <div class="app-detail-date">📅 ${dateStr}</div>
       <div class="app-detail-title">${escapeHtml(festival.nombre || 'Festival')}</div>
       ${ubicacion ? `<div class="app-detail-place">📍 ${escapeHtml(ubicacion)}</div>` : ''}
-      ${desc}${lugar}${mapBtn}${waBtn}`;
+      <div id="phone-muni-section"><div class="app-detail-loading">Cargando municipio…</div></div>
+      <div id="phone-detail-extra"></div>`;
 
     document.getElementById('phone-back-btn').addEventListener('click', showPhoneList);
     const views = document.getElementById('phone-views');
     if (views) views.classList.add('show-detail');
     const detailView = document.getElementById('phone-detail-view');
     if (detailView) detailView.scrollTop = 0;
+
+    // Fetch enriquecido con datos del municipio
+    try {
+      const r = await fetch(`https://festquest-backend.onrender.com/api/festivals/${festival.id}`);
+      if (!r.ok) throw new Error(r.status);
+      const d = await r.json();
+
+      // Chips de municipio (solo si tienen valor real)
+      const chips = [];
+      if (hasValue(d.subregion))           chips.push(`<span class="app-muni-chip">🌎 ${escapeHtml(d.subregion)}</span>`);
+      if (hasValue(d.habitantes))          chips.push(`<span class="app-muni-chip">👥 ${Number(d.habitantes).toLocaleString('es-CO')}</span>`);
+      if (hasValue(d.temperatura_promedio))chips.push(`<span class="app-muni-chip">🌡 ${d.temperatura_promedio}°C</span>`);
+      if (hasValue(d.altura))              chips.push(`<span class="app-muni-chip">⛰ ${Number(d.altura).toLocaleString('es-CO')} msnm</span>`);
+
+      const muniEl = document.getElementById('phone-muni-section');
+      if (muniEl) muniEl.innerHTML = chips.length
+        ? `<div class="app-detail-label">Sobre el municipio</div><div class="app-muni-chips">${chips.join('')}</div>`
+        : '';
+
+      // Descripción, lugar y botones con datos completos
+      const desc  = hasValue(d.descripcion)
+        ? `<div class="app-detail-label">Descripción</div><div class="app-detail-body">${escapeHtml(d.descripcion)}</div>` : '';
+      const lugar = hasValue(d.lugar_encuentro)
+        ? `<div class="app-detail-label">Lugar</div><div class="app-detail-body">${escapeHtml(d.lugar_encuentro)}</div>` : '';
+      const mapBtn = hasValue(d.maps_link)
+        ? `<a class="app-detail-btn app-detail-btn-map" href="${escapeHtml(safeUrl(d.maps_link))}" target="_blank" rel="noopener noreferrer">Ver en mapa</a>` : '';
+      const waBtn  = hasValue(d.whatsapp_link)
+        ? `<a class="app-detail-btn app-detail-btn-wa" href="${escapeHtml(safeUrl(d.whatsapp_link))}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : '';
+
+      const extraEl = document.getElementById('phone-detail-extra');
+      if (extraEl) extraEl.innerHTML = `${desc}${lugar}${mapBtn}${waBtn}`;
+
+    } catch {
+      // Si falla el fetch, quitar el loading y mostrar lo que tenemos
+      const muniEl = document.getElementById('phone-muni-section');
+      if (muniEl) muniEl.innerHTML = '';
+      const mapBtn = hasValue(festival.maps_link)
+        ? `<a class="app-detail-btn app-detail-btn-map" href="${escapeHtml(safeUrl(festival.maps_link))}" target="_blank" rel="noopener noreferrer">Ver en mapa</a>` : '';
+      const waBtn  = hasValue(festival.whatsapp_link)
+        ? `<a class="app-detail-btn app-detail-btn-wa" href="${escapeHtml(safeUrl(festival.whatsapp_link))}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : '';
+      const extraEl = document.getElementById('phone-detail-extra');
+      if (extraEl) extraEl.innerHTML = `${mapBtn}${waBtn}`;
+    }
   }
 
   function showPhoneList() {
