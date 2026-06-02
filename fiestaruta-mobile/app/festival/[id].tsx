@@ -190,7 +190,7 @@ export default function FestivalDetail() {
         {data.municipio_id ? (
           <Pressable
             style={styles.btnSecondary}
-            onPress={() => router.push(`/municipality/${data.municipio_id}`)}
+            onPress={() => router.push({ pathname: '/municipality/[id]', params: { id: String(data.municipio_id) } })}
           >
             <Text style={styles.btnSecondaryText}>Ver municipio</Text>
           </Pressable>
