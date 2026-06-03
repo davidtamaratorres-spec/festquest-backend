@@ -1,0 +1,6 @@
+codigo_dane,departamento,municipio,subregion,provincia,categoria_municipal,cabecera_municipal,poblacion,altitud_ms_nm,temperatura_promedio,superficie_km2,latitud,longitud,anio_fundacion,gentilicio,festival_principal,fecha_inicio,fecha_fin,descripcion_festival,sitio_1,maps_1,sitio_2,maps_2,sitio_3,maps_3,hotel_1,wa_1,hotel_2,wa_2,hotel_3,wa_3,fuente_datos,estado_enriquecimiento,observaciones
+05001,Antioquia,Medellín,,,,,,,,,,,,,Feria de las Flores,2026-08-01,2026-08-10,Evento cultural con silleteros,,,,,,,,,,,,,dataset_festivales_reales,parcial,festival cargado desde dataset real
+05002,Antioquia,Abejorral,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,pendiente_revision,error IA
+05004,Antioquia,Abriaquí,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,pendiente_revision,error IA
+05021,Antioquia,Alejandría,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,pendiente_revision,error IA
+05030,Antioquia,Amagá,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,pendiente_revision,error IA
