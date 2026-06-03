@@ -116,6 +116,55 @@ app.get("/api/municipalities", async (req, res) => {
   }
 });
 
+app.get("/api/municipalities/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
+
+    const result = await db.query(
+      `SELECT
+         m.id, m.nombre, m.departamento, m.subregion,
+         m.habitantes, m.temperatura_promedio, m.altura,
+         m.gentilicio, m.alcalde, m.correo_alcalde,
+         m.sitios_turisticos, m.hoteles, m.contacto_hoteles,
+         m.codigo_dane, m.bandera_url,
+         (SELECT COUNT(*) FROM festivals f WHERE f.municipio_id = m.id) AS "festivalsCount"
+       FROM municipalities m
+       WHERE m.id = $1`,
+      [id]
+    );
+
+    const row = result.rows[0];
+    if (!row) return res.status(404).json({ error: "Municipio no encontrado" });
+
+    function splitPipe(value) {
+      if (!value) return [];
+      return String(value).split("|").map((s) => s.trim()).filter(Boolean);
+    }
+
+    const placesNames = splitPipe(row.sitios_turisticos);
+    const hotelsNames = splitPipe(row.hoteles);
+    const contacts    = splitPipe(row.contacto_hoteles);
+
+    const places = placesNames.map((nombre) => ({
+      nombre,
+      maps_link: `https://www.google.com/maps/search/${encodeURIComponent(nombre)}`,
+    }));
+
+    const hotels = hotelsNames.map((nombre, i) => ({
+      nombre,
+      whatsapp_link: contacts[i] || `https://www.google.com/search?q=${encodeURIComponent(nombre + " whatsapp")}`,
+    }));
+
+    res.json({ municipio: row, places, hotels });
+  } catch (err) {
+    console.error("Error /api/municipalities/:id:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Rutas DishQuest integradas
 app.use("/api/restaurants", require("./routes/restaurants"));
 app.use("/api/dishes", require("./routes/dishes"));

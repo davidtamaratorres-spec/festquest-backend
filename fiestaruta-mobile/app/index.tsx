@@ -26,6 +26,24 @@ function obtenerFechaInicio(item: any) {
   return fechaSoloDia(item?.date_start || item?.fecha_inicio || item?.fecha || "");
 }
 
+function isPast(item: any): boolean {
+  const end = item.date_end || item.fecha_fin;
+  if (!end) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return new Date(String(end).split("T")[0]) < today;
+}
+
+function sortFestivals(data: any[]): any[] {
+  const upcoming: any[] = [];
+  const past: any[] = [];
+  for (const item of data) {
+    if (isPast(item)) past.push(item);
+    else upcoming.push(item);
+  }
+  return [...upcoming, ...past];
+}
+
 function normalizarTexto(texto?: string | null) {
   return String(texto || "")
     .replace(/\r?\n|\r/g, " ")
@@ -68,7 +86,7 @@ export default function Home() {
       const resp = await fetchFestivals({});
       const data = Array.isArray(resp) ? resp : [];
       setAllItems(data);
-      setItems(data);
+      setItems(sortFestivals(data));
     } catch (e: any) {
       console.error("Error:", e);
       setAllItems([]);
@@ -98,7 +116,7 @@ export default function Home() {
         municipio: munLimpio || undefined,
       });
 
-      setItems(Array.isArray(resp) ? resp : []);
+      setItems(sortFestivals(Array.isArray(resp) ? resp : []));
     } catch (e: any) {
       console.error("Error:", e);
       setItems([]);
@@ -173,7 +191,7 @@ export default function Home() {
         fecha_inicio: inicio,
         fecha_fin: fin,
       });
-      setItems(Array.isArray(resp) ? resp : []);
+      setItems(sortFestivals(Array.isArray(resp) ? resp : []));
     } catch {
       setItems([]);
       setErrorText("No se pudieron cargar los festivales.");
@@ -351,24 +369,34 @@ export default function Home() {
             </Text>
           ) : null
         }
-        renderItem={({ item }: any) => (
-          <Pressable
-            style={styles.card}
-            onPress={() => router.push(`/festival/${item.id}`)}
-          >
-            <Text style={styles.cardTitle}>
-              {item.festival || item.nombre}
-            </Text>
+        renderItem={({ item }: any) => {
+          const past = isPast(item);
+          return (
+            <Pressable
+              style={[styles.card, past && styles.cardPast]}
+              onPress={() => router.push(`/festival/${item.id}`)}
+            >
+              <View style={styles.cardHeader}>
+                <Text style={[styles.cardTitle, past && styles.cardTitlePast]} numberOfLines={2}>
+                  {item.festival || item.nombre}
+                </Text>
+                {past && (
+                  <View style={styles.badgePast}>
+                    <Text style={styles.badgePastText}>Pasado</Text>
+                  </View>
+                )}
+              </View>
 
-            <Text style={styles.cardDate}>
-              📅 {obtenerFechaInicio(item)}
-            </Text>
+              <Text style={styles.cardDate}>
+                📅 {obtenerFechaInicio(item)}
+              </Text>
 
-            <Text style={styles.cardDept}>
-              📍 {item.departamento} • {item.municipio}
-            </Text>
-          </Pressable>
-        )}
+              <Text style={styles.cardDept}>
+                📍 {item.departamento} • {item.municipio}
+              </Text>
+            </Pressable>
+          );
+        }}
         ListEmptyComponent={
           !loading ? (
             <Text style={styles.emptyText}>No hay resultados</Text>
@@ -497,10 +525,44 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
+  cardPast: {
+    opacity: 0.55,
+  },
+
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 4,
+    gap: 8,
+  },
+
   cardTitle: {
     color: "white",
     fontSize: 15,
     fontWeight: "700",
+    flex: 1,
+  },
+
+  cardTitlePast: {
+    color: "#aaa",
+  },
+
+  badgePast: {
+    backgroundColor: "#2a2a2a",
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: "#444",
+    flexShrink: 0,
+  },
+
+  badgePastText: {
+    color: "#777",
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
 
   cardDate: {
