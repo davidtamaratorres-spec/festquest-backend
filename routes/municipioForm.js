@@ -156,7 +156,7 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
 }
 .nav-item.active .nav-icon { background: var(--orange-glow); }
 .nav-text { flex: 1; }
-.nav-title { font-size: 0.9rem; font-weight: 500; display: block; line-height: 1.2; }
+.nav-title { font-size: 1rem; font-weight: 500; display: block; line-height: 1.2; }
 .nav-sub { font-size: 0.72rem; color: var(--muted); display: block; margin-top: 1px; }
 .nav-item.active .nav-sub { color: var(--orange); opacity: 0.8; }
 
@@ -192,7 +192,7 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
 }
 .success-banner .check { font-size: 3.5rem; margin-bottom: 16px; }
 .success-banner h3 { font-family: var(--font-display); color: var(--green); font-size: 1.6rem; margin-bottom: 8px; }
-.success-banner p { color: var(--muted); font-size: 1rem; line-height: 1.6; }
+.success-banner p { color: var(--muted); font-size: 1.05rem; line-height: 1.6; }
 
 /* SECTIONS */
 .form-section {
@@ -224,8 +224,8 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
   display: flex; align-items: center; justify-content: center;
   font-size: 1.2rem; flex-shrink: 0;
 }
-.section-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; }
-.section-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+.section-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+.section-desc { font-size: 0.95rem; color: var(--muted); line-height: 1.5; }
 
 .section-card {
   background: var(--surface);
@@ -243,7 +243,7 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
 .field:last-child { margin-bottom: 0; }
 .field label {
   display: block;
-  font-size: 0.78rem; font-weight: 600;
+   font-size: 0.85rem; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.8px;
   color: var(--muted); margin-bottom: 8px;
 }
@@ -254,7 +254,7 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
   border-radius: 11px;
   padding: 13px 16px;
   color: var(--text);
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-family: var(--font-body);
   outline: none;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
