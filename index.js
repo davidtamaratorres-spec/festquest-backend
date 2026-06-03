@@ -173,6 +173,10 @@ app.use("/api/promotions", require("./routes/promotions"));
 app.use("/api/analytics", require("./routes/analytics"));
 app.use("/api/partners", require("./routes/partners"));
 
+// Rutas formulario municipios
+const municipioForm = require('./routes/municipioForm');
+app.use('/', municipioForm);
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
