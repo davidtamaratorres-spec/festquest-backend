@@ -460,7 +460,7 @@ body {
           ${[0,1,2].map(i => `
           <div class="hotel-row">
             <div class="field" style="margin:0">
-              <label>Nombre${i===0?''?' (opcional)':''}</label>
+              <label>Nombre${i===0?'':' (opcional)'}</label>
               <input type="text" name="hotel_nombre_${i}" placeholder="Nombre del hotel" value="${hoteles[i]||''}">
             </div>
             <div class="hotel-sep">·</div>
