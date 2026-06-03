@@ -910,19 +910,11 @@
           <select id="filter-departamento" class="filter-select" aria-label="Filtrar por departamento">
             <option value="">Todos los departamentos</option>
           </select>
-          <div class="mes-chips" id="mes-chips" role="group" aria-label="Filtrar por mes">
-            <button class="mes-chip" data-mes="1">Ene</button>
-            <button class="mes-chip" data-mes="2">Feb</button>
-            <button class="mes-chip" data-mes="3">Mar</button>
-            <button class="mes-chip" data-mes="4">Abr</button>
-            <button class="mes-chip" data-mes="5">May</button>
-            <button class="mes-chip" data-mes="6">Jun</button>
-            <button class="mes-chip" data-mes="7">Jul</button>
-            <button class="mes-chip" data-mes="8">Ago</button>
-            <button class="mes-chip" data-mes="9">Sep</button>
-            <button class="mes-chip" data-mes="10">Oct</button>
-            <button class="mes-chip" data-mes="11">Nov</button>
-            <button class="mes-chip" data-mes="12">Dic</button>
+          <div class="mes-chips" id="mes-chips" role="group" aria-label="Filtrar por fecha">
+            <button class="mes-chip" data-datefilter="">Todos</button>
+            <button class="mes-chip" data-datefilter="week">Esta semana</button>
+            <button class="mes-chip" data-datefilter="month">Este mes</button>
+            <button class="mes-chip" data-datefilter="nextmonth">Próximo mes</button>
           </div>
           <button class="filter-clear" id="clear-filters">Limpiar filtros</button>
         </div>
@@ -1020,7 +1012,7 @@
   <script>
   // ── STATE ──────────────────────────────────────────────────────────────
   let allFestivals = [];
-  let activeMes    = null;
+  let activeDateFilter = null;
   const festivalsById = new Map();
 
   // ── ELEMENTS ───────────────────────────────────────────────────────────
@@ -1097,10 +1089,20 @@
       if (q && ![f.nombre, f.municipio, f.departamento, f.descripcion]
               .some(v => String(v || '').toLowerCase().includes(q))) return false;
       if (dept && f.departamento !== dept) return false;
-      if (activeMes !== null) {
+      if (activeDateFilter) {
         if (!hasValue(f.date_start)) return false;
         const d = new Date(f.date_start);
-        if (isNaN(d.getTime()) || d.getMonth() + 1 !== activeMes) return false;
+        if (isNaN(d.getTime())) return false;
+        const today = new Date(); today.setHours(0,0,0,0);
+        if (activeDateFilter === 'week') {
+          const wEnd = new Date(today); wEnd.setDate(wEnd.getDate() + 7);
+          if (d < today || d > wEnd) return false;
+        } else if (activeDateFilter === 'month') {
+          if (d.getMonth() !== today.getMonth() || d.getFullYear() !== today.getFullYear()) return false;
+        } else if (activeDateFilter === 'nextmonth') {
+          const nm = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+          if (d.getMonth() !== nm.getMonth() || d.getFullYear() !== nm.getFullYear()) return false;
+        }
       }
       return true;
     });
@@ -1212,22 +1214,16 @@
 
   document.querySelectorAll('.mes-chip').forEach(chip => {
     chip.addEventListener('click', () => {
-      const mes = parseInt(chip.dataset.mes, 10);
-      if (activeMes === mes) {
-        activeMes = null;
-        chip.classList.remove('active');
-      } else {
-        document.querySelectorAll('.mes-chip').forEach(c => c.classList.remove('active'));
-        activeMes = mes;
-        chip.classList.add('active');
-      }
+      document.querySelectorAll('.mes-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeDateFilter = chip.dataset.datefilter || null;
       filterAndRender();
     });
   });
 
   clearBtn?.addEventListener('click', () => {
     if (deptSelect)  deptSelect.value  = '';
-    activeMes = null;
+    activeDateFilter = null;
     document.querySelectorAll('.mes-chip').forEach(c => c.classList.remove('active'));
     filterAndRender();
   });
@@ -1263,7 +1259,7 @@
 
   // ── PHONE MOCKUP ───────────────────────────────────────────────────────
   let phoneActiveDept = '';
-  let phoneActiveMes  = null;
+  let phoneActiveDateFilter = null;
 
   function getPhoneFiltered() {
     const today = new Date(); today.setHours(0,0,0,0);
@@ -1273,10 +1269,19 @@
                    : hasValue(f.date_start) ? new Date(f.date_start) : null;
         if (endD && !isNaN(endD) && endD < today) return false;
         if (phoneActiveDept && f.departamento !== phoneActiveDept) return false;
-        if (phoneActiveMes !== null) {
+        if (phoneActiveDateFilter) {
           if (!hasValue(f.date_start)) return false;
           const d = new Date(f.date_start);
-          if (isNaN(d.getTime()) || d.getMonth() + 1 !== phoneActiveMes) return false;
+          if (isNaN(d.getTime())) return false;
+          if (phoneActiveDateFilter === 'week') {
+            const wEnd = new Date(today); wEnd.setDate(wEnd.getDate() + 7);
+            if (d < today || d > wEnd) return false;
+          } else if (phoneActiveDateFilter === 'month') {
+            if (d.getMonth() !== today.getMonth() || d.getFullYear() !== today.getFullYear()) return false;
+          } else if (phoneActiveDateFilter === 'nextmonth') {
+            const nm = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+            if (d.getMonth() !== nm.getMonth() || d.getFullYear() !== nm.getFullYear()) return false;
+          }
         }
         return true;
       })
@@ -1285,7 +1290,7 @@
         const db = hasValue(b.date_start) ? new Date(b.date_start).getTime() : Infinity;
         return da - db;
       })
-      .slice(0, 3);
+      .slice(0, 8);
   }
 
   function updatePhoneCards() {
@@ -1372,8 +1377,6 @@
   }
 
   function initPhoneChips() {
-    const MSHORT = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-
     // Dept chips: top 3 departamentos por número de festivales
     const counts = {};
     allFestivals.forEach(f => { if (f.departamento) counts[f.departamento] = (counts[f.departamento]||0)+1; });
@@ -1394,19 +1397,22 @@
       });
     }
 
-    // Mes chips: mes actual + próximos 3
-    const now = new Date();
+    // Chips de fecha: Todos, Esta semana, Este mes, Próximo mes
     const mesEl = document.getElementById('phone-mes-chips');
     if (mesEl) {
-      const months = [0,1,2,3].map(i => (now.getMonth()+i)%12);
-      mesEl.innerHTML = ['Todo',...months.map(m=>MSHORT[m])].map((label,i) => {
-        const num = i===0 ? '' : String(months[i-1]+1);
-        return `<span class="app-chip${i===0?' app-chip-active':''}" data-pmes="${num}">${label}</span>`;
-      }).join('');
+      const dateChips = [
+        { label: 'Todos',       filter: '' },
+        { label: 'Esta semana', filter: 'week' },
+        { label: 'Este mes',    filter: 'month' },
+        { label: 'Próx. mes',   filter: 'nextmonth' },
+      ];
+      mesEl.innerHTML = dateChips.map((c, i) =>
+        `<span class="app-chip${i===0?' app-chip-active':''}" data-pdatefilter="${c.filter}">${c.label}</span>`
+      ).join('');
       mesEl.addEventListener('click', e => {
-        const c = e.target.closest('[data-pmes]');
+        const c = e.target.closest('[data-pdatefilter]');
         if (!c) return;
-        phoneActiveMes = c.dataset.pmes ? parseInt(c.dataset.pmes) : null;
+        phoneActiveDateFilter = c.dataset.pdatefilter || null;
         mesEl.querySelectorAll('.app-chip').forEach(x => x.classList.remove('app-chip-active'));
         c.classList.add('app-chip-active');
         updatePhoneCards();
