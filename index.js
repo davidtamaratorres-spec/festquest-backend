@@ -35,6 +35,7 @@ app.get("/api/festivals", async (req, res) => {
         f.maps_link,
         f.whatsapp_link,
         f.codigo_dane,
+        m.id   AS municipio_id,
         m.nombre AS municipio,
         m.departamento
       FROM festivals f

@@ -769,6 +769,40 @@
       .catalog-filters { gap: 8px; }
       .filter-select { min-width: 100%; }
     }
+
+    /* ── MUNICIPIO VIEW ── */
+    .municipio-overlay { z-index: 300; }
+    .muni-gentilicio { color: #fb923c; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    .muni-chips-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 6px; }
+    .muni-chip {
+      background: rgba(251,146,60,0.1);
+      border: 1px solid rgba(251,146,60,0.2);
+      border-radius: 12px;
+      padding: 10px 14px;
+      flex: 1;
+      min-width: 110px;
+    }
+    .muni-chip-label { display: block; color: #fb923c; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
+    .muni-chip-val   { display: block; color: #f1f5f9; font-size: 14px; font-weight: 700; }
+    .muni-email { display: block; color: #fb923c; font-size: 14px; margin-top: 4px; text-decoration: underline; word-break: break-all; }
+    .muni-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .muni-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(148,163,184,0.1);
+      border-radius: 10px;
+      padding: 10px 12px;
+      gap: 10px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    .muni-list-link { flex-shrink: 0; font-size: 12px; font-weight: 700; color: #fb923c; text-decoration: none; white-space: nowrap; }
+    .muni-list-link:hover { text-decoration: underline; }
+    .muni-list-link-wa { color: #22c55e; }
+    .modal-btn-muni { background: rgba(255,255,255,0.07); color: #e2e8f0; border: 1px solid rgba(148,163,184,0.18); width: 100%; justify-content: center; }
+    .modal-btn-muni:hover { background: rgba(255,255,255,0.13); }
   </style>
 </head>
 <body>
@@ -975,6 +1009,14 @@
     </div>
   </div>
 
+  <!-- MUNICIPIO VIEW OVERLAY -->
+  <div id="municipio-overlay" class="modal-overlay municipio-overlay" hidden role="dialog" aria-modal="true" aria-label="Detalle del municipio">
+    <div class="modal-box">
+      <button class="modal-close" id="municipio-close" aria-label="Cerrar">×</button>
+      <div id="municipio-content"></div>
+    </div>
+  </div>
+
   <script>
   // ── STATE ──────────────────────────────────────────────────────────────
   let allFestivals = [];
@@ -1143,12 +1185,17 @@
     const actHtml = actions.length
       ? `<hr class="modal-divider"><div class="modal-actions">${actions.join('')}</div>` : '';
 
+    const muniId = parseInt(f.municipio_id, 10);
+    const muniBtn = Number.isFinite(muniId)
+      ? `<hr class="modal-divider"><button class="modal-btn modal-btn-muni" onclick="openMunicipioView(${muniId})">Ver municipio →</button>`
+      : '';
+
     modalContent.innerHTML = `
       ${past ? '<span class="modal-past-badge">Festival pasado</span>' : ''}
       <div class="modal-date-badge">${formatDate(f.date_start, f.date_end)}</div>
       <h2 class="modal-title" id="modal-title-el">${escapeHtml(f.nombre || 'Festival')}</h2>
       <p class="modal-location">📍 ${escapeHtml(f.municipio || '—')} · ${escapeHtml(f.departamento || '—')}</p>
-      ${lugar}${desc}${actHtml}`;
+      ${lugar}${desc}${actHtml}${muniBtn}`;
 
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -1207,7 +1254,12 @@
 
   modalClose.addEventListener('click', closeModal);
   modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const muniOv = document.getElementById('municipio-overlay');
+    if (muniOv && !muniOv.hidden) { closeMunicipioView(); return; }
+    if (!modal.hidden) closeModal();
+  });
 
   // ── PHONE MOCKUP ───────────────────────────────────────────────────────
   let phoneActiveDept = '';
@@ -1398,6 +1450,93 @@
         : 'No fue posible cargar los festivales. Intenta recargar la página.';
       festivalCount.textContent = '0';
     });
+
+  // ── MUNICIPIO VIEW ────────────────────────────────────────────────────
+  const municipioOverlay = document.getElementById('municipio-overlay');
+  const municipioContent = document.getElementById('municipio-content');
+  const municipioClose   = document.getElementById('municipio-close');
+
+  function closeMunicipioView() {
+    municipioOverlay.hidden = true;
+    // body overflow stays hidden — festival modal is still open
+  }
+
+  municipioClose.addEventListener('click', closeMunicipioView);
+  municipioOverlay.addEventListener('click', (e) => { if (e.target === municipioOverlay) closeMunicipioView(); });
+
+  async function openMunicipioView(id) {
+    municipioContent.innerHTML = '<p style="color:#94a3b8;padding:24px 0;text-align:center;">Cargando municipio…</p>';
+    municipioOverlay.hidden = false;
+    municipioClose.focus();
+
+    try {
+      const r = await fetch(`/api/municipalities/${id}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const { municipio: m, places = [], hotels = [] } = await r.json();
+
+      const ok = (v) => v !== null && v !== undefined && String(v).trim() !== '' && String(v).trim().toLowerCase() !== 'n/a';
+
+      // Chips
+      const chips = [];
+      if (ok(m.habitantes))           chips.push(`<div class="muni-chip"><span class="muni-chip-label">Habitantes</span><span class="muni-chip-val">${Number(m.habitantes).toLocaleString('es-CO')}</span></div>`);
+      if (ok(m.temperatura_promedio)) chips.push(`<div class="muni-chip"><span class="muni-chip-label">Temperatura</span><span class="muni-chip-val">${parseFloat(m.temperatura_promedio)}°C</span></div>`);
+      if (ok(m.altura))               chips.push(`<div class="muni-chip"><span class="muni-chip-label">Altura</span><span class="muni-chip-val">${Number(m.altura).toLocaleString('es-CO')} msnm</span></div>`);
+
+      const chipsHtml = chips.length ? `<div class="muni-chips-row">${chips.join('')}</div>` : '';
+
+      // Alcalde
+      let alcaldeHtml = '';
+      if (ok(m.alcalde) || ok(m.correo_alcalde)) {
+        alcaldeHtml = `<hr class="modal-divider">
+          <p class="modal-label">Alcalde / Mandatario</p>
+          ${ok(m.alcalde) ? `<p class="modal-description">${escapeHtml(m.alcalde)}</p>` : ''}
+          ${ok(m.correo_alcalde) ? `<a href="mailto:${escapeHtml(m.correo_alcalde)}" class="muni-email">${escapeHtml(m.correo_alcalde)}</a>` : ''}`;
+      }
+
+      // Sitios turísticos
+      let placesHtml = '';
+      if (places.length) {
+        placesHtml = `<hr class="modal-divider">
+          <p class="modal-label">Sitios Turísticos</p>
+          <ul class="muni-list">
+            ${places.map(p => `<li class="muni-list-item">
+              <span>📍 ${escapeHtml(p.nombre)}</span>
+              <a href="${escapeHtml(p.maps_link)}" target="_blank" rel="noopener noreferrer" class="muni-list-link">Ver mapa →</a>
+            </li>`).join('')}
+          </ul>`;
+      }
+
+      // Hoteles
+      let hotelsHtml = '';
+      if (hotels.length) {
+        hotelsHtml = `<hr class="modal-divider">
+          <p class="modal-label">Hoteles</p>
+          <ul class="muni-list">
+            ${hotels.map(h => `<li class="muni-list-item">
+              <span>🏨 ${escapeHtml(h.nombre)}</span>
+              <a href="${escapeHtml(safeUrl(h.whatsapp_link) || '#')}" target="_blank" rel="noopener noreferrer" class="muni-list-link muni-list-link-wa">WhatsApp →</a>
+            </li>`).join('')}
+          </ul>`;
+      }
+
+      const subtitle = [
+        ok(m.departamento) ? escapeHtml(m.departamento) : '',
+        ok(m.subregion)    ? escapeHtml(m.subregion)    : ''
+      ].filter(Boolean).join(' · ');
+
+      municipioContent.innerHTML = `
+        ${ok(m.gentilicio) ? `<p class="muni-gentilicio">${escapeHtml(m.gentilicio)}</p>` : ''}
+        <h2 class="modal-title">${escapeHtml(m.nombre)}</h2>
+        ${subtitle ? `<p class="modal-location">${subtitle}</p>` : ''}
+        ${chipsHtml}
+        ${alcaldeHtml}
+        ${placesHtml}
+        ${hotelsHtml}`;
+
+    } catch {
+      municipioContent.innerHTML = '<p style="color:#ef4444;padding:24px 0;text-align:center;">No se pudo cargar la información del municipio.</p>';
+    }
+  }
   </script>
 </body>
 </html>
