@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
     "@react-native-community/datetimepicker": "^9.1.0",
     "axios": "^1.14.0",
     "cheerio": "^1.2.0",
@@ -24,6 +25,7 @@
     "dotenv": "^17.3.1",
     "express": "^4.18.2",
     "nodemailer": "^8.0.4",
+    "openai": "^6.41.0",
     "pg": "^8.11.0",
     "sharp": "^0.34.5",
     "xlsx": "^0.18.5"
