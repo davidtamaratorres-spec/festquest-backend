@@ -1524,6 +1524,13 @@
         ok(m.subregion)    ? escapeHtml(m.subregion)    : ''
       ].filter(Boolean).join(' · ');
 
+      const noEnrichment = !alcaldeHtml && !placesHtml && !hotelsHtml;
+      const pendingNote = noEnrichment
+        ? `<hr class="modal-divider"><p style="color:#475569;font-size:13px;text-align:center;padding:6px 0;">
+            ℹ️ Información turística de este municipio en proceso de actualización.
+           </p>`
+        : '';
+
       municipioContent.innerHTML = `
         ${ok(m.gentilicio) ? `<p class="muni-gentilicio">${escapeHtml(m.gentilicio)}</p>` : ''}
         <h2 class="modal-title">${escapeHtml(m.nombre)}</h2>
@@ -1531,7 +1538,8 @@
         ${chipsHtml}
         ${alcaldeHtml}
         ${placesHtml}
-        ${hotelsHtml}`;
+        ${hotelsHtml}
+        ${pendingNote}`;
 
     } catch {
       municipioContent.innerHTML = '<p style="color:#ef4444;padding:24px 0;text-align:center;">No se pudo cargar la información del municipio.</p>';
