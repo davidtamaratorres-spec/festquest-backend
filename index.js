@@ -37,7 +37,8 @@ app.get("/api/festivals", async (req, res) => {
         f.codigo_dane,
         m.id   AS municipio_id,
         m.nombre AS municipio,
-        m.departamento
+        m.departamento,
+        m.subregion
       FROM festivals f
       LEFT JOIN municipalities m ON f.municipio_id = m.id
       WHERE 1=1
