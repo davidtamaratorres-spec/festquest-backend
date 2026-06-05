@@ -363,7 +363,7 @@ router.get('/municipio/:slug/editar', async (req, res) => {
               </div>
               <div class="field" style="margin:0">
                 <label>Enlace Google Maps</label>
-                <input type="url" name="maps_${n}" placeholder="https://maps.google.com/..." value="${mp}" data-type="url">
+                <input type="text" name="maps_${n}" placeholder="https://maps.google.com/..." value="${mp}" data-type="text">
                 <div class="field-error" id="err-maps_${n}">URL inválida</div>
               </div>
             </div>
@@ -389,7 +389,7 @@ router.get('/municipio/:slug/editar', async (req, res) => {
               </div>
               <div class="field" style="margin:0">
                 <label>WhatsApp (https://wa.me/57…)</label>
-                <input type="url" name="wa_${n}" placeholder="https://wa.me/573001234567" value="${w}" data-type="wa">
+                <input type="text" name="wa_${n}" placeholder="https://wa.me/573001234567" value="${w}" data-type="wa">
                 <div class="field-error" id="err-wa_${n}">Debe ser https://wa.me/...</div>
               </div>
             </div>
@@ -467,26 +467,20 @@ function previewBandera(val) {
 function isValidUrl(s) { if (!s) return true; try { new URL(s); return true; } catch { return false; } }
 function isValidWa(s) { if (!s) return true; return /^https?:\\/\\/wa\\.me\\//.test(s); }
 
+function validateField(input) {
+  const val = input.value.trim();
+  const bad = input.dataset.type === 'wa' ? !isValidWa(val) : !isValidUrl(val);
+  const errEl = document.getElementById('err-' + input.name);
+  input.classList.toggle('error', bad);
+  if (errEl) errEl.classList.toggle('show', bad);
+  return !bad;
+}
 function validateUrls() {
   let valid = true;
-  document.querySelectorAll('[data-type="url"]').forEach(input => {
-    const name = input.name;
-    const errEl = document.getElementById('err-' + name);
-    const bad = !isValidUrl(input.value.trim());
-    input.classList.toggle('error', bad);
-    if (errEl) errEl.classList.toggle('show', bad);
-    if (bad) valid = false;
-  });
-  document.querySelectorAll('[data-type="wa"]').forEach(input => {
-    const name = input.name;
-    const errEl = document.getElementById('err-' + name);
-    const bad = !isValidWa(input.value.trim());
-    input.classList.toggle('error', bad);
-    if (errEl) errEl.classList.toggle('show', bad);
-    if (bad) valid = false;
-  });
+  document.querySelectorAll('[data-type]').forEach(input => { if (!validateField(input)) valid = false; });
   return valid;
 }
+document.querySelectorAll('[data-type]').forEach(input => input.addEventListener('input', () => validateField(input)));
 
 let festivalCount = 0;
 function agregarFestival() {
@@ -786,12 +780,12 @@ router.get('/festival/:id/editar', async (req, res) => {
           <div class="grid-2">
             <div class="field">
               <label>Enlace Google Maps</label>
-              <input type="url" name="maps_link" placeholder="https://maps.google.com/..." value="${v(f.maps_link)}" data-type="url">
+              <input type="text" name="maps_link" placeholder="https://maps.google.com/..." value="${v(f.maps_link)}" data-type="text">
               <div class="field-error" id="err-maps_link">URL inválida</div>
             </div>
             <div class="field">
               <label>WhatsApp del organizador</label>
-              <input type="url" name="whatsapp_link" placeholder="https://wa.me/573001234567" value="${v(f.whatsapp_link)}" data-type="wa">
+              <input type="text" name="whatsapp_link" placeholder="https://wa.me/573001234567" value="${v(f.whatsapp_link)}" data-type="wa">
               <div class="field-error" id="err-whatsapp_link">Debe ser https://wa.me/...</div>
             </div>
           </div>
@@ -815,7 +809,7 @@ router.get('/festival/:id/editar', async (req, res) => {
               </div>
               <div class="field" style="margin:0">
                 <label>Enlace Google Maps</label>
-                <input type="url" name="maps_${n}" placeholder="https://maps.google.com/..." value="${mp}" data-type="url">
+                <input type="text" name="maps_${n}" placeholder="https://maps.google.com/..." value="${mp}" data-type="text">
                 <div class="field-error" id="err-maps_${n}">URL inválida</div>
               </div>
             </div>
@@ -841,7 +835,7 @@ router.get('/festival/:id/editar', async (req, res) => {
               </div>
               <div class="field" style="margin:0">
                 <label>WhatsApp (https://wa.me/57…)</label>
-                <input type="url" name="wa_${n}" placeholder="https://wa.me/573001234567" value="${w}" data-type="wa">
+                <input type="text" name="wa_${n}" placeholder="https://wa.me/573001234567" value="${w}" data-type="wa">
                 <div class="field-error" id="err-wa_${n}">Debe ser https://wa.me/...</div>
               </div>
             </div>
@@ -896,24 +890,20 @@ calcProgress();
 function isValidUrl(s) { if (!s) return true; try { new URL(s); return true; } catch { return false; } }
 function isValidWa(s) { if (!s) return true; return /^https?:\\/\\/wa\\.me\\//.test(s); }
 
+function validateField(input) {
+  const val = input.value.trim();
+  const bad = input.dataset.type === 'wa' ? !isValidWa(val) : !isValidUrl(val);
+  const errEl = document.getElementById('err-' + input.name);
+  input.classList.toggle('error', bad);
+  if (errEl) errEl.classList.toggle('show', bad);
+  return !bad;
+}
 function validateUrls() {
   let valid = true;
-  document.querySelectorAll('[data-type="url"]').forEach(input => {
-    const errEl = document.getElementById('err-' + input.name);
-    const bad = !isValidUrl(input.value.trim());
-    input.classList.toggle('error', bad);
-    if (errEl) errEl.classList.toggle('show', bad);
-    if (bad) valid = false;
-  });
-  document.querySelectorAll('[data-type="wa"]').forEach(input => {
-    const errEl = document.getElementById('err-' + input.name);
-    const bad = !isValidWa(input.value.trim());
-    input.classList.toggle('error', bad);
-    if (errEl) errEl.classList.toggle('show', bad);
-    if (bad) valid = false;
-  });
+  document.querySelectorAll('[data-type]').forEach(input => { if (!validateField(input)) valid = false; });
   return valid;
 }
+document.querySelectorAll('[data-type]').forEach(input => input.addEventListener('input', () => validateField(input)));
 
 document.getElementById('mainForm').addEventListener('submit', async function(e) {
   e.preventDefault();
