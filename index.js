@@ -88,7 +88,8 @@ app.get("/api/festivals/:id", async (req, res) => {
         f.municipio_id,
         m.nombre AS municipio, m.departamento,
         m.subregion, m.habitantes, m.temperatura_promedio, m.altura,
-        m.sitios_turisticos, m.hoteles
+        m.sitio_1, m.maps_1, m.sitio_2, m.maps_2, m.sitio_3, m.maps_3,
+        m.hotel_1, m.wa_1, m.hotel_2, m.wa_2, m.hotel_3, m.wa_3
        FROM festivals f
        LEFT JOIN municipalities m ON f.municipio_id = m.id
        WHERE f.id = $1`,
@@ -124,20 +125,32 @@ app.get("/api/municipalities/:id", async (req, res) => {
       return res.status(400).json({ error: "ID inválido" });
     }
 
-    const result = await db.query(
-      `SELECT
-         m.id, m.nombre, m.departamento, m.subregion,
-         m.habitantes, m.temperatura_promedio, m.altura,
-         m.gentilicio, m.alcalde, m.correo_alcalde,
-         m.sitios_turisticos, m.hoteles, m.contacto_hoteles,
-         m.codigo_dane, m.bandera_url,
-         (SELECT COUNT(*) FROM festivals f WHERE f.municipio_id = m.id) AS "festivalsCount"
-       FROM municipalities m
-       WHERE m.id = $1`,
-      [id]
-    );
+    const [muniResult, festivalesResult] = await Promise.all([
+      db.query(
+        `SELECT
+           m.id, m.nombre, m.departamento, m.subregion,
+           m.habitantes, m.temperatura_promedio, m.altura,
+           m.gentilicio, m.alcalde, m.correo_alcalde,
+           m.sitios_turisticos, m.hoteles, m.contacto_hoteles,
+           m.codigo_dane, m.bandera_url,
+           m.sitio_1, m.maps_1, m.sitio_2, m.maps_2, m.sitio_3, m.maps_3,
+           m.hotel_1, m.wa_1, m.hotel_2, m.wa_2, m.hotel_3, m.wa_3
+         FROM municipalities m
+         WHERE m.id = $1`,
+        [id]
+      ),
+      db.query(
+        `SELECT id, nombre,
+           TO_CHAR(fecha_inicio, 'YYYY-MM-DD') AS fecha_inicio,
+           TO_CHAR(fecha_fin,    'YYYY-MM-DD') AS fecha_fin
+         FROM festivals
+         WHERE municipio_id = $1
+         ORDER BY fecha_inicio ASC NULLS LAST, id ASC`,
+        [id]
+      ),
+    ]);
 
-    const row = result.rows[0];
+    const row = muniResult.rows[0];
     if (!row) return res.status(404).json({ error: "Municipio no encontrado" });
 
     function splitPipe(value) {
@@ -159,7 +172,7 @@ app.get("/api/municipalities/:id", async (req, res) => {
       whatsapp_link: contacts[i] || `https://www.google.com/search?q=${encodeURIComponent(nombre + " whatsapp")}`,
     }));
 
-    res.json({ municipio: row, places, hotels });
+    res.json({ municipio: row, places, hotels, festivals: festivalesResult.rows });
   } catch (err) {
     console.error("Error /api/municipalities/:id:", err.message);
     res.status(500).json({ error: err.message });
