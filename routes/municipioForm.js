@@ -204,15 +204,17 @@ router.get('/municipio/:slug/editar', async (req, res) => {
     const secStatus = {
       general:    ok(m.gentilicio) || ok(m.codigo_dane),
       autoridades: ok(m.alcalde) && ok(m.correo_alcalde),
-      identidad:  ok(m.bandera_url) || ok(m.descripcion),
+      identidad:  ok(m.bandera_url) || ok(m.escudo_url) || ok(m.descripcion),
       geo:        ok(m.latitud) && ok(m.longitud),
       sitios:     ok(m.sitio_1),
       hoteles:    ok(m.hotel_1),
     };
 
-    const banderaPreviewUrl = ok(m.bandera_url)
-      ? (m.bandera_url.startsWith('http') ? m.bandera_url : `https://festquest-backend.onrender.com/${m.bandera_url}`)
+    const resolveUrl = (url) => ok(url)
+      ? (url.startsWith('http') ? url : `https://festquest-backend.onrender.com/${url}`)
       : '';
+    const banderaPreviewUrl = resolveUrl(m.bandera_url);
+    const escudoPreviewUrl  = resolveUrl(m.escudo_url);
 
     const lat = parseFloat(m.latitud)  || '';
     const lon = parseFloat(m.longitud) || '';
@@ -259,7 +261,7 @@ router.get('/municipio/:slug/editar', async (req, res) => {
     </a>
     <a class="nav-item" data-section="sec-identidad" onclick="goTo('sec-identidad',this)">
       <div class="nav-icon">🎨</div>
-      <div class="nav-text"><span class="nav-title">Identidad</span><span class="nav-sub">Bandera, descripción</span></div>
+      <div class="nav-text"><span class="nav-title">Identidad</span><span class="nav-sub">Bandera, escudo, descripción</span></div>
       <div class="nav-status ${secStatus.identidad?'done':''}" id="ns-identidad">${secStatus.identidad?'✓':''}</div>
     </a>
     <a class="nav-item" data-section="sec-geo" onclick="goTo('sec-geo',this)">
@@ -404,18 +406,41 @@ router.get('/municipio/:slug/editar', async (req, res) => {
           </div>
         </div>
         <div class="section-card">
-          <div class="field">
-            <label>URL de la bandera</label>
-            <input type="text" name="bandera_url" id="banderaUrl"
-              placeholder="https://... o ruta relativa (ej: /banderas/05001.png)"
-              value="${v(m.bandera_url)}"
-              oninput="previewBandera(this.value)">
-            <div class="field-note">URL pública de la imagen de la bandera del municipio. Se muestra en el perfil.</div>
-            <img id="banderaPreview" class="img-preview"
-              src="${banderaPreviewUrl}"
-              ${banderaPreviewUrl?'style="display:block"':''}
-              alt="Preview bandera"
-              onerror="this.style.display='none'">
+            <div class="grid-2" style="margin-bottom:20px">
+            <!-- Bandera -->
+            <div class="field" style="margin:0">
+              <label>URL de la bandera</label>
+              <input type="text" name="bandera_url" id="banderaUrl"
+                placeholder="https://commons.wikimedia.org/…"
+                value="${v(m.bandera_url)}"
+                oninput="previewImg('banderaUrl','banderaPreview',this.value)">
+              <div class="field-note">Imagen de la bandera municipal.</div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+                <img id="banderaPreview"
+                  src="${banderaPreviewUrl}"
+                  ${banderaPreviewUrl?'style="display:block;max-height:52px;max-width:80px;object-fit:contain;border-radius:6px;border:1px solid var(--border);background:var(--surface2);padding:3px"':'style="display:none"'}
+                  alt="Bandera"
+                  onerror="this.style.display='none'">
+                ${banderaPreviewUrl?'<span style="font-size:0.75rem;color:var(--green)">✓ Cargada</span>':'<span style="font-size:0.75rem;color:var(--muted)">Sin imagen aún</span>'}
+              </div>
+            </div>
+            <!-- Escudo -->
+            <div class="field" style="margin:0">
+              <label>URL del escudo</label>
+              <input type="text" name="escudo_url" id="escudoUrl"
+                placeholder="https://commons.wikimedia.org/…"
+                value="${v(m.escudo_url)}"
+                oninput="previewImg('escudoUrl','escudoPreview',this.value)">
+              <div class="field-note">Imagen del escudo o coat of arms.</div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+                <img id="escudoPreview"
+                  src="${escudoPreviewUrl}"
+                  ${escudoPreviewUrl?'style="display:block;max-height:52px;max-width:52px;object-fit:contain;border-radius:6px;border:1px solid var(--border);background:var(--surface2);padding:3px"':'style="display:none"'}
+                  alt="Escudo"
+                  onerror="this.style.display='none'">
+                ${escudoPreviewUrl?'<span style="font-size:0.75rem;color:var(--green)">✓ Cargado</span>':'<span style="font-size:0.75rem;color:var(--muted)">Sin imagen aún</span>'}
+              </div>
+            </div>
           </div>
           <div class="field">
             <label>Descripción del municipio</label>
@@ -583,7 +608,7 @@ sections.forEach(id => { const el = document.getElementById(id); if (el) observe
 const progressFields = [
   { fields: ['gentilicio','codigo_dane','subregion'],    ns: 'ns-general' },
   { fields: ['alcalde','correo_alcalde'],                ns: 'ns-autoridades' },
-  { fields: ['bandera_url','descripcion'],               ns: 'ns-identidad' },
+  { fields: ['bandera_url','escudo_url','descripcion'],   ns: 'ns-identidad' },
   { fields: ['latitud','longitud'],                      ns: 'ns-geo' },
   { fields: ['sitio_1'],                                 ns: 'ns-sitios' },
   { fields: ['hotel_1'],                                 ns: 'ns-hoteles' },
@@ -603,15 +628,18 @@ function calcProgress() {
 document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', calcProgress));
 calcProgress();
 
-// ── Preview bandera ────────────────────────────────────────────────────────
-function previewBandera(val) {
-  const preview = document.getElementById('banderaPreview');
+// ── Preview imagen (bandera / escudo) ─────────────────────────────────────
+function previewImg(inputId, previewId, val) {
+  const preview = document.getElementById(previewId);
+  if (!preview) return;
   if (!val.trim()) { preview.style.display = 'none'; return; }
   const url = val.startsWith('http') ? val : 'https://festquest-backend.onrender.com/' + val.replace(/^\\//, '');
   preview.src = url;
-  preview.style.display = 'block';
+  preview.style.cssText = 'display:block;max-height:52px;max-width:80px;object-fit:contain;border-radius:6px;border:1px solid var(--border);background:var(--surface2);padding:3px';
   preview.onerror = () => { preview.style.display = 'none'; };
 }
+// Alias para compatibilidad
+function previewBandera(val) { previewImg('banderaUrl','banderaPreview',val); }
 
 // ── Preview mapa OSM ───────────────────────────────────────────────────────
 function updateMapPreview() {
@@ -722,6 +750,7 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     telefono:            data.telefono              || null,
     // Sección 3
     bandera_url:         data.bandera_url           || null,
+    escudo_url:          data.escudo_url            || null,
     descripcion:         data.descripcion           || null,
     // Sección 4
     latitud:             data.latitud               || null,
@@ -777,7 +806,7 @@ router.post('/api/municipio/:id/actualizar', async (req, res) => {
     habitantes, altura, temperatura_promedio,
     alcalde, correo_alcalde,
     mandatario_local, mandatario, correo, telefono,
-    bandera_url, descripcion,
+    bandera_url, escudo_url, descripcion,
     latitud, longitud,
     sitio_1, maps_1, sitio_2, maps_2, sitio_3, maps_3,
     hotel_1, wa_1, hotel_2, wa_2, hotel_3, wa_3,
@@ -822,32 +851,33 @@ router.post('/api/municipio/:id/actualizar', async (req, res) => {
         correo                = COALESCE($11, correo),
         telefono              = COALESCE($12, telefono),
         bandera_url           = COALESCE($13, bandera_url),
-        descripcion           = COALESCE($14, descripcion),
-        latitud               = COALESCE($15::numeric, latitud),
-        longitud              = COALESCE($16::numeric, longitud),
-        sitio_1               = COALESCE($17, sitio_1),
-        maps_1                = COALESCE($18, maps_1),
-        sitio_2               = COALESCE($19, sitio_2),
-        maps_2                = COALESCE($20, maps_2),
-        sitio_3               = COALESCE($21, sitio_3),
-        maps_3                = COALESCE($22, maps_3),
-        hotel_1               = COALESCE($23, hotel_1),
-        wa_1                  = COALESCE($24, wa_1),
-        hotel_2               = COALESCE($25, hotel_2),
-        wa_2                  = COALESCE($26, wa_2),
-        hotel_3               = COALESCE($27, hotel_3),
-        wa_3                  = COALESCE($28, wa_3),
-        contacto_hoteles      = COALESCE($29, contacto_hoteles),
-        sitios_turisticos     = COALESCE($30, sitios_turisticos),
-        hoteles               = COALESCE($31, hoteles),
+        escudo_url            = COALESCE($14, escudo_url),
+        descripcion           = COALESCE($15, descripcion),
+        latitud               = COALESCE($16::numeric, latitud),
+        longitud              = COALESCE($17::numeric, longitud),
+        sitio_1               = COALESCE($18, sitio_1),
+        maps_1                = COALESCE($19, maps_1),
+        sitio_2               = COALESCE($20, sitio_2),
+        maps_2                = COALESCE($21, maps_2),
+        sitio_3               = COALESCE($22, sitio_3),
+        maps_3                = COALESCE($23, maps_3),
+        hotel_1               = COALESCE($24, hotel_1),
+        wa_1                  = COALESCE($25, wa_1),
+        hotel_2               = COALESCE($26, hotel_2),
+        wa_2                  = COALESCE($27, wa_2),
+        hotel_3               = COALESCE($28, hotel_3),
+        wa_3                  = COALESCE($29, wa_3),
+        contacto_hoteles      = COALESCE($30, contacto_hoteles),
+        sitios_turisticos     = COALESCE($31, sitios_turisticos),
+        hoteles               = COALESCE($32, hoteles),
         fecha_actualizacion   = NOW()
-       WHERE id = $32`,
+       WHERE id = $33`,
       [
         subregion, codigo_dane, gentilicio,
         habitantes||null, altura||null, temperatura_promedio||null,
         alcalde, correo_alcalde,
         mandatario_local, mandatario, correo, telefono,
-        bandera_url, descripcion,
+        bandera_url, escudo_url, descripcion,
         latitud||null, longitud||null,
         sitio_1, maps_1, sitio_2, maps_2, sitio_3, maps_3,
         hotel_1, wa_1, hotel_2, wa_2, hotel_3, wa_3,
@@ -902,7 +932,11 @@ router.get('/festival/:id/editar', async (req, res) => {
       contacto: ok(f.maps_link) || ok(f.lugar_encuentro),
       sitios:   ok(f.sitio_1),
       hoteles:  ok(f.hotel_1),
+      imagen:   ok(f.foto_url) || ok(f.foto_prompt),
     };
+    const fotoPreviewUrl = ok(f.foto_url)
+      ? (f.foto_url.startsWith('http') ? f.foto_url : `https://festquest-backend.onrender.com/${f.foto_url}`)
+      : '';
 
     res.send(`${SHARED_HEAD(`${f.nombre} — Formulario festival`)}
 
@@ -949,6 +983,11 @@ router.get('/festival/:id/editar', async (req, res) => {
       <div class="nav-icon">🏨</div>
       <div class="nav-text"><span class="nav-title">Hospedaje</span><span class="nav-sub">Hoteles con WhatsApp</span></div>
       <div class="nav-status ${secStatus.hoteles?'done':''}" id="ns-hoteles">${secStatus.hoteles?'✓':''}</div>
+    </a>
+    <a class="nav-item" data-section="sec-imagen" onclick="goTo('sec-imagen',this)">
+      <div class="nav-icon">🖼️</div>
+      <div class="nav-text"><span class="nav-title">Imagen Firefly</span><span class="nav-sub">foto_url + prompt AI</span></div>
+      <div class="nav-status ${secStatus.imagen?'done':''}" id="ns-imagen">${secStatus.imagen?'✓':''}</div>
     </a>
   </aside>
 
@@ -1064,6 +1103,40 @@ router.get('/festival/:id/editar', async (req, res) => {
         </div>
       </div>
 
+      <!-- ── SECCIÓN: IMAGEN FIREFLY ──────────────────────────────────── -->
+      <div class="form-section" id="sec-imagen">
+        <div class="section-head">
+          <div class="section-icon-lg">🖼️</div>
+          <div>
+            <div class="section-title">Imagen del festival</div>
+            <div class="section-desc">URL de la foto portada + prompt generado para Adobe Firefly.</div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="field">
+            <label>URL de la foto (foto_url)</label>
+            <input type="text" name="foto_url" id="fotoUrl"
+              placeholder="https://..."
+              value="${v(f.foto_url)}"
+              oninput="previewFoto(this.value)">
+            <div class="field-note">Imagen de portada del festival. Puede ser una URL de Firefly, Unsplash, o subida manualmente.</div>
+            <div id="fotoPreviewWrap" style="margin-top:12px;${fotoPreviewUrl?'':'display:none'}">
+              <img id="fotoPreview"
+                src="${fotoPreviewUrl}"
+                alt="Preview foto festival"
+                onerror="document.getElementById('fotoPreviewWrap').style.display='none'"
+                style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
+            </div>
+          </div>
+          <div class="field">
+            <label>Prompt Adobe Firefly (foto_prompt)</label>
+            <textarea name="foto_prompt" rows="5"
+              placeholder="Se genera automáticamente con IA. Puedes editarlo antes de usar en Firefly.">${v(f.foto_prompt)}</textarea>
+            <div class="field-note">Prompt en inglés para generar la imagen con Adobe Firefly. Generado por <code>node generarPromptsFoto.js --apply</code>.</div>
+          </div>
+        </div>
+      </div>
+
       <div class="save-bar">
         <button type="submit" class="btn-submit" id="btnEnviar">Guardar información del festival</button>
       </div>
@@ -1078,7 +1151,7 @@ function goTo(sectionId, navEl) {
   const section = document.getElementById(sectionId);
   if (section) { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); section.classList.add('highlight'); setTimeout(() => section.classList.remove('highlight'), 1500); }
 }
-const sections = ['sec-general','sec-contacto','sec-sitios','sec-hoteles'];
+const sections = ['sec-general','sec-contacto','sec-sitios','sec-hoteles','sec-imagen'];
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -1093,7 +1166,16 @@ const progressFields = [
   { fields: ['lugar_encuentro','maps_link'],ns: 'ns-contacto' },
   { fields: ['sitio_1'],                   ns: 'ns-sitios' },
   { fields: ['hotel_1'],                   ns: 'ns-hoteles' },
+  { fields: ['foto_url','foto_prompt'],     ns: 'ns-imagen' },
 ];
+function previewFoto(val) {
+  const wrap    = document.getElementById('fotoPreviewWrap');
+  const preview = document.getElementById('fotoPreview');
+  if (!val || !val.trim()) { wrap.style.display = 'none'; return; }
+  preview.src = val.trim();
+  wrap.style.display = 'block';
+  preview.onerror = () => { wrap.style.display = 'none'; };
+}
 function calcProgress() {
   let done = 0;
   progressFields.forEach(({ fields, ns }) => {
@@ -1142,6 +1224,8 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     hotel_1: data.hotel_1||null, wa_1: data.wa_1||null,
     hotel_2: data.hotel_2||null, wa_2: data.wa_2||null,
     hotel_3: data.hotel_3||null, wa_3: data.wa_3||null,
+    foto_url:    data.foto_url    || null,
+    foto_prompt: data.foto_prompt || null,
   };
   try {
     const res = await fetch('/api/festival/'+data.festival_id+'/actualizar', {
@@ -1175,6 +1259,7 @@ router.post('/api/festival/:id/actualizar', async (req, res) => {
     maps_link, whatsapp_link,
     sitio_1, maps_1, sitio_2, maps_2, sitio_3, maps_3,
     hotel_1, wa_1, hotel_2, wa_2, hotel_3, wa_3,
+    foto_url, foto_prompt,
   } = req.body;
 
   if (!admintoken || admintoken !== process.env.ADMIN_TOKEN) {
@@ -1213,13 +1298,16 @@ router.post('/api/festival/:id/actualizar', async (req, res) => {
         hotel_2         = COALESCE($16, hotel_2),
         wa_2            = COALESCE($17, wa_2),
         hotel_3         = COALESCE($18, hotel_3),
-        wa_3            = COALESCE($19, wa_3)
-       WHERE id = $20`,
+        wa_3            = COALESCE($19, wa_3),
+        foto_url        = COALESCE($20, foto_url),
+        foto_prompt     = COALESCE($21, foto_prompt)
+       WHERE id = $22`,
       [
         nombre, fecha_inicio||null, fecha_fin||null, descripcion, lugar_encuentro,
         maps_link, whatsapp_link,
         sitio_1, maps_1, sitio_2, maps_2, sitio_3, maps_3,
         hotel_1, wa_1, hotel_2, wa_2, hotel_3, wa_3,
+        foto_url, foto_prompt,
         festId,
       ]
     );
