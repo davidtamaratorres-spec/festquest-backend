@@ -1,0 +1,245 @@
+import type { Restaurant } from "./types";
+
+/**
+ * NOTA:
+ * - Platos compartidos entre restaurantes y ciudades
+ * - Precios varían por restaurante
+ * - Promos/parqueadero/distanceKm diferencian la oferta
+ */
+
+export const restaurants: Restaurant[] = [
+  // ===================== MEDELLÍN =====================
+  {
+    id: "med-1",
+    name: "Antioquia Tradicional",
+    city: "Medellín",
+    distanceKm: 0.6,
+    hasParking: false,
+    offersDiscount: true,
+    discountType: "percentage",
+    discountValue: 10,
+    promoDescription: "10% OFF en platos típicos con DishQuest",
+    whatsappPhone: "573001111111",
+    dishes: [
+      { id: "p-bandeja", name: "Bandeja paisa", price: 36000, description: "Clásica bandeja paisa", image: require("../../assets/images/dishes/bandeja-paisa.jpg") },
+      { id: "p-mondongo", name: "Mondongo", price: 28000, description: "Mondongo tradicional", image: require("../../assets/images/dishes/mondongo.jpg") },
+      { id: "p-hc", name: "Hamburguesa clásica", price: 24000, description: "Hamburguesa con queso", image: require("../../assets/images/dishes/hamburguesa-clasica.jpg") },
+      { id: "p-des", name: "Desayuno campesino", price: 18000, description: "Huevos, arepa y queso", image: require("../../assets/images/dishes/desayuno-campesino.jpg") },
+    ],
+  },
+  {
+    id: "med-2",
+    name: "Parrilla La Montaña",
+    city: "Medellín",
+    distanceKm: 1.8,
+    hasParking: true,
+    offersDiscount: false,
+    whatsappPhone: "573001111112",
+    promoDescription: "",
+    dishes: [
+      { id: "p-chu", name: "Churrasco a la parrilla", price: 42000, description: "Corte a la parrilla", image: require("../../assets/images/dishes/churrasco-parrilla.jpg") },
+      { id: "p-hd", name: "Hamburguesa doble", price: 32000, description: "Doble carne y queso", image: require("../../assets/images/dishes/hamburguesa-doble.jpg") },
+      { id: "p-pap", name: "Papas artesanales", price: 12000, description: "Papas con especias", image: require("../../assets/images/dishes/papas-artesanales.jpg") },
+    ],
+  },
+  {
+    id: "med-3",
+    name: "Ruta Burger Medellín",
+    city: "Medellín",
+    distanceKm: 0.9,
+    hasParking: false,
+    offersDiscount: true,
+    discountType: "two_for_one",
+    promoDescription: "2x1 en hamburguesa clásica",
+    whatsappPhone: "573001111113",
+    dishes: [
+      { id: "p-hc", name: "Hamburguesa clásica", price: 23000, description: "Clásica urbana", image: require("../../assets/images/dishes/hamburguesa-clasica.jpg") },
+      { id: "p-ha", name: "Hamburguesa artesanal", price: 28000, description: "Pan brioche y carne premium", image: require("../../assets/images/dishes/hamburguesa-artesanal.jpg") },
+    ],
+  },
+  {
+    id: "med-4",
+    name: "Café Aurora",
+    city: "Medellín",
+    distanceKm: 0.4,
+    hasParking: false,
+    offersDiscount: false,
+    whatsappPhone: "573001111114",
+    promoDescription: "",
+    dishes: [
+      { id: "p-des", name: "Desayuno campesino", price: 17000, description: "Desayuno tradicional", image: require("../../assets/images/dishes/desayuno-campesino.jpg") },
+      { id: "p-caf", name: "Café especial", price: 8000, description: "Café colombiano", image: require("../../assets/images/dishes/cafe-especial.jpg") },
+      { id: "p-smo", name: "Smoothie antioxidante", price: 15000, description: "Frutos rojos", image: require("../../assets/images/dishes/smoothie-antioxidante.jpg") },
+    ],
+  },
+  {
+    id: "med-5",
+    name: "La Esquina Veggie",
+    city: "Medellín",
+    distanceKm: 2.5,
+    hasParking: true,
+    offersDiscount: true,
+    discountType: "free_item",
+    promoDescription: "Bebida gratis en bowls y wraps",
+    whatsappPhone: "573001111115",
+    dishes: [
+      { id: "p-lv", name: "Lasaña vegana", price: 30000, description: "Vegetales y salsa natural", image: require("../../assets/images/dishes/lasana-vegana.jpg") },
+      { id: "p-wrap", name: "Wrap vegetal", price: 22000, description: "Vegetales y hummus", image: require("../../assets/images/dishes/wrap-vegetal.jpg") },
+      { id: "p-hv", name: "Hamburguesa vegana", price: 27000, description: "Base de legumbres", image: require("../../assets/images/dishes/hamburguesa-vegana.jpg") },
+    ],
+  },
+
+  // ===================== BOGOTÁ =====================
+  {
+    id: "bog-1",
+    name: "Sabor Capital",
+    city: "Bogotá",
+    distanceKm: 0.7,
+    hasParking: false,
+    offersDiscount: true,
+    discountType: "percentage",
+    discountValue: 10,
+    promoDescription: "10% OFF en ajiaco",
+    whatsappPhone: "573002222221",
+    dishes: [
+      { id: "p-aji", name: "Ajiaco", price: 32000, description: "Sopa típica bogotana", image: require("../../assets/images/dishes/ajiaco.jpg") },
+      { id: "p-hc", name: "Hamburguesa clásica", price: 25000, description: "Clásica capitalina", image: require("../../assets/images/dishes/hamburguesa-clasica.jpg") },
+    ],
+  },
+  {
+    id: "bog-2",
+    name: "Distrito Burger",
+    city: "Bogotá",
+    distanceKm: 1.2,
+    hasParking: false,
+    offersDiscount: true,
+    discountType: "two_for_one",
+    promoDescription: "2x1 en hamburguesa",
+    whatsappPhone: "573002222222",
+    dishes: [
+      { id: "p-hd", name: "Hamburguesa doble", price: 33000, description: "Doble carne urbana", image: require("../../assets/images/dishes/hamburguesa-doble.jpg") },
+      { id: "p-pap", name: "Papas artesanales", price: 13000, description: "Papas crujientes", image: require("../../assets/images/dishes/papas-artesanales.jpg") },
+    ],
+  },
+  {
+    id: "bog-3",
+    name: "La Pasta Urbana",
+    city: "Bogotá",
+    distanceKm: 2.0,
+    hasParking: true,
+    offersDiscount: false,
+    whatsappPhone: "573002222223",
+    promoDescription: "",
+    dishes: [
+      { id: "p-piz", name: "Pizza margarita", price: 34000, description: "Clásica italiana", image: require("../../assets/images/dishes/pizza-margarita.jpg") },
+      { id: "p-car", name: "Pasta carbonara", price: 36000, description: "Salsa cremosa", image: require("../../assets/images/dishes/pasta-carbonara.jpg") },
+    ],
+  },
+  {
+    id: "bog-4",
+    name: "Desayunos Chapinero",
+    city: "Bogotá",
+    distanceKm: 0.5,
+    hasParking: false,
+    offersDiscount: false,
+    whatsappPhone: "573002222224",
+    promoDescription: "",
+    dishes: [
+      { id: "p-des", name: "Desayuno campesino", price: 19000, description: "Huevos y arepa", image: require("../../assets/images/dishes/desayuno-campesino.jpg") },
+      { id: "p-smo", name: "Smoothie antioxidante", price: 16000, description: "Frutos rojos", image: require("../../assets/images/dishes/smoothie-antioxidante.jpg") },
+    ],
+  },
+  {
+    id: "bog-5",
+    name: "Green Bowl Bogotá",
+    city: "Bogotá",
+    distanceKm: 3.1,
+    hasParking: true,
+    offersDiscount: true,
+    discountType: "free_item",
+    promoDescription: "Bebida gratis en bowls",
+    whatsappPhone: "573002222225",
+    dishes: [
+      { id: "p-wrap", name: "Wrap vegetal", price: 23000, description: "Wrap saludable", image: require("../../assets/images/dishes/wrap-vegetal.jpg") },
+      { id: "p-lv", name: "Lasaña vegana", price: 31000, description: "Vegana y natural", image: require("../../assets/images/dishes/lasana-vegana.jpg") },
+    ],
+  },
+
+  // ===================== SINCELEJO =====================
+  {
+    id: "sin-1",
+    name: "Sabor Costeño",
+    city: "Sincelejo",
+    distanceKm: 0.8,
+    hasParking: false,
+    offersDiscount: true,
+    discountType: "percentage",
+    discountValue: 10,
+    promoDescription: "10% OFF en mote de queso",
+    whatsappPhone: "573003333331",
+    dishes: [
+      { id: "p-mote", name: "Mote de queso", price: 26000, description: "Plato típico sucreño", image: require("../../assets/images/dishes/mote-de-queso.jpg") },
+      { id: "p-hc", name: "Hamburguesa clásica", price: 22000, description: "Clásica costeña", image: require("../../assets/images/dishes/hamburguesa-clasica.jpg") },
+    ],
+  },
+  {
+    id: "sin-2",
+    name: "Mar Azul",
+    city: "Sincelejo",
+    distanceKm: 1.6,
+    hasParking: true,
+    offersDiscount: false,
+    whatsappPhone: "573003333332",
+    promoDescription: "",
+    dishes: [
+      { id: "p-caz", name: "Cazuela de mariscos", price: 42000, description: "Mariscos mixtos", image: require("../../assets/images/dishes/cazuela-mariscos.jpg") },
+      { id: "p-moj", name: "Mojarra frita", price: 30000, description: "Pescado frito", image: require("../../assets/images/dishes/mojarra-frita.jpg") },
+    ],
+  },
+  {
+    id: "sin-3",
+    name: "Costa Grill",
+    city: "Sincelejo",
+    distanceKm: 2.9,
+    hasParking: true,
+    offersDiscount: true,
+    discountType: "two_for_one",
+    promoDescription: "2x1 en pescado frito",
+    whatsappPhone: "573003333333",
+    dishes: [
+      { id: "p-moj", name: "Mojarra frita", price: 28000, description: "Mojarra dorada", image: require("../../assets/images/dishes/mojarra-frita.jpg") },
+      { id: "p-par", name: "Pargo rojo frito", price: 45000, description: "Pargo con patacones", image: require("../../assets/images/dishes/pargo-rojo-frito.jpg") },
+    ],
+  },
+  {
+    id: "sin-4",
+    name: "Hamburguesas del Puerto",
+    city: "Sincelejo",
+    distanceKm: 1.1,
+    hasParking: false,
+    offersDiscount: false,
+    whatsappPhone: "573003333334",
+    promoDescription: "",
+    dishes: [
+      { id: "p-hd", name: "Hamburguesa doble", price: 29000, description: "Doble carne", image: require("../../assets/images/dishes/hamburguesa-doble.jpg") },
+      { id: "p-pap", name: "Papas artesanales", price: 12000, description: "Papas fritas", image: require("../../assets/images/dishes/papas-artesanales.jpg") },
+    ],
+  },
+  {
+    id: "sin-5",
+    name: "Desayunos La Sabana",
+    city: "Sincelejo",
+    distanceKm: 0.3,
+    hasParking: false,
+    offersDiscount: true,
+    discountType: "free_item",
+    promoDescription: "Bebida gratis en desayunos",
+    whatsappPhone: "573003333335",
+    dishes: [
+      { id: "p-des", name: "Desayuno campesino", price: 17000, description: "Desayuno costeño", image: require("../../assets/images/dishes/desayuno-campesino.jpg") },
+      { id: "p-caf", name: "Café especial", price: 7000, description: "Café caliente", image: require("../../assets/images/dishes/cafe-especial.jpg") },
+    ],
+  },
+];
+
+
