@@ -1,336 +1,310 @@
 /**
- * completarMunicipios.js
+ * completarMunicipios.js  — v2 con parsers corregidos
  *
- * Flujo completo para los 67 municipios con festivales:
- *   1. DIAGNÓSTICO — imprime tabla de completitud antes de enriquecer
- *   2. ENRIQUECIMIENTO — busca datos faltantes en:
- *        • Wikipedia REST API + MediaWiki API → gentilicio, alcalde, altura, temperatura, habitantes
- *        • datos.gov.co (DIVIPOLA DANE)       → codigo_dane, latitud, longitud
- *        • Nominatim (OpenStreetMap)           → latitud/longitud fallback
- *   3. UPDATE — aplica los datos encontrados en la BD (COALESCE: no sobreescribe existentes)
- *   4. REPORTE — compara completitud antes vs. después y lista campos aún pendientes
+ * Fuentes:
+ *   1. Wikipedia ES  → gentilicio, alcalde, altitud, temperatura, población
+ *      Template: {{Ficha de entidad subnacional}} (campo real de municipios CO)
+ *      y        {{Ficha de localidad de Colombia}} (template viejo, algunos municipios)
+ *   2. DANE datos.gov.co → latitud/longitud (con , decimal), cod_mpio
+ *      Endpoint: /resource/gdxc-w37w.json?cod_mpio=<codigo_dane>
+ *   3. Nominatim OSM → lat/lon fallback si DANE no tiene coords
  *
  * Uso:
- *   node completarMunicipios.js                → preview (no escribe en BD)
- *   node completarMunicipios.js --apply        → ejecuta el UPDATE masivo
- *   node completarMunicipios.js --todos        → incluye municipios sin festivales
- *   node completarMunicipios.js --id 42        → solo ese municipio
- *   node completarMunicipios.js --campo gentilicio  → re-procesa solo ese campo
+ *   node completarMunicipios.js           → DRY RUN (sin BD)
+ *   node completarMunicipios.js --apply   → escribe en BD
+ *   node completarMunicipios.js --id 42   → solo ese municipio
+ *   node completarMunicipios.js --todos   → todos los municipios (no solo los de festivales)
  */
 
 require('dotenv').config();
 const axios = require('axios');
 const { Pool } = require('pg');
 
-const pool    = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
-const DRY_RUN = !process.argv.includes('--apply');
-const TODOS   = process.argv.includes('--todos');
-const ONLY_ID = (() => { const i = process.argv.indexOf('--id');    return i !== -1 ? parseInt(process.argv[i + 1], 10) : null; })();
-const SOLO_CAMPO = (() => { const i = process.argv.indexOf('--campo'); return i !== -1 ? process.argv[i + 1] : null; })();
+const pool     = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+const DRY_RUN  = !process.argv.includes('--apply');
+const TODOS    = process.argv.includes('--todos');
+const ONLY_ID  = (() => { const i = process.argv.indexOf('--id');  return i !== -1 ? parseInt(process.argv[i+1], 10) : null; })();
 
-const DELAY_NOMINATIM = 1100;
-const DELAY_WP        = 400;
-const DELAY_DANE      = 300;
-const delay = ms => new Promise(r => setTimeout(r, ms));
+const D_WP   = 800;   // ms entre llamadas Wikipedia
+const D_DANE = 350;   // ms entre llamadas DANE
+const D_NOM  = 1200;  // ms entre llamadas Nominatim (ToS: ≤1 req/s)
+const sleep  = ms => new Promise(r => setTimeout(r, ms));
 
-// ── Campos que diagnosticamos ─────────────────────────────────────────────
-const CAMPOS_DIAG = [
-  'habitantes', 'temperatura_promedio', 'altura',
-  'alcalde', 'gentilicio', 'codigo_dane',
-  'latitud', 'longitud',
-  'sitio_1', 'hotel_1',
+// ── Campos diagnosticados ──────────────────────────────────────────────────
+const CAMPOS = [
+  'habitantes','temperatura_promedio','altura',
+  'alcalde','gentilicio','codigo_dane',
+  'latitud','longitud','sitio_1','hotel_1',
 ];
+const presente = v => v !== null && v !== undefined && String(v).trim().length > 0;
 
-function presente(v) {
-  if (v === null || v === undefined) return false;
-  return String(v).trim().length > 0;
+// ── Limpiar texto wiki ─────────────────────────────────────────────────────
+function cleanWiki(raw) {
+  if (!raw) return '';
+  return raw
+    .replace(/<small[^>]*>.*?<\/small>/gis, '')  // <small>...</small>
+    .replace(/<ref[^>]*>.*?<\/ref>/gis, '')       // <ref>...</ref>
+    .replace(/<ref[^/]*\/>/gi, '')                // <ref />
+    .replace(/<br\s*\/?>/gi, '')                  // <br/>
+    .replace(/<[^>]+>/g, '')                      // resto de HTML
+    .replace(/\[\[([^\|\]]+\|)?([^\]]+)\]\]/g, '$2') // [[link|texto]] → texto
+    .replace(/\{\{formatnum:([^}]+)\}\}/gi, '$1')    // {{formatnum:X}} → X
+    .replace(/\{\{[^}]+\}\}/g, '')               // otros templates
+    .replace(/'''|''|&nbsp;/g, '')
+    .replace(/<!--.*?-->/gs, '')
+    .trim();
 }
 
-// ── DIAGNÓSTICO ───────────────────────────────────────────────────────────
-async function diagnostico(label) {
-  const { rows } = await pool.query(`
-    SELECT id, nombre, departamento,
-           habitantes, temperatura_promedio, altura,
-           alcalde, gentilicio, codigo_dane,
-           latitud, longitud, sitio_1, hotel_1
-    FROM municipalities
-    WHERE id IN (
-      SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL
-    )
-    ORDER BY nombre ASC
-  `);
-
-  const total = CAMPOS_DIAG.length;
-  const resultados = rows.map(r => {
-    const vacios = CAMPOS_DIAG.filter(c => !presente(r[c]));
-    const pct = Math.round(((total - vacios.length) / total) * 100);
-    return { id: r.id, nombre: r.nombre, departamento: r.departamento ?? '', vacios, pct };
-  });
-
-  const promedio = Math.round(resultados.reduce((s, r) => s + r.pct, 0) / resultados.length);
-
-  const PAD_MUN  = 28;
-  const PAD_DEPT = 20;
-  const PAD_PCT  = 5;
-  const pad = (s, n) => String(s).padEnd(n).slice(0, n);
-  const line = '─'.repeat(PAD_MUN + 1 + PAD_DEPT + 1 + PAD_PCT + 1 + 48);
-
-  console.log(`\n${'═'.repeat(line.length)}`);
-  console.log(`  DIAGNÓSTICO — ${label}   (${rows.length} municipios con festivales)`);
-  console.log(`${'═'.repeat(line.length)}`);
-  console.log(`  ${pad('MUNICIPIO', PAD_MUN)} ${pad('DEPTO', PAD_DEPT)} ${pad('%', PAD_PCT)} CAMPOS VACÍOS`);
-  console.log(`  ${line}`);
-
-  for (const r of resultados.sort((a, b) => a.pct - b.pct)) {
-    const vaciosStr = r.vacios.length === 0 ? '✓ completo' : r.vacios.join(', ');
-    const pctStr = `${r.pct}%`;
-    console.log(`  ${pad(r.nombre, PAD_MUN)} ${pad(r.departamento, PAD_DEPT)} ${pad(pctStr, PAD_PCT)} ${vaciosStr}`);
+// Extraer un campo de la infobox wiki (cualquier template)
+function getField(content, ...aliases) {
+  for (const alias of aliases) {
+    const re = new RegExp(`\\|\\s*${alias}\\s*=\\s*([^\\|\\}\\n\\r]{1,250})`, 'i');
+    const m  = content.match(re);
+    if (m) {
+      const v = cleanWiki(m[1]);
+      if (v.length > 0 && v.length < 120) return v;
+    }
   }
-
-  console.log(`\n  Promedio de completitud: ${promedio}%`);
-
-  // Resumen por campo
-  const campoStats = CAMPOS_DIAG.map(c => ({
-    campo: c,
-    vacios: rows.filter(r => !presente(r[c])).length,
-  })).sort((a, b) => b.vacios - a.vacios);
-
-  console.log(`\n  VACÍOS POR CAMPO:`);
-  for (const { campo, vacios } of campoStats) {
-    const bar = '█'.repeat(Math.round((vacios / rows.length) * 20)).padEnd(20);
-    console.log(`    ${campo.padEnd(22)} ${bar} ${vacios}/${rows.length}`);
-  }
-
-  return { rows, resultados, promedio };
+  return null;
 }
 
-// ── DANE datos.gov.co ─────────────────────────────────────────────────────
-async function fetchDANE(nombre, departamento) {
-  try {
-    // Dataset DIVIPOLA — Marco Geoestadístico Nacional
-    const { data } = await axios.get(
-      'https://www.datos.gov.co/resource/gdxc-w37w.json',
-      {
-        params: {
-          '$where': `upper(municipio) like '%${nombre.toUpperCase().replace(/'/g, "''")}%'`,
-          '$limit': 10,
-        },
+// ── 1. WIKIPEDIA ES ────────────────────────────────────────────────────────
+const WP_API = 'https://es.wikipedia.org/w/api.php';
+
+async function fetchWikipedia(nombre, departamento) {
+  const result = {};
+  let content  = '';
+
+  // Búsqueda del artículo
+  const queries = [
+    `${nombre}, ${departamento}`,
+    `${nombre} (municipio)`,
+    nombre,
+  ];
+
+  for (const q of queries) {
+    try {
+      const { data: s } = await axios.get(WP_API, {
+        params: { action:'query', list:'search', srsearch:q, srlimit:5, format:'json', utf8:1 },
         timeout: 10000,
-        headers: { 'Accept': 'application/json' },
-      }
-    );
+        headers: { 'User-Agent': 'FestQuest/1.0 contact@festquest.app' },
+      });
+      const hits = (s?.query?.search || []).filter(h => {
+        const t = h.title.toLowerCase();
+        return t.includes(nombre.toLowerCase().split(' ')[0]) &&
+               !t.includes('desambiguación') && !t.includes('provincia');
+      });
+      if (!hits.length) continue;
 
+      const { data: p } = await axios.get(WP_API, {
+        params: { action:'query', prop:'revisions', titles:hits[0].title,
+                  rvprop:'content', rvslots:'main', format:'json', utf8:1 },
+        timeout: 12000,
+        headers: { 'User-Agent': 'FestQuest/1.0 contact@festquest.app' },
+      });
+      const pages = p?.query?.pages || {};
+      const pid   = Object.keys(pages)[0];
+      if (!pid || pid === '-1') continue;
+      const raw = pages[pid]?.revisions?.[0]?.slots?.main?.['*'] || '';
+      if (raw.length > 800) { content = raw; break; }
+    } catch { /* continuar con siguiente query */ }
+    await sleep(200);
+  }
+
+  if (!content) return result;
+
+  // ── Gentilicio ────────────────────────────────────────────────────────────
+  const gent = getField(content, 'gentilicio', 'gentilicio1', 'gentilicio2');
+  if (gent) {
+    const limpio = gent.split(/[,\/\n]/)[0].trim();
+    if (limpio.length >= 2 && limpio.length <= 50 && !/\d/.test(limpio))
+      result.gentilicio = limpio;
+  }
+
+  // ── Alcalde — template NUEVO: dirigentes_nombres, template VIEJO: alcalde ─
+  const alc = getField(content,
+    'dirigentes_nombres',          // {{Ficha de entidad subnacional}}
+    'alcalde', 'alcaldesa', 'alcalde_nombre', 'alcalde1', 'mandatario'
+  );
+  if (alc) {
+    // Quitar período de mandato "(2024-2027)" si viene incluido
+    const limpio = alc
+      .replace(/\s*\(?\d{4}[-–]\d{4}\)?\s*$/g, '')
+      .replace(/\s*\(?\d{4}\)?\s*$/g, '')
+      .split(/[\(\n\|]/)[0].trim();
+    const palabras = limpio.split(/\s+/).filter(Boolean);
+    if (palabras.length >= 2 && palabras.length <= 6 && limpio.length <= 80
+        && !/\d{4}/.test(limpio))
+      result.alcalde = limpio;
+  }
+
+  // ── Altura ────────────────────────────────────────────────────────────────
+  const altRaw = getField(content, 'altitud', 'altitud_media', 'elevación', 'altitud_msnm');
+  if (altRaw) {
+    const n = parseInt(altRaw.replace(/[^\d]/g, ''), 10);
+    if (!isNaN(n) && n >= 1 && n <= 5800) result.altura = n;
+  }
+
+  // ── Temperatura ───────────────────────────────────────────────────────────
+  const tempRaw = getField(content,
+    'temperatura', 'temperatura_media', 'temp_media_anual', 'clima_temperatura'
+  );
+  if (tempRaw) {
+    const n = parseFloat(tempRaw.replace(',', '.').replace(/[^\d.]/g, ''));
+    if (!isNaN(n) && n >= 1 && n <= 42) result.temperatura_promedio = n;
+  }
+
+  // ── Población — template NUEVO: "población", template VIEJO: "población_total" ─
+  const habRaw = getField(content,
+    'población',          // {{Ficha de entidad subnacional}} — campo directo
+    'población_total', 'poblacion', 'habitantes', 'pop_total'
+  );
+  if (habRaw) {
+    // Puede tener puntos o comas como miles: "1.234.567" o "1,234,567"
+    const n = parseInt(habRaw.replace(/[.,\s]/g, '').replace(/[^\d]/g, ''), 10);
+    if (!isNaN(n) && n >= 200 && n <= 12_000_000) result.habitantes = n;
+  }
+
+  // ── Bandera URL (Wikimedia Commons) ──────────────────────────────────────
+  const bandRaw = getField(content, 'imagen_bandera', 'bandera', 'flag', 'flag_image');
+  if (bandRaw && /\.(png|jpg|svg|jpeg)/i.test(bandRaw)) {
+    const archivo = bandRaw.replace(/^(File:|Archivo:|Image:)/i, '').trim();
+    if (archivo.length > 3) {
+      result.bandera_url = `https://commons.wikimedia.org/wiki/Special:FilePath/${
+        encodeURIComponent(archivo.replace(/ /g, '_'))
+      }`;
+    }
+  }
+
+  return result;
+}
+
+// ── 2. DANE datos.gov.co — lookup directo por cod_mpio ────────────────────
+// Dataset: Marco Geoestadístico Nacional (DIVIPOLA)
+// Campo coma-decimal: "6,246631" → parseFloat("6.246631")
+const DANE_URL = 'https://www.datos.gov.co/resource/gdxc-w37w.json';
+
+async function fetchDANE(codigoDane) {
+  if (!codigoDane) return null;
+  try {
+    const { data } = await axios.get(DANE_URL, {
+      params: { cod_mpio: String(codigoDane), '$limit': 1 },
+      timeout: 10000,
+      headers: { Accept: 'application/json' },
+    });
     if (!Array.isArray(data) || !data.length) return null;
+    const row = data[0];
 
-    const norm = s => s ? s.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '') : '';
-    const target = norm(nombre);
-    const deptTarget = norm(departamento?.split(' ')[0] ?? '');
-
-    const match = data.find(r => {
-      const mn = norm(r.municipio || r.nombre_municipio || '');
-      const dn = norm(r.departamento || r.nombre_departamento || '');
-      return mn === target || (mn.includes(target) && dn.includes(deptTarget));
-    }) || data[0];
-
-    const code = match.c_digo_dane || match.codigo_dane || match.divipola || match.cod_municipio || null;
-    const lat  = parseFloat(match.latitud  || match.lat || '') || null;
-    const lon  = parseFloat(match.longitud || match.lon || match.lng || '') || null;
+    const parseComa = v => v ? parseFloat(String(v).replace(',', '.')) : null;
+    const lat = parseComa(row.latitud);
+    const lon = parseComa(row.longitud);
 
     return {
-      codigo_dane: code ? String(code).replace(/\D/g, '').padStart(5, '0') : null,
-      latitud:  isNaN(lat)  ? null : lat,
-      longitud: isNaN(lon) ? null : lon,
+      latitud:  (lat && !isNaN(lat)) ? lat : null,
+      longitud: (lon && !isNaN(lon)) ? lon : null,
     };
   } catch {
     return null;
   }
 }
 
-// ── Wikipedia REST API + MediaWiki ─────────────────────────────────────────
-const WP_REST = 'https://es.wikipedia.org/api/rest_v1';
-const WP_API  = 'https://es.wikipedia.org/w/api.php';
-
-async function fetchWikipedia(nombre, departamento) {
-  const result = {};
-
-  // 1. REST API: summary (coordenadas, descripción)
-  try {
-    const titles = [
-      `${nombre}, ${departamento}`,
-      `${nombre} (${departamento})`,
-      nombre,
-    ];
-    for (const title of titles) {
+// ── 3. Nominatim fallback ──────────────────────────────────────────────────
+async function fetchNominatim(nombre, departamento, retries = 3) {
+  const q = encodeURIComponent(`${nombre}, ${departamento}, Colombia`);
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
       const { data } = await axios.get(
-        `${WP_REST}/page/summary/${encodeURIComponent(title)}`,
-        { timeout: 8000, headers: { 'User-Agent': 'FestQuest/1.0 (festquest.app)' } }
+        `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=5&countrycodes=co`,
+        { headers: { 'User-Agent': 'FestQuest/1.0 contact@festquest.app' }, timeout: 10000 }
       );
-      if (data?.type === 'standard' || data?.coordinates) {
-        if (data.coordinates?.lat) result._lat = data.coordinates.lat;
-        if (data.coordinates?.lon) result._lon = data.coordinates.lon;
-        if (data.titles?.canonical) result._wpTitle = data.titles.canonical;
-        break;
-      }
+      if (!data?.length) return null;
+      const best = data.find(r =>
+        ['city','town','village','municipality','administrative'].includes(r.type)
+      ) || data[0];
+      const lat = parseFloat(best.lat);
+      const lon = parseFloat(best.lon);
+      return (!isNaN(lat) && !isNaN(lon)) ? { latitud: lat, longitud: lon } : null;
+    } catch {
+      if (attempt < retries - 1) await sleep(D_NOM * (attempt + 1));
     }
-  } catch { /* sigue */ }
-
-  // 2. MediaWiki API: infobox del artículo (campos detallados)
-  let pageContent = '';
-  try {
-    const queries = [
-      result._wpTitle,
-      `${nombre}, ${departamento}`,
-      `${nombre} (${departamento})`,
-      nombre,
-    ].filter(Boolean);
-
-    for (const q of queries) {
-      const { data: search } = await axios.get(WP_API, {
-        params: { action: 'query', list: 'search', srsearch: q, srlimit: 5, format: 'json', utf8: 1 },
-        timeout: 8000,
-      });
-      const hits = search?.query?.search || [];
-      const hit  = hits.find(h => {
-        const t = h.title.toLowerCase();
-        return t.includes(nombre.toLowerCase()) && !t.includes('desambiguación');
-      });
-      if (hit) {
-        const { data: page } = await axios.get(WP_API, {
-          params: { action: 'query', prop: 'revisions', titles: hit.title,
-                    rvprop: 'content', rvslots: 'main', format: 'json', utf8: 1 },
-          timeout: 10000,
-        });
-        const pages = page?.query?.pages || {};
-        const pid   = Object.keys(pages)[0];
-        if (pid && pid !== '-1') {
-          pageContent = pages[pid]?.revisions?.[0]?.slots?.main?.['*'] || '';
-          if (pageContent.length > 500) break;
-        }
-      }
-    }
-  } catch {
-    return result;
   }
-
-  if (!pageContent) return result;
-
-  // Parsear infobox
-  function getField(...aliases) {
-    for (const alias of aliases) {
-      const re = new RegExp(`\\|\\s*${alias}\\s*=\\s*([^\\|\\}\\n\\r]{1,150})`, 'i');
-      const m  = pageContent.match(re);
-      if (m) {
-        const v = m[1]
-          .replace(/\[\[([^\|\]]+\|)?([^\]]+)\]\]/g, '$2')
-          .replace(/\{\{formatnum:([^}]+)\}\}/gi, '$1')
-          .replace(/\{\{[^}]+\}\}/g, '')
-          .replace(/<[^>]+>/g, '')
-          .replace(/'''|''|&nbsp;|<!--.*?-->/g, '')
-          .trim();
-        if (v.length > 0 && v.length < 100) return v;
-      }
-    }
-    return null;
-  }
-
-  const gent = getField('gentilicio', 'gentilicio1', 'gentilicio2');
-  if (gent) {
-    const limpio = gent.split(/[,\/\n]/)[0].trim();
-    if (limpio.length > 1) result.gentilicio = limpio;
-  }
-
-  const alc = getField('alcalde', 'alcaldesa', 'alcalde_nombre', 'alcalde1', 'mandatario');
-  if (alc) {
-    const limpio = alc.split(/[\(\n]/)[0].trim();
-    if (limpio.length > 3) result.alcalde = limpio;
-  }
-
-  const altStr = getField('altitud', 'altitud_media', 'elevación', 'altitud_msnm');
-  if (altStr) {
-    const n = parseInt(altStr.replace(/[^\d]/g, ''), 10);
-    if (!isNaN(n) && n > 0 && n < 5800) result.altura = n;
-  }
-
-  const tempStr = getField('temperatura_media', 'temperatura', 'temp_media_anual');
-  if (tempStr) {
-    const n = parseFloat(tempStr.replace(',', '.').replace(/[^\d.]/g, ''));
-    if (!isNaN(n) && n > 0 && n < 45) result.temperatura_promedio = n;
-  }
-
-  const habStr = getField('población', 'poblacion', 'población_total', 'habitantes');
-  if (habStr) {
-    const n = parseInt(habStr.replace(/[^\d]/g, ''), 10);
-    if (!isNaN(n) && n > 100) result.habitantes = n;
-  }
-
-  // Código DANE desde infobox (a veces está como |municipio_id= o |cod_dane=)
-  const daneStr = getField('municipio_id', 'cod_dane', 'código_dane', 'codigo_dane');
-  if (daneStr) {
-    const code = daneStr.replace(/\D/g, '').padStart(5, '0');
-    if (code.length === 5) result.codigo_dane = code;
-  }
-
-  return result;
-}
-
-// ── Nominatim (coordenadas fallback) ──────────────────────────────────────
-async function fetchNominatim(nombre, departamento) {
-  try {
-    const q = encodeURIComponent(`${nombre}, ${departamento}, Colombia`);
-    const { data } = await axios.get(
-      `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=3&countrycodes=co`,
-      { headers: { 'User-Agent': 'FestQuest/1.0 (festquest.app)' }, timeout: 10000 }
-    );
-    if (!data?.length) return null;
-    const best = data.find(r =>
-      ['city', 'town', 'village', 'municipality', 'administrative'].includes(r.type)
-    ) || data[0];
-    return { latitud: parseFloat(best.lat), longitud: parseFloat(best.lon) };
-  } catch {
-    return null;
-  }
+  return null;
 }
 
 // ── Update BD ──────────────────────────────────────────────────────────────
 async function updateMunicipio(id, datos) {
   const campos = Object.keys(datos).filter(k => datos[k] !== null && datos[k] !== undefined);
   if (!campos.length) return 0;
-  const sets   = campos.map((c, i) => `${c} = COALESCE($${i + 1}, ${c})`).join(', ');
+  const sets   = campos.map((c, i) => `${c} = COALESCE($${i+1}, ${c})`).join(', ');
   const values = [...campos.map(c => datos[c]), id];
   const { rowCount } = await pool.query(
-    `UPDATE municipalities SET ${sets} WHERE id = $${values.length}`,
+    `UPDATE municipalities SET ${sets}, fecha_actualizacion = NOW() WHERE id = $${values.length}`,
     values
   );
   return rowCount;
 }
 
-// ── Selección ─────────────────────────────────────────────────────────────
+// ── Diagnóstico ────────────────────────────────────────────────────────────
+async function diagnostico(label) {
+  const { rows } = await pool.query(`
+    SELECT id, nombre, departamento, ${CAMPOS.join(', ')}
+    FROM municipalities
+    WHERE id IN (SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL)
+    ORDER BY nombre ASC
+  `);
+
+  const total = CAMPOS.length;
+  const resultados = rows.map(r => {
+    const vacios = CAMPOS.filter(c => !presente(r[c]));
+    return { nombre: r.nombre, depto: r.departamento ?? '', vacios,
+             pct: Math.round(((total - vacios.length) / total) * 100) };
+  });
+
+  const promedio = Math.round(resultados.reduce((s, r) => s + r.pct, 0) / resultados.length);
+  const pad = (s, n) => String(s).padEnd(n).slice(0, n);
+  const L = 100;
+
+  console.log(`\n${'═'.repeat(L)}`);
+  console.log(`  DIAGNÓSTICO — ${label}   (${rows.length} municipios)`);
+  console.log(`${'═'.repeat(L)}`);
+  console.log(`  ${'MUNICIPIO'.padEnd(28)} ${'DEPTO'.padEnd(22)} ${'%'.padEnd(5)} VACÍOS`);
+  console.log(`  ${'─'.repeat(L-2)}`);
+  for (const r of resultados.sort((a, b) => a.pct - b.pct))
+    console.log(`  ${pad(r.nombre,28)} ${pad(r.depto,22)} ${pad(r.pct+'%',5)} ${r.vacios.join(', ') || '✓ completo'}`);
+
+  console.log(`\n  Promedio: ${promedio}%`);
+  console.log('\n  VACÍOS POR CAMPO:');
+  CAMPOS.map(c => ({ c, n: rows.filter(r => !presente(r[c])).length }))
+    .sort((a,b) => b.n - a.n)
+    .forEach(({ c, n }) => {
+      const bar = '█'.repeat(Math.round(n/rows.length*20)).padEnd(20);
+      console.log(`    ${c.padEnd(22)} ${bar} ${n}/${rows.length}`);
+    });
+
+  return { rows, promedio };
+}
+
+// ── Selección ──────────────────────────────────────────────────────────────
 async function getMunicipios() {
   if (ONLY_ID) {
     const { rows } = await pool.query(
-      `SELECT id, nombre, departamento, codigo_dane, habitantes,
-              latitud, longitud, altura, temperatura_promedio, gentilicio, alcalde
+      `SELECT id, nombre, departamento, codigo_dane, habitantes, latitud, longitud,
+              altura, temperatura_promedio, gentilicio, alcalde, bandera_url
        FROM municipalities WHERE id = $1`, [ONLY_ID]
     );
     return rows;
   }
-
-  const needsFields = SOLO_CAMPO
-    ? `${SOLO_CAMPO} IS NULL`
-    : `(codigo_dane IS NULL OR latitud IS NULL OR longitud IS NULL
-        OR gentilicio IS NULL OR alcalde IS NULL
-        OR altura IS NULL OR temperatura_promedio IS NULL
-        OR habitantes IS NULL)`;
-
+  const needsFields = `(latitud IS NULL OR longitud IS NULL OR gentilicio IS NULL
+                        OR alcalde IS NULL OR altura IS NULL
+                        OR temperatura_promedio IS NULL OR habitantes IS NULL)`;
   const scope = TODOS
     ? `FROM municipalities WHERE ${needsFields}`
     : `FROM municipalities
        WHERE ${needsFields}
          AND id IN (SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL)`;
-
   const { rows } = await pool.query(
-    `SELECT id, nombre, departamento, codigo_dane, habitantes,
-            latitud, longitud, altura, temperatura_promedio, gentilicio, alcalde
+    `SELECT id, nombre, departamento, codigo_dane, habitantes, latitud, longitud,
+            altura, temperatura_promedio, gentilicio, alcalde, bandera_url
      ${scope} ORDER BY nombre ASC`
   );
   return rows;
@@ -338,96 +312,104 @@ async function getMunicipios() {
 
 // ── Main ───────────────────────────────────────────────────────────────────
 async function main() {
-  const scope = TODOS ? 'todos los municipios' : 'municipios con festivales';
   console.log(`\n${'═'.repeat(72)}`);
-  console.log('  FestQuest — completarMunicipios.js');
-  console.log(`  Scope: ${scope}${DRY_RUN ? '  |  DRY RUN (sin cambios en BD)' : '  |  MODO APPLY'}`);
+  console.log('  FestQuest — completarMunicipios.js  (v2 parsers corregidos)');
+  console.log(`  Modo: ${DRY_RUN ? 'DRY RUN — sin cambios en BD' : '🔴 APPLY — escribiendo en BD'}`);
   console.log(`${'═'.repeat(72)}`);
 
-  // ── FASE 1: Diagnóstico inicial ──────────────────────────────────────────
-  const { rows: rowsAntes, promedio: promedioAntes } = await diagnostico('ANTES del enriquecimiento');
+  await diagnostico('ANTES del enriquecimiento');
 
-  // ── FASE 2: Enriquecimiento ──────────────────────────────────────────────
   const municipios = await getMunicipios();
   console.log(`\n${'─'.repeat(72)}`);
   console.log(`  ENRIQUECIMIENTO — ${municipios.length} municipios con campos vacíos`);
-  if (DRY_RUN) console.log('  (DRY RUN: los datos se mostrarán pero NO se escribirán en BD)');
+  if (DRY_RUN) console.log('  ⚠️  DRY RUN: los datos NO se guardarán en BD');
   console.log(`${'─'.repeat(72)}\n`);
 
   if (!municipios.length) {
-    console.log('✅ No hay campos que enriquecer. Todos los municipios están completos.');
+    console.log('✅ Todo completado. No hay campos vacíos.\n');
     await pool.end(); return;
   }
 
   let updated = 0, sinDatos = 0, errores = 0;
-  const camposCompletados = {};
-  CAMPOS_DIAG.forEach(c => { camposCompletados[c] = 0; });
+  const conteo = {};  // campo → {wp:0, dane:0, nom:0}
+  CAMPOS.forEach(c => { conteo[c] = { wp: 0, dane: 0, nom: 0 }; });
 
-  for (let idx = 0; idx < municipios.length; idx++) {
-    const m = municipios[idx];
-    process.stdout.write(
-      `  [${String(idx + 1).padStart(3)}/${municipios.length}] ${m.nombre.padEnd(28)} `
-    );
+  for (let i = 0; i < municipios.length; i++) {
+    const m   = municipios[i];
+    const pfx = `  [${String(i+1).padStart(3)}/${municipios.length}] ${m.nombre.padEnd(30)}`;
+    process.stdout.write(pfx);
 
-    const datos = {};
+    const datos   = {};
+    const fuentes = {};
 
-    // ── Wikipedia ──────────────────────────────────────────────────────────
-    const needsWp = !m.gentilicio || !m.alcalde || !m.altura || !m.temperatura_promedio
-                    || !m.habitantes || !m.codigo_dane;
+    // ── Wikipedia ────────────────────────────────────────────────────────────
+    const needsWp = !m.gentilicio || !m.alcalde || !m.altura
+                    || !m.temperatura_promedio || !m.habitantes || !m.bandera_url;
     if (needsWp) {
       try {
         const wp = await fetchWikipedia(m.nombre, m.departamento);
-        if (!m.gentilicio           && wp.gentilicio)           datos.gentilicio           = wp.gentilicio;
-        if (!m.alcalde              && wp.alcalde)              datos.alcalde              = wp.alcalde;
-        if (!m.altura               && wp.altura)               datos.altura               = wp.altura;
-        if (!m.temperatura_promedio && wp.temperatura_promedio) datos.temperatura_promedio = wp.temperatura_promedio;
-        if (!m.habitantes           && wp.habitantes)           datos.habitantes           = wp.habitantes;
-        if (!m.codigo_dane          && wp.codigo_dane)          datos.codigo_dane          = wp.codigo_dane;
-        // Coords desde Wikipedia REST si están disponibles
-        if (!m.latitud  && wp._lat) datos.latitud  = wp._lat;
-        if (!m.longitud && wp._lon) datos.longitud = wp._lon;
-      } catch { /* sigue */ }
-      await delay(DELAY_WP);
+        const wpMap = [
+          ['gentilicio',          m.gentilicio],
+          ['alcalde',             m.alcalde],
+          ['altura',              m.altura],
+          ['temperatura_promedio',m.temperatura_promedio],
+          ['habitantes',          m.habitantes],
+          ['bandera_url',         m.bandera_url],
+        ];
+        for (const [campo, existente] of wpMap) {
+          if (!existente && wp[campo] !== undefined) {
+            datos[campo]   = wp[campo];
+            fuentes[campo] = 'wp';
+            if (campo in conteo) conteo[campo].wp++;
+          }
+        }
+      } catch { /* continuar */ }
+      await sleep(D_WP);
     }
 
-    // ── DANE datos.gov.co ──────────────────────────────────────────────────
-    if (!m.codigo_dane && !datos.codigo_dane) {
+    // ── DANE (coords por codigo_dane) ─────────────────────────────────────
+    if (!m.latitud || !m.longitud) {
       try {
-        const dane = await fetchDANE(m.nombre, m.departamento);
-        if (dane?.codigo_dane) datos.codigo_dane = dane.codigo_dane;
-        if (!datos.latitud  && dane?.latitud)  datos.latitud  = dane.latitud;
-        if (!datos.longitud && dane?.longitud) datos.longitud = dane.longitud;
-      } catch { /* sigue */ }
-      await delay(DELAY_DANE);
+        const dane = await fetchDANE(m.codigo_dane);
+        if (dane?.latitud && !datos.latitud) {
+          datos.latitud   = dane.latitud;
+          datos.longitud  = dane.longitud;
+          fuentes.latitud  = 'dane';
+          fuentes.longitud = 'dane';
+          conteo.latitud.dane++;
+          conteo.longitud.dane++;
+        }
+      } catch { /* continuar */ }
+      await sleep(D_DANE);
     }
 
-    // ── Nominatim (coords fallback) ────────────────────────────────────────
+    // ── Nominatim fallback (si DANE no dio coords) ────────────────────────
     if (!m.latitud && !m.longitud && !datos.latitud) {
       try {
-        const coords = await fetchNominatim(m.nombre, m.departamento);
-        if (coords) {
-          datos.latitud  = coords.latitud;
-          datos.longitud = coords.longitud;
+        const nom = await fetchNominatim(m.nombre, m.departamento);
+        if (nom) {
+          datos.latitud   = nom.latitud;
+          datos.longitud  = nom.longitud;
+          fuentes.latitud  = 'nominatim';
+          fuentes.longitud = 'nominatim';
+          conteo.latitud.nom++;
+          conteo.longitud.nom++;
         }
-      } catch { /* sigue */ }
-      await delay(DELAY_NOMINATIM);
+      } catch { /* continuar */ }
+      await sleep(D_NOM);
     }
 
-    const encontrados = Object.keys(datos).filter(k => !k.startsWith('_'));
+    const encontrados = Object.keys(datos);
     if (!encontrados.length) {
       console.log('—');
       sinDatos++;
       continue;
     }
 
-    // Registrar campos completados
-    encontrados.forEach(k => { if (k in camposCompletados) camposCompletados[k]++; });
-
-    const resumen = encontrados.map(k => {
-      const v = String(datos[k]).slice(0, 18);
-      return `${k}=${v}`;
-    }).join(', ');
-    console.log(resumen);
+    const resumen = encontrados.map(k =>
+      `${k}=${String(datos[k]).slice(0,15)}[${fuentes[k]||'?'}]`
+    ).join('  ');
+    console.log(resumen.slice(0, 120));
 
     if (!DRY_RUN) {
       try {
@@ -435,7 +417,7 @@ async function main() {
         if (r > 0) updated++;
         else errores++;
       } catch (e) {
-        console.log(`    ❌ BD error: ${e.message}`);
+        console.log(`    ❌ BD: ${e.message}`);
         errores++;
       }
     } else {
@@ -443,75 +425,57 @@ async function main() {
     }
   }
 
-  // ── FASE 3: Diagnóstico final ────────────────────────────────────────────
+  // ── Diagnóstico final ─────────────────────────────────────────────────────
   if (!DRY_RUN) {
-    const { promedio: promedioDespues } = await diagnostico('DESPUÉS del enriquecimiento');
-    const delta = promedioDespues - promedioAntes;
-    console.log(`\n  📈 Mejora de completitud: ${promedioAntes}% → ${promedioDespues}% (+${delta}%)`);
+    const { promedio: despues } = await diagnostico('DESPUÉS del enriquecimiento');
+    console.log(`\n  📈 Mejora: → ${despues}% promedio`);
   }
 
-  // ── RESUMEN FINAL ─────────────────────────────────────────────────────────
+  // ── Resumen ────────────────────────────────────────────────────────────────
   console.log(`\n${'═'.repeat(72)}`);
   console.log('  RESUMEN FINAL');
   console.log(`${'═'.repeat(72)}`);
-  console.log(`  ✅ Municipios con datos nuevos : ${updated}`);
-  console.log(`  —  Sin datos nuevos            : ${sinDatos}`);
-  if (errores) console.log(`  ❌ Errores de BD               : ${errores}`);
-  if (DRY_RUN) console.log('  ℹ️  DRY RUN — sin cambios en BD');
+  console.log(`  Municipios con datos nuevos : ${updated}`);
+  console.log(`  Sin datos nuevos            : ${sinDatos}`);
+  if (errores) console.log(`  ❌ Errores BD               : ${errores}`);
+  if (DRY_RUN) console.log('  ⚠️  DRY RUN — sin cambios en BD');
 
-  console.log('\n  CAMPOS COMPLETADOS (esta ejecución):');
-  const totalesCompletados = Object.entries(camposCompletados)
-    .filter(([, v]) => v > 0)
-    .sort(([, a], [, b]) => b - a);
-
-  if (totalesCompletados.length) {
-    totalesCompletados.forEach(([campo, n]) => {
-      console.log(`    ${campo.padEnd(24)} +${n}`);
+  console.log('\n  CAMPOS COMPLETADOS por fuente:');
+  console.log(`  ${'CAMPO'.padEnd(24)} ${'Wikipedia'.padStart(10)} ${'DANE'.padStart(6)} ${'Nominatim'.padStart(10)}`);
+  console.log(`  ${'─'.repeat(54)}`);
+  CAMPOS.filter(c => c !== 'sitio_1' && c !== 'hotel_1' && c !== 'codigo_dane')
+    .forEach(c => {
+      const { wp, dane, nom } = conteo[c] || { wp:0, dane:0, nom:0 };
+      if (wp + dane + nom > 0)
+        console.log(`  ${c.padEnd(24)} ${String(wp).padStart(10)} ${String(dane).padStart(6)} ${String(nom).padStart(10)}`);
     });
-  } else {
-    console.log('    (ninguno)');
-  }
 
-  // Campos aún pendientes (para carga manual)
-  const { rows: rowsFinal } = await pool.query(`
+  // Pendientes
+  const { rows: fin } = await pool.query(`
     SELECT nombre, departamento,
-           gentilicio IS NULL AS sin_gentilicio,
-           alcalde IS NULL AS sin_alcalde,
-           codigo_dane IS NULL AS sin_dane,
-           altura IS NULL AS sin_altura,
-           temperatura_promedio IS NULL AS sin_temp,
-           habitantes IS NULL AS sin_hab,
-           latitud IS NULL AS sin_coords
+      gentilicio IS NULL AS sg, alcalde IS NULL AS sa,
+      altura IS NULL AS sal, temperatura_promedio IS NULL AS st,
+      habitantes IS NULL AS sh, latitud IS NULL AS sc
     FROM municipalities
     WHERE id IN (SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL)
     ORDER BY nombre ASC
   `);
-
-  const pendientes = rowsFinal.filter(r =>
-    r.sin_gentilicio || r.sin_alcalde || r.sin_dane ||
-    r.sin_altura || r.sin_temp || r.sin_hab || r.sin_coords
-  );
-
-  if (pendientes.length) {
-    console.log(`\n  PENDIENTES PARA CARGA MANUAL (${pendientes.length} municipios):`);
-    for (const r of pendientes) {
-      const faltantes = [
-        r.sin_gentilicio && 'gentilicio',
-        r.sin_alcalde    && 'alcalde',
-        r.sin_dane       && 'codigo_dane',
-        r.sin_altura     && 'altura',
-        r.sin_temp       && 'temperatura',
-        r.sin_hab        && 'habitantes',
-        r.sin_coords     && 'coords',
-      ].filter(Boolean);
-      console.log(`    ${r.nombre.padEnd(28)} ${faltantes.join(', ')}`);
-    }
+  const pendientes = fin.filter(r => r.sg||r.sa||r.sal||r.st||r.sh||r.sc);
+  console.log(`\n  PENDIENTES CARGA MANUAL: ${pendientes.length} municipios`);
+  if (pendientes.length <= 30) {
+    pendientes.forEach(r => {
+      const f = [r.sg&&'gentilicio',r.sa&&'alcalde',r.sal&&'altura',r.st&&'temp',r.sh&&'hab',r.sc&&'coords'].filter(Boolean);
+      console.log(`    ${r.nombre.padEnd(30)} ${r.departamento?.padEnd(20)||''} → ${f.join(', ')}`);
+    });
   } else {
-    console.log('\n  ✅ Todos los campos básicos están completos');
+    pendientes.slice(0,20).forEach(r => {
+      const f = [r.sg&&'gentilicio',r.sa&&'alcalde',r.sal&&'altura',r.st&&'temp',r.sh&&'hab',r.sc&&'coords'].filter(Boolean);
+      console.log(`    ${r.nombre.padEnd(30)} ${r.departamento?.padEnd(20)||''} → ${f.join(', ')}`);
+    });
+    console.log(`    ... y ${pendientes.length-20} más`);
   }
 
   console.log(`${'═'.repeat(72)}\n`);
-
   await pool.end();
 }
 
