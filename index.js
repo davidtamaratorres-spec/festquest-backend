@@ -35,6 +35,7 @@ app.get("/api/festivals", async (req, res) => {
         f.maps_link,
         f.whatsapp_link,
         f.codigo_dane,
+        f.foto_url,
         m.id   AS municipio_id,
         m.nombre AS municipio,
         m.departamento,
@@ -86,6 +87,7 @@ app.get("/api/festivals/:id", async (req, res) => {
         TO_CHAR(f.fecha_inicio, 'YYYY-MM-DD') AS fecha_inicio,
         TO_CHAR(f.fecha_fin,    'YYYY-MM-DD') AS fecha_fin,
         f.descripcion, f.lugar_encuentro, f.maps_link, f.whatsapp_link,
+        f.foto_url, f.foto_prompt,
         f.municipio_id,
         m.nombre AS municipio, m.departamento,
         m.subregion, m.habitantes, m.temperatura_promedio, m.altura,
@@ -133,7 +135,8 @@ app.get("/api/municipalities/:id", async (req, res) => {
            m.habitantes, m.temperatura_promedio, m.altura,
            m.gentilicio, m.alcalde, m.correo_alcalde,
            m.sitios_turisticos, m.hoteles, m.contacto_hoteles,
-           m.codigo_dane, m.bandera_url,
+           m.codigo_dane, m.bandera_url, m.escudo_url,
+           m.latitud, m.longitud,
            m.sitio_1, m.maps_1, m.sitio_2, m.maps_2, m.sitio_3, m.maps_3,
            m.hotel_1, m.wa_1, m.hotel_2, m.wa_2, m.hotel_3, m.wa_3
          FROM municipalities m
