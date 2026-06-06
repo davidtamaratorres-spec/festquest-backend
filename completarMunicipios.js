@@ -25,7 +25,7 @@ const DRY_RUN  = !process.argv.includes('--apply');
 const TODOS    = process.argv.includes('--todos');
 const ONLY_ID  = (() => { const i = process.argv.indexOf('--id');  return i !== -1 ? parseInt(process.argv[i+1], 10) : null; })();
 
-const D_WP   = 800;   // ms entre llamadas Wikipedia
+const D_WP   = 2000;  // ms entre llamadas Wikipedia (2 s para evitar rate-limit)
 const D_DANE = 350;   // ms entre llamadas DANE
 const D_NOM  = 1200;  // ms entre llamadas Nominatim (ToS: ≤1 req/s)
 const sleep  = ms => new Promise(r => setTimeout(r, ms));
