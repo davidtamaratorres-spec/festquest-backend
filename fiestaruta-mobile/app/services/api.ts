@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const API_URL = 'https://dishquest-backend.onrender.com';
+export const API_URL = 'https://festquest-backend.onrender.com';
 
 export async function apiFetch<T>(
   path: string,

@@ -1,4 +1,4 @@
-const BASE_URL = "https://dishquest-backend.onrender.com";
+const BASE_URL = "https://festquest-backend.onrender.com";
 
 type AnalyticsEvent = {
   dishId: string;
