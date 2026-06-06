@@ -42,9 +42,6 @@ const SUB_GRAD: Record<string, readonly [string, string]> = {
   'Amazonia': ['#26C6DA', '#0D9488'],
 };
 
-const CHIPS = ['Todos', 'Próximos', 'Caribe', 'Andina', 'Pacífico', 'Llanos', 'Amazonia'] as const;
-type Chip = typeof CHIPS[number];
-
 const DEPT_SUB: Record<string, string> = {
   'Atlántico': 'Caribe', 'Bolívar': 'Caribe', 'Cesar': 'Caribe', 'Córdoba': 'Caribe',
   'La Guajira': 'Caribe', 'Magdalena': 'Caribe', 'Sucre': 'Caribe',
@@ -133,20 +130,6 @@ function SuggestDrop({ items, onSelect, icon }: {
           <Text style={s.dropTxt} numberOfLines={1}>{item}</Text>
         </Pressable>
       ))}
-    </View>
-  );
-}
-
-// ── SectionHead ────────────────────────────────────────────────────────────
-function SectionHead({ title, count }: { title: string; count?: number }) {
-  return (
-    <View style={s.sectionHead}>
-      <Text style={s.sectionTitle}>{title}</Text>
-      {count !== undefined && (
-        <View style={s.sectionBadge}>
-          <Text style={s.sectionBadgeTxt}>{count}</Text>
-        </View>
-      )}
     </View>
   );
 }
@@ -251,7 +234,6 @@ export default function HomeScreen() {
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeChip, setActiveChip] = useState<Chip>('Todos');
 
   const [showSearch, setShowSearch] = useState(false);
   const [query, setQuery]           = useState('');
@@ -304,14 +286,12 @@ export default function HomeScreen() {
       const q = normalize(query.trim());
       r = r.filter(f => normalize(f.nombre ?? '').includes(q) || normalize(f.municipio ?? '').includes(q) || normalize(f.departamento ?? '').includes(q));
     }
-    if (activeChip === 'Próximos') r = r.filter(f => !!f.date_start);
-    else if (activeChip !== 'Todos') r = r.filter(f => getSubregion(f) === activeChip);
     if (selectedDept) r = r.filter(f => f.departamento === selectedDept);
     if (selectedMuni) r = r.filter(f => f.municipio === selectedMuni);
     if (filterFrom)   r = r.filter(f => !!f.date_start && f.date_start >= filterFrom);
     if (filterTo)     r = r.filter(f => !f.date_start || f.date_start <= filterTo);
     return r;
-  }, [festivals, query, activeChip, selectedDept, selectedMuni, filterFrom, filterTo]);
+  }, [festivals, query, selectedDept, selectedMuni, filterFrom, filterTo]);
 
   const featured = useMemo(() =>
     filtered.filter(f => !!f.date_start).sort((a, b) => a.date_start! > b.date_start! ? 1 : -1),
@@ -350,9 +330,10 @@ export default function HomeScreen() {
 
       {/* ── Header ── */}
       <View style={s.header}>
-        <View>
+        <View style={{ flex: 1, marginRight: 12 }}>
           <Text style={s.logo}>Fest<Text style={{ color: C.orange }}>Quest</Text></Text>
           <Text style={s.tagline}>Descubre fiestas de Colombia 🇨🇴</Text>
+          <Text style={s.description}>Explora las fiestas y festivales de los municipios de Colombia. Filtra por departamento, municipio o fecha y descubre la cultura de cada región 🇨🇴</Text>
         </View>
         <View style={s.headerBtns}>
           <Pressable style={[s.hBtn, (showFilters || hasActiveFilters) && s.hBtnActive]} onPress={toggleFilters}>
@@ -483,18 +464,12 @@ export default function HomeScreen() {
           </View>
         )}
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.chipsScroll} contentContainerStyle={s.chipsContent} keyboardShouldPersistTaps="handled">
-          {CHIPS.map(chip => (
-            <Pressable key={chip} style={[s.chip, activeChip === chip && s.chipActive]} onPress={() => setActiveChip(chip)}>
-              <Text style={[s.chipTxt, activeChip === chip && s.chipTxtActive]}>{chip}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
       </View>
 
       {/* ── Lista ── */}
       <ScrollView
         style={s.scroll}
+        contentContainerStyle={{ paddingTop: 12 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(true); }} tintColor={C.orange} colors={[C.orange]} />}
@@ -515,21 +490,10 @@ export default function HomeScreen() {
           </View>
         )}
 
-        {!loading && !error && featured.length > 0 && (
-          <>
-            <SectionHead title="Próximos festivales" />
-            {featured.map(f => <FestCard key={f.id} f={f} onPress={() => router.push(`/festival/${f.id}`)} />)}
-          </>
-        )}
+        {!loading && !error && featured.map(f => <FestCard key={f.id} f={f} onPress={() => router.push(`/festival/${f.id}`)} />)}
+        {!loading && !error && noDate.map(f => <MiniCard key={f.id} f={f} onPress={() => router.push(`/festival/${f.id}`)} />)}
 
-        {!loading && !error && noDate.length > 0 && (
-          <>
-            <SectionHead title="Sin fecha confirmada" count={noDate.length} />
-            {noDate.map(f => <MiniCard key={f.id} f={f} onPress={() => router.push(`/festival/${f.id}`)} />)}
-          </>
-        )}
-
-        {!loading && !error && featured.length === 0 && noDate.length === 0 && (
+        {!loading && !error && featured.length === 0 && noDate.length === 0 && !loading && (
           <View style={s.center}>
             <Text style={{ fontSize: 32 }}>🔍</Text>
             <Text style={s.emptyTxt}>
@@ -561,6 +525,7 @@ const s = StyleSheet.create({
   },
   logo: { fontFamily: 'Outfit_900Black', fontSize: 24, color: C.text, letterSpacing: -0.5 },
   tagline: { fontFamily: 'DMSans_400Regular', fontSize: 11, color: C.textSub, marginTop: 1 },
+  description: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: C.textSub, marginTop: 6, lineHeight: 17 },
   headerBtns: { flexDirection: 'row', gap: 8, marginTop: 4 },
   hBtn: {
     width: 36, height: 36, borderRadius: 18,
@@ -608,31 +573,6 @@ const s = StyleSheet.create({
     backgroundColor: C.orangeDim, borderRadius: 8, borderWidth: 1, borderColor: C.orangeBorder,
   },
   clearBtnTxt: { fontSize: 11, color: C.orange, fontWeight: '600' },
-
-  chipsScroll: { flexGrow: 0 },
-  chipsContent: { paddingHorizontal: 16, paddingVertical: 10, gap: 8 },
-  chip: {
-    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
-    backgroundColor: C.surface, borderWidth: 1, borderColor: C.border,
-    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 2, shadowOffset: { width: 0, height: 1 }, elevation: 1,
-  },
-  chipActive: { backgroundColor: C.orange, borderColor: C.orange },
-  chipTxt: { fontSize: 12, fontWeight: '600', color: C.textSub, fontFamily: 'Outfit_700Bold' },
-  chipTxtActive: { color: '#FFFFFF' },
-
-  sectionHead: {
-    flexDirection: 'row', alignItems: 'center', gap: 8,
-    paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10,
-  },
-  sectionTitle: {
-    fontFamily: 'Outfit_700Bold', fontSize: 12, color: C.textSub,
-    textTransform: 'uppercase', letterSpacing: 0.8,
-  },
-  sectionBadge: {
-    backgroundColor: C.surface, borderRadius: 10, borderWidth: 1, borderColor: C.border,
-    paddingHorizontal: 7, paddingVertical: 2,
-  },
-  sectionBadgeTxt: { fontSize: 10, color: C.textDim, fontWeight: '600' },
 
   festCard: {
     marginHorizontal: 16, marginBottom: 14,
