@@ -226,20 +226,14 @@ function MiniCard({ f, onPress }: { f: FestivalListItem; onPress: () => void }) 
 // ── Screen ─────────────────────────────────────────────────────────────────
 export default function HomeScreen() {
   const router = useRouter();
-  const searchRef = useRef<TextInput>(null);
-  const deptRef   = useRef<TextInput>(null);
-  const muniRef   = useRef<TextInput>(null);
+  const deptRef = useRef<TextInput>(null);
+  const muniRef = useRef<TextInput>(null);
 
   const [festivals, setFestivals]   = useState<FestivalListItem[]>([]);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const [showSearch, setShowSearch] = useState(false);
-  const [query, setQuery]           = useState('');
-  const [showSearchDrop, setShowSearchDrop] = useState(false);
-
-  const [showFilters, setShowFilters] = useState(false);
   const [deptInput, setDeptInput]     = useState('');
   const [selectedDept, setSelectedDept] = useState('');
   const [showDeptDrop, setShowDeptDrop] = useState(false);
@@ -259,14 +253,6 @@ export default function HomeScreen() {
 
   useEffect(() => { load(); }, [load]);
 
-  const searchSugg = useMemo(() => {
-    if (query.length < 2) return [];
-    const q = normalize(query);
-    const byName = [...new Set(festivals.filter(f => normalize(f.nombre ?? '').includes(q)).map(f => f.nombre).filter(Boolean) as string[])].slice(0, 3);
-    const byMuni = [...new Set(festivals.filter(f => normalize(f.municipio ?? '').includes(q)).map(f => f.municipio).filter(Boolean) as string[])].slice(0, 2);
-    return [...byName, ...byMuni].slice(0, 5);
-  }, [festivals, query]);
-
   const deptSugg = useMemo(() => {
     if (deptInput.length < 2) return [];
     const q = normalize(deptInput);
@@ -282,16 +268,12 @@ export default function HomeScreen() {
 
   const filtered = useMemo(() => {
     let r = festivals;
-    if (query.trim()) {
-      const q = normalize(query.trim());
-      r = r.filter(f => normalize(f.nombre ?? '').includes(q) || normalize(f.municipio ?? '').includes(q) || normalize(f.departamento ?? '').includes(q));
-    }
     if (selectedDept) r = r.filter(f => f.departamento === selectedDept);
     if (selectedMuni) r = r.filter(f => f.municipio === selectedMuni);
     if (filterFrom)   r = r.filter(f => !!f.date_start && f.date_start >= filterFrom);
     if (filterTo)     r = r.filter(f => !f.date_start || f.date_start <= filterTo);
     return r;
-  }, [festivals, query, selectedDept, selectedMuni, filterFrom, filterTo]);
+  }, [festivals, selectedDept, selectedMuni, filterFrom, filterTo]);
 
   const featured = useMemo(() =>
     filtered.filter(f => !!f.date_start).sort((a, b) => a.date_start! > b.date_start! ? 1 : -1),
@@ -299,29 +281,11 @@ export default function HomeScreen() {
 
   const noDate = useMemo(() => filtered.filter(f => !f.date_start), [filtered]);
 
-  const hasActiveFilters = !!(selectedDept || selectedMuni || filterFrom || filterTo || query);
-
-  function toggleSearch() {
-    setShowSearch(v => {
-      if (!v) setTimeout(() => searchRef.current?.focus(), 80);
-      else { setQuery(''); setShowSearchDrop(false); }
-      return !v;
-    });
-  }
-
-  function toggleFilters() {
-    setShowFilters(v => {
-      if (v) {
-        setDeptInput(''); setSelectedDept(''); setMuniInput(''); setSelectedMuni('');
-        setFilterFrom(''); setFilterTo(''); setShowDeptDrop(false); setShowMuniDrop(false);
-      }
-      return !v;
-    });
-  }
+  const hasActiveFilters = !!(selectedDept || selectedMuni || filterFrom || filterTo);
 
   function clearAll() {
-    setQuery(''); setSelectedDept(''); setDeptInput(''); setSelectedMuni(''); setMuniInput('');
-    setFilterFrom(''); setFilterTo(''); setShowSearchDrop(false); setShowDeptDrop(false); setShowMuniDrop(false);
+    setSelectedDept(''); setDeptInput(''); setSelectedMuni(''); setMuniInput('');
+    setFilterFrom(''); setFilterTo(''); setShowDeptDrop(false); setShowMuniDrop(false);
   }
 
   return (
@@ -330,54 +294,14 @@ export default function HomeScreen() {
 
       {/* ── Header ── */}
       <View style={s.header}>
-        <View style={{ flex: 1, marginRight: 12 }}>
-          <Text style={s.logo}>Fest<Text style={{ color: C.orange }}>Quest</Text></Text>
-          <Text style={s.tagline}>Descubre fiestas de Colombia 🇨🇴</Text>
-          <Text style={s.description}>Explora las fiestas y festivales de los municipios de Colombia. Filtra por departamento, municipio o fecha y descubre la cultura de cada región 🇨🇴</Text>
-        </View>
-        <View style={s.headerBtns}>
-          <Pressable style={[s.hBtn, (showFilters || hasActiveFilters) && s.hBtnActive]} onPress={toggleFilters}>
-            <Ionicons name="options-outline" size={17} color={(showFilters || hasActiveFilters) ? C.orange : C.textSub} />
-            {hasActiveFilters && !showFilters && <View style={s.hBtnDot} />}
-          </Pressable>
-          <Pressable style={[s.hBtn, showSearch && s.hBtnActive]} onPress={toggleSearch}>
-            <Ionicons name={showSearch ? 'close-outline' : 'search-outline'} size={17} color={showSearch ? C.orange : C.textSub} />
-          </Pressable>
-        </View>
+        <Text style={s.logo}>Fest<Text style={{ color: C.orange }}>Quest</Text></Text>
+        <Text style={s.tagline}>Descubre fiestas de Colombia 🇨🇴</Text>
+        <Text style={s.description}>Explora las fiestas y festivales de los municipios de Colombia. Filtra por departamento, municipio o fecha y descubre la cultura de cada región 🇨🇴</Text>
       </View>
 
       {/* ── Zona interactiva ── */}
       <View style={s.interactiveZone}>
-        {showSearch && (
-          <View style={s.searchWrap}>
-            <View style={[s.inputRow, showSearchDrop && searchSugg.length > 0 && s.inputRowOpen]}>
-              <Ionicons name="search-outline" size={14} color={C.textDim} />
-              <TextInput
-                ref={searchRef}
-                style={s.inputTxt}
-                placeholder="Festival, municipio, departamento..."
-                placeholderTextColor={C.textDim}
-                value={query}
-                onChangeText={t => { setQuery(t); setShowSearchDrop(t.length >= 2); }}
-                onFocus={() => { if (query.length >= 2) setShowSearchDrop(true); }}
-                onBlur={() => setTimeout(() => setShowSearchDrop(false), 150)}
-                returnKeyType="search"
-                autoCorrect={false}
-              />
-              {query.length > 0 && (
-                <Pressable onPress={() => { setQuery(''); setShowSearchDrop(false); }}>
-                  <Ionicons name="close-circle" size={15} color={C.textDim} />
-                </Pressable>
-              )}
-            </View>
-            {showSearchDrop && (
-              <SuggestDrop items={searchSugg} onSelect={v => { setQuery(v); setShowSearchDrop(false); }} icon="search-outline" />
-            )}
-          </View>
-        )}
-
-        {showFilters && (
-          <View style={s.filterPanel}>
+        <View style={s.filterPanel}>
             <View style={s.filterRow}>
               <View style={[s.filterCell, { zIndex: showDeptDrop ? 30 : 10 }]}>
                 <View style={[s.inputRow, s.inputRowSm, selectedDept && s.inputRowSelected, showDeptDrop && deptSugg.length > 0 && s.inputRowOpen]}>
@@ -435,7 +359,7 @@ export default function HomeScreen() {
                 <Ionicons name="calendar-outline" size={12} color={filterFrom ? C.orange : C.textDim} />
                 <TextInput
                   style={[s.inputTxt, s.inputTxtSm]}
-                  placeholder="Desde  AAAA-MM-DD"
+                  placeholder="Desde"
                   placeholderTextColor={C.textDim}
                   value={filterFrom}
                   onChangeText={setFilterFrom}
@@ -446,7 +370,7 @@ export default function HomeScreen() {
                 <Ionicons name="calendar-outline" size={12} color={filterTo ? C.orange : C.textDim} />
                 <TextInput
                   style={[s.inputTxt, s.inputTxtSm]}
-                  placeholder="Hasta  AAAA-MM-DD"
+                  placeholder="Hasta"
                   placeholderTextColor={C.textDim}
                   value={filterTo}
                   onChangeText={setFilterTo}
@@ -462,8 +386,6 @@ export default function HomeScreen() {
               </Pressable>
             )}
           </View>
-        )}
-
       </View>
 
       {/* ── Lista ── */}
@@ -519,29 +441,15 @@ const s = StyleSheet.create({
   scroll: { flex: 1 },
 
   header: {
-    flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between',
-    paddingHorizontal: 18, paddingTop: 14, paddingBottom: 10,
+    paddingHorizontal: 18, paddingTop: 14, paddingBottom: 12,
     backgroundColor: C.bg, borderBottomWidth: 1, borderBottomColor: C.border,
   },
   logo: { fontFamily: 'Outfit_900Black', fontSize: 24, color: C.text, letterSpacing: -0.5 },
   tagline: { fontFamily: 'DMSans_400Regular', fontSize: 11, color: C.textSub, marginTop: 1 },
-  description: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: C.textSub, marginTop: 6, lineHeight: 17 },
-  headerBtns: { flexDirection: 'row', gap: 8, marginTop: 4 },
-  hBtn: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: C.surface, borderWidth: 1, borderColor: C.border,
-    alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, elevation: 1,
-  },
-  hBtnActive: { backgroundColor: C.orangeDim, borderColor: C.orangeBorder },
-  hBtnDot: {
-    position: 'absolute', top: 6, right: 6, width: 7, height: 7,
-    borderRadius: 4, backgroundColor: C.orange, borderWidth: 1.5, borderColor: C.bg,
-  },
+  description: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#333333', marginTop: 8, lineHeight: 21 },
 
   interactiveZone: { backgroundColor: C.bg, borderBottomWidth: 1, borderBottomColor: C.border, zIndex: 50 },
-  searchWrap: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 4, zIndex: 100 },
-  filterPanel: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 10, gap: 8, zIndex: 90 },
+  filterPanel: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 12, gap: 8, zIndex: 90 },
   filterRow: { flexDirection: 'row', gap: 8 },
   filterCell: { flex: 1, position: 'relative' },
 
