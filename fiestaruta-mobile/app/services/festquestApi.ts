@@ -12,6 +12,7 @@ export type FestivalListItem = {
   municipio: string | null;
   departamento: string | null;
   subregion: string | null;
+  foto_url: string | null;
 };
 
 export type Festival = {
@@ -30,6 +31,7 @@ export type Festival = {
   habitantes: number | null;
   temperatura_promedio: number | null;
   altura: number | null;
+  foto_url: string | null;
   sitio_1: string | null; maps_1: string | null;
   sitio_2: string | null; maps_2: string | null;
   sitio_3: string | null; maps_3: string | null;
@@ -58,9 +60,12 @@ export type Municipio = {
   alcalde: string | null;
   correo_alcalde: string | null;
   bandera_url: string | null;
-  sitio_1: string | null; maps_1: string | null;
-  sitio_2: string | null; maps_2: string | null;
-  sitio_3: string | null; maps_3: string | null;
+  escudo_url: string | null;
+  latitud: number | null;
+  longitud: number | null;
+  sitio_1: string | null; maps_1: string | null; foto_sitio_1: string | null;
+  sitio_2: string | null; maps_2: string | null; foto_sitio_2: string | null;
+  sitio_3: string | null; maps_3: string | null; foto_sitio_3: string | null;
   hotel_1: string | null; wa_1: string | null;
   hotel_2: string | null; wa_2: string | null;
   hotel_3: string | null; wa_3: string | null;
