@@ -1,15 +1,15 @@
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
 const { Pool } = require('pg');
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
 
-function ok(val) { return val !== null && val !== undefined && val !== 'N/A' && String(val).trim() !== ''; }
-function v(val) { return ok(val) ? String(val) : ''; }
+function ok(val)  { return val !== null && val !== undefined && val !== 'N/A' && String(val).trim() !== ''; }
+function v(val)   { return ok(val) ? String(val).replace(/"/g, '&quot;').replace(/</g, '&lt;') : ''; }
 function isUrl(s) { if (!s) return true; try { new URL(s); return true; } catch { return false; } }
-function isWa(s) { if (!s) return true; return /^https?:\/\/wa\.me\//.test(s); }
+function isWa(s)  { if (!s) return true; return /^https?:\/\/wa\.me\//.test(s); }
 
-// ── CSS compartido ─────────────────────────────────────────────────────────
+// ── CSS ────────────────────────────────────────────────────────────────────
 const SHARED_CSS = `
 :root {
   --orange: #ff6b35; --orange-glow: #ff6b3530;
@@ -95,6 +95,8 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
 .form-section:nth-child(3){animation-delay:.15s}
 .form-section:nth-child(4){animation-delay:.2s}
 .form-section:nth-child(5){animation-delay:.25s}
+.form-section:nth-child(6){animation-delay:.3s}
+.form-section:nth-child(7){animation-delay:.35s}
 @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
 .form-section.highlight .section-card { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-glow); }
 
@@ -119,6 +121,7 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
 }
 .field input:focus, .field textarea:focus { border-color: var(--orange); background: #ff6b350a; box-shadow: 0 0 0 3px var(--orange-glow); }
 .field input.error { border-color: var(--red); background: var(--red-bg); }
+.field input:disabled { opacity: 0.5; cursor: not-allowed; }
 .field textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
 .field input::placeholder, .field textarea::placeholder { color: #2a2a50; }
 .field-note { font-size: 0.8rem; color: var(--muted); margin-top: 8px; line-height: 1.5; }
@@ -131,6 +134,12 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
 @media (max-width: 600px) { .pair-fields { grid-template-columns: 1fr; } }
 
 .img-preview { margin-top: 10px; border-radius: 8px; max-height: 60px; max-width: 100px; object-fit: contain; display: none; border: 1px solid var(--border); background: var(--surface2); padding: 4px; }
+
+.map-preview-wrap { margin-top: 14px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); display: none; }
+.map-preview-wrap iframe { display: block; width: 100%; height: 220px; border: none; }
+.map-coords-note { margin-top: 8px; font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.map-coords-note a { color: var(--orange); text-decoration: none; }
+.map-coords-note a:hover { text-decoration: underline; }
 
 .festival-nuevo { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 12px; position: relative; }
 .festival-nuevo-num { font-size: 0.72rem; font-weight: 700; color: var(--orange); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
@@ -187,20 +196,28 @@ router.get('/municipio/:slug/editar', async (req, res) => {
     const festivalesHTML = festivales.length
       ? festivales.map(f => {
           const ini = f.fecha_inicio ? new Date(f.fecha_inicio).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}) : '';
-          const fin = f.fecha_fin ? new Date(f.fecha_fin).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}) : '';
+          const fin = f.fecha_fin   ? new Date(f.fecha_fin).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}) : '';
           return `<div class="fest-item"><span class="fest-dot"></span><div><strong>${f.nombre}</strong>${ini?`<span>${ini}${fin?' – '+fin:''}</span>`:''}</div></div>`;
         }).join('')
       : '<p class="empty">Sin festivales registrados aún</p>';
 
     const secStatus = {
-      general:  ok(m.gentilicio) || ok(m.descripcion) || ok(m.codigo_dane),
-      alcalde:  ok(m.alcalde) && ok(m.correo_alcalde),
-      sitios:   ok(m.sitio_1),
-      hoteles:  ok(m.hotel_1),
+      general:    ok(m.gentilicio) || ok(m.codigo_dane),
+      autoridades: ok(m.alcalde) && ok(m.correo_alcalde),
+      identidad:  ok(m.bandera_url) || ok(m.descripcion),
+      geo:        ok(m.latitud) && ok(m.longitud),
+      sitios:     ok(m.sitio_1),
+      hoteles:    ok(m.hotel_1),
     };
 
     const banderaPreviewUrl = ok(m.bandera_url)
       ? (m.bandera_url.startsWith('http') ? m.bandera_url : `https://festquest-backend.onrender.com/${m.bandera_url}`)
+      : '';
+
+    const lat = parseFloat(m.latitud)  || '';
+    const lon = parseFloat(m.longitud) || '';
+    const mapSrc = (lat && lon)
+      ? `https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.03},${lat-0.03},${lon+0.03},${lat+0.03}&layer=mapnik&marker=${lat},${lon}`
       : '';
 
     res.send(`${SHARED_HEAD(`${m.nombre} — Formulario municipio`)}
@@ -232,13 +249,23 @@ router.get('/municipio/:slug/editar', async (req, res) => {
 
     <a class="nav-item active" data-section="sec-general" onclick="goTo('sec-general',this)">
       <div class="nav-icon">🏙️</div>
-      <div class="nav-text"><span class="nav-title">Datos generales</span><span class="nav-sub">Gentilicio, DANE, descripción</span></div>
+      <div class="nav-text"><span class="nav-title">Datos generales</span><span class="nav-sub">Gentilicio, DANE, estadísticas</span></div>
       <div class="nav-status ${secStatus.general?'done':''}" id="ns-general">${secStatus.general?'✓':''}</div>
     </a>
-    <a class="nav-item" data-section="sec-alcalde" onclick="goTo('sec-alcalde',this)">
+    <a class="nav-item" data-section="sec-autoridades" onclick="goTo('sec-autoridades',this)">
       <div class="nav-icon">👤</div>
-      <div class="nav-text"><span class="nav-title">Autoridad municipal</span><span class="nav-sub">Alcalde/sa, correo</span></div>
-      <div class="nav-status ${secStatus.alcalde?'done':''}" id="ns-alcalde">${secStatus.alcalde?'✓':''}</div>
+      <div class="nav-text"><span class="nav-title">Autoridades</span><span class="nav-sub">Alcalde, correo, mandatarios</span></div>
+      <div class="nav-status ${secStatus.autoridades?'done':''}" id="ns-autoridades">${secStatus.autoridades?'✓':''}</div>
+    </a>
+    <a class="nav-item" data-section="sec-identidad" onclick="goTo('sec-identidad',this)">
+      <div class="nav-icon">🎨</div>
+      <div class="nav-text"><span class="nav-title">Identidad</span><span class="nav-sub">Bandera, descripción</span></div>
+      <div class="nav-status ${secStatus.identidad?'done':''}" id="ns-identidad">${secStatus.identidad?'✓':''}</div>
+    </a>
+    <a class="nav-item" data-section="sec-geo" onclick="goTo('sec-geo',this)">
+      <div class="nav-icon">🗺️</div>
+      <div class="nav-text"><span class="nav-title">Geolocalización</span><span class="nav-sub">Latitud y longitud</span></div>
+      <div class="nav-status ${secStatus.geo?'done':''}" id="ns-geo">${secStatus.geo?'✓':''}</div>
     </a>
     <a class="nav-item" data-section="sec-sitios" onclick="goTo('sec-sitios',this)">
       <div class="nav-icon">📍</div>
@@ -247,7 +274,7 @@ router.get('/municipio/:slug/editar', async (req, res) => {
     </a>
     <a class="nav-item" data-section="sec-hoteles" onclick="goTo('sec-hoteles',this)">
       <div class="nav-icon">🏨</div>
-      <div class="nav-text"><span class="nav-title">Alojamiento</span><span class="nav-sub">Hoteles con WhatsApp</span></div>
+      <div class="nav-text"><span class="nav-title">Hospedaje</span><span class="nav-sub">Hoteles con WhatsApp</span></div>
       <div class="nav-status ${secStatus.hoteles?'done':''}" id="ns-hoteles">${secStatus.hoteles?'✓':''}</div>
     </a>
     <a class="nav-item" data-section="sec-festivales" onclick="goTo('sec-festivales',this)">
@@ -273,70 +300,91 @@ router.get('/municipio/:slug/editar', async (req, res) => {
       <input type="hidden" name="token" value="${token}">
       <input type="hidden" name="municipio_id" value="${m.id}">
 
-      <!-- DATOS GENERALES -->
+      <!-- ── SECCIÓN 1: DATOS GENERALES ─────────────────────────────────── -->
       <div class="form-section" id="sec-general">
         <div class="section-head">
           <div class="section-icon-lg">🏙️</div>
-          <div><div class="section-title">Datos generales</div><div class="section-desc">Información básica del municipio visible en FestQuest.</div></div>
+          <div>
+            <div class="section-title">Datos generales</div>
+            <div class="section-desc">Información base del municipio visible en FestQuest.</div>
+          </div>
         </div>
         <div class="section-card">
-          <div class="grid-3">
+          <div class="grid-2">
             <div class="field">
-              <label>Gentilicio</label>
-              <input type="text" name="gentilicio" placeholder="Ej: Guatapeño/a" value="${v(m.gentilicio)}">
+              <label>Municipio</label>
+              <input type="text" value="${v(m.nombre)}" disabled title="No editable desde este formulario">
             </div>
             <div class="field">
-              <label>Habitantes</label>
-              <input type="number" name="habitantes" placeholder="Ej: 12000" value="${v(m.habitantes)}">
-            </div>
-            <div class="field">
-              <label>Subregión</label>
-              <input type="text" name="subregion" placeholder="Ej: Oriente" value="${v(m.subregion)}">
+              <label>Departamento</label>
+              <input type="text" value="${v(m.departamento)}" disabled title="No editable desde este formulario">
             </div>
           </div>
           <div class="grid-3">
             <div class="field">
-              <label>Altura (m.s.n.m)</label>
-              <input type="number" name="altura" placeholder="Ej: 1900" value="${v(m.altura)}">
+              <label>Subregión</label>
+              <input type="text" name="subregion" placeholder="Ej: Oriente" value="${v(m.subregion)}">
+            </div>
+            <div class="field">
+              <label>Código DANE</label>
+              <input type="text" name="codigo_dane" placeholder="Ej: 05001" maxlength="6" value="${v(m.codigo_dane)}">
+            </div>
+            <div class="field">
+              <label>Gentilicio</label>
+              <input type="text" name="gentilicio" placeholder="Ej: Guatapeño/a" value="${v(m.gentilicio)}">
+            </div>
+          </div>
+          <div class="grid-3">
+            <div class="field">
+              <label>Habitantes</label>
+              <input type="number" name="habitantes" placeholder="Ej: 12000" min="0" value="${v(m.habitantes)}">
             </div>
             <div class="field">
               <label>Temperatura prom. (°C)</label>
               <input type="number" step="0.1" name="temperatura_promedio" placeholder="Ej: 22" value="${v(m.temperatura_promedio)}">
             </div>
             <div class="field">
-              <label>Código DANE</label>
-              <input type="text" name="codigo_dane" placeholder="Ej: 05001" value="${v(m.codigo_dane)}">
+              <label>Altura (m.s.n.m)</label>
+              <input type="number" name="altura" placeholder="Ej: 1900" min="0" value="${v(m.altura)}">
             </div>
-          </div>
-          <div class="field">
-            <label>URL de la bandera</label>
-            <input type="text" name="bandera_url" id="banderaUrl" placeholder="https://... o ruta relativa" value="${v(m.bandera_url)}" oninput="previewBandera(this.value)">
-            <div class="field-note">Si la URL es relativa (ej: 05001.jpg), se construirá como festquest-backend.onrender.com/05001.jpg</div>
-            <img id="banderaPreview" class="img-preview" src="${banderaPreviewUrl}" ${banderaPreviewUrl?'style="display:block"':''} alt="Preview bandera" onerror="this.style.display='none'">
-          </div>
-          <div class="field">
-            <label>Descripción del municipio</label>
-            <textarea name="descripcion" placeholder="Historia, cultura, gastronomía, atractivos naturales...">${v(m.descripcion)}</textarea>
-            <div class="field-note">Este texto aparece cuando alguien explora el municipio en FestQuest.</div>
           </div>
         </div>
       </div>
 
-      <!-- ALCALDE -->
-      <div class="form-section" id="sec-alcalde">
+      <!-- ── SECCIÓN 2: AUTORIDADES ─────────────────────────────────────── -->
+      <div class="form-section" id="sec-autoridades">
         <div class="section-head">
           <div class="section-icon-lg">👤</div>
-          <div><div class="section-title">Autoridad municipal</div><div class="section-desc">Contacto oficial de la alcaldía para visitantes.</div></div>
+          <div>
+            <div class="section-title">Autoridades</div>
+            <div class="section-desc">Contactos oficiales de la administración municipal.</div>
+          </div>
         </div>
         <div class="section-card">
-          <div class="field">
-            <label>Nombre completo del alcalde/sa</label>
-            <input type="text" name="alcalde" placeholder="Ej: María García Rodríguez" value="${v(m.alcalde)}">
+          <div class="grid-2">
+            <div class="field">
+              <label>Alcalde / Alcaldesa</label>
+              <input type="text" name="alcalde" placeholder="Ej: María García Rodríguez" value="${v(m.alcalde)}">
+            </div>
+            <div class="field">
+              <label>Correo del alcalde/sa</label>
+              <input type="email" name="correo_alcalde" placeholder="alcaldia@municipio.gov.co" value="${v(m.correo_alcalde)}">
+            </div>
           </div>
           <div class="grid-2">
             <div class="field">
-              <label>Correo electrónico oficial</label>
-              <input type="email" name="correo_alcalde" placeholder="alcaldia@municipio.gov.co" value="${v(m.correo_alcalde)}">
+              <label>Mandatario local</label>
+              <input type="text" name="mandatario_local" placeholder="Ej: Personero, Concejal" value="${v(m.mandatario_local)}">
+            </div>
+            <div class="field">
+              <label>Mandatario</label>
+              <input type="text" name="mandatario" placeholder="Nombre del mandatario" value="${v(m.mandatario)}">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>Correo de contacto general</label>
+              <input type="email" name="correo" placeholder="info@municipio.gov.co" value="${v(m.correo)}">
             </div>
             <div class="field">
               <label>Teléfono / WhatsApp</label>
@@ -346,11 +394,92 @@ router.get('/municipio/:slug/editar', async (req, res) => {
         </div>
       </div>
 
-      <!-- SITIOS TURÍSTICOS -->
+      <!-- ── SECCIÓN 3: IDENTIDAD ───────────────────────────────────────── -->
+      <div class="form-section" id="sec-identidad">
+        <div class="section-head">
+          <div class="section-icon-lg">🎨</div>
+          <div>
+            <div class="section-title">Identidad</div>
+            <div class="section-desc">Imagen institucional y presentación del municipio.</div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="field">
+            <label>URL de la bandera</label>
+            <input type="text" name="bandera_url" id="banderaUrl"
+              placeholder="https://... o ruta relativa (ej: /banderas/05001.png)"
+              value="${v(m.bandera_url)}"
+              oninput="previewBandera(this.value)">
+            <div class="field-note">URL pública de la imagen de la bandera del municipio. Se muestra en el perfil.</div>
+            <img id="banderaPreview" class="img-preview"
+              src="${banderaPreviewUrl}"
+              ${banderaPreviewUrl?'style="display:block"':''}
+              alt="Preview bandera"
+              onerror="this.style.display='none'">
+          </div>
+          <div class="field">
+            <label>Descripción del municipio</label>
+            <textarea name="descripcion"
+              placeholder="Historia, cultura, gastronomía, atractivos naturales, por qué vale la pena visitar...">${v(m.descripcion)}</textarea>
+            <div class="field-note">Este texto aparece cuando alguien explora el municipio en FestQuest.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECCIÓN 4: GEOLOCALIZACIÓN ────────────────────────────────── -->
+      <div class="form-section" id="sec-geo">
+        <div class="section-head">
+          <div class="section-icon-lg">🗺️</div>
+          <div>
+            <div class="section-title">Geolocalización</div>
+            <div class="section-desc">Coordenadas exactas del municipio para mostrar el mapa interactivo.</div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="grid-2">
+            <div class="field">
+              <label>Latitud</label>
+              <input type="number" step="0.000001" name="latitud" id="inputLat"
+                placeholder="Ej: 6.246631"
+                value="${lat}"
+                oninput="updateMapPreview()">
+              <div class="field-note">Decimal, positivo = norte. Ej: 6.246631</div>
+            </div>
+            <div class="field">
+              <label>Longitud</label>
+              <input type="number" step="0.000001" name="longitud" id="inputLon"
+                placeholder="Ej: -75.590553"
+                value="${lon}"
+                oninput="updateMapPreview()">
+              <div class="field-note">Decimal, negativo = oeste. Ej: -75.590553</div>
+            </div>
+          </div>
+          <div class="map-preview-wrap" id="mapaWrap" ${mapSrc?'style="display:block"':''}>
+            <iframe id="mapaFrame"
+              src="${mapSrc}"
+              title="Ubicación del municipio"
+              loading="lazy"
+              referrerpolicy="no-referrer">
+            </iframe>
+          </div>
+          <div class="map-coords-note" id="mapaCoordsNote" ${mapSrc?'':'style="display:none"'}>
+            📌 <span id="mapaCoordsText">${lat && lon ? `${lat}, ${lon}` : ''}</span>
+            &nbsp;·&nbsp;
+            <a id="mapaGmapsLink" href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank" rel="noopener">
+              Ver en Google Maps →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECCIÓN 5: SITIOS TURÍSTICOS ──────────────────────────────── -->
       <div class="form-section" id="sec-sitios">
         <div class="section-head">
           <div class="section-icon-lg">📍</div>
-          <div><div class="section-title">Sitios turísticos</div><div class="section-desc">Hasta 3 atractivos principales con enlace a Google Maps.</div></div>
+          <div>
+            <div class="section-title">Sitios turísticos</div>
+            <div class="section-desc">Hasta 3 atractivos principales del municipio con enlace a Google Maps.</div>
+          </div>
         </div>
         <div class="section-card">
           ${[[1, v(m.sitio_1), v(m.maps_1)],[2, v(m.sitio_2), v(m.maps_2)],[3, v(m.sitio_3), v(m.maps_3)]].map(([n,s,mp]) => `
@@ -359,24 +488,27 @@ router.get('/municipio/:slug/editar', async (req, res) => {
             <div class="pair-fields">
               <div class="field" style="margin:0">
                 <label>Nombre del sitio</label>
-                <input type="text" name="sitio_${n}" placeholder="${n===1?'Ej: Parque principal':'Opcional'}" value="${s}">
+                <input type="text" name="sitio_${n}" placeholder="${n===1?'Ej: Parque Simón Bolívar':'Opcional'}" value="${s}">
               </div>
               <div class="field" style="margin:0">
                 <label>Enlace Google Maps</label>
-                <input type="text" name="maps_${n}" placeholder="https://maps.google.com/..." value="${mp}" data-type="text">
+                <input type="text" name="maps_${n}" placeholder="https://maps.app.goo.gl/..." value="${mp}" data-type="url">
                 <div class="field-error" id="err-maps_${n}">URL inválida</div>
               </div>
             </div>
           </div>`).join('')}
-          <div class="field-note">Parques, iglesias, ríos, cascadas, museos, miradores, reservas naturales, etc.</div>
+          <div class="field-note">Parques, iglesias, ríos, cascadas, museos, miradores, reservas naturales, plazas, etc.</div>
         </div>
       </div>
 
-      <!-- ALOJAMIENTO -->
+      <!-- ── SECCIÓN 6: HOSPEDAJE ───────────────────────────────────────── -->
       <div class="form-section" id="sec-hoteles">
         <div class="section-head">
           <div class="section-icon-lg">🏨</div>
-          <div><div class="section-title">Alojamiento</div><div class="section-desc">Hoteles y hospedajes recomendados con contacto directo por WhatsApp.</div></div>
+          <div>
+            <div class="section-title">Hospedaje</div>
+            <div class="section-desc">Hoteles y hospedajes recomendados con contacto directo por WhatsApp.</div>
+          </div>
         </div>
         <div class="section-card">
           ${[[1, v(m.hotel_1), v(m.wa_1)],[2, v(m.hotel_2), v(m.wa_2)],[3, v(m.hotel_3), v(m.wa_3)]].map(([n,h,w]) => `
@@ -385,24 +517,31 @@ router.get('/municipio/:slug/editar', async (req, res) => {
             <div class="pair-fields">
               <div class="field" style="margin:0">
                 <label>Nombre del establecimiento</label>
-                <input type="text" name="hotel_${n}" placeholder="${n===1?'Ej: Hotel Boutique':'Opcional'}" value="${h}">
+                <input type="text" name="hotel_${n}" placeholder="${n===1?'Ej: Hotel Boutique El Retiro':'Opcional'}" value="${h}">
               </div>
               <div class="field" style="margin:0">
-                <label>WhatsApp (https://wa.me/57…)</label>
+                <label>WhatsApp reservas</label>
                 <input type="text" name="wa_${n}" placeholder="https://wa.me/573001234567" value="${w}" data-type="wa">
-                <div class="field-error" id="err-wa_${n}">Debe ser https://wa.me/...</div>
+                <div class="field-error" id="err-wa_${n}">Debe ser https://wa.me/57…</div>
               </div>
             </div>
           </div>`).join('')}
-          <div class="field-note">El contacto_hoteles legacy también se actualizará automáticamente.</div>
+          <div class="field" style="margin-top:8px">
+            <label>Contacto general de hospedaje</label>
+            <input type="text" name="contacto_hoteles" placeholder="Teléfono, email o WhatsApp de coordinación hotelera" value="${v(m.contacto_hoteles)}">
+            <div class="field-note">Contacto centralizado para quienes buscan alojamiento durante los festivales.</div>
+          </div>
         </div>
       </div>
 
-      <!-- FESTIVALES NUEVOS -->
+      <!-- ── SECCIÓN 7: PROPONER FESTIVALES ────────────────────────────── -->
       <div class="form-section" id="sec-festivales">
         <div class="section-head">
           <div class="section-icon-lg">🎉</div>
-          <div><div class="section-title">Proponer festivales</div><div class="section-desc">¿Hay festivales que no aparecen en FestQuest? Agréguelos para verificación.</div></div>
+          <div>
+            <div class="section-title">Proponer festivales</div>
+            <div class="section-desc">¿Hay festivales que no aparecen en FestQuest? Agréguelos para verificación.</div>
+          </div>
         </div>
         <div class="section-card">
           <div id="festivalesNuevos"></div>
@@ -422,24 +561,32 @@ function goTo(sectionId, navEl) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   if (navEl) navEl.classList.add('active');
   const section = document.getElementById(sectionId);
-  if (section) { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); section.classList.add('highlight'); setTimeout(() => section.classList.remove('highlight'), 1500); }
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    section.classList.add('highlight');
+    setTimeout(() => section.classList.remove('highlight'), 1500);
+  }
 }
 
-const sections = ['sec-general','sec-alcalde','sec-sitios','sec-hoteles','sec-festivales'];
+const sections = ['sec-general','sec-autoridades','sec-identidad','sec-geo','sec-sitios','sec-hoteles','sec-festivales'];
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.section === entry.target.id));
+      document.querySelectorAll('.nav-item').forEach(el =>
+        el.classList.toggle('active', el.dataset.section === entry.target.id)
+      );
     }
   });
 }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
 sections.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
 
 const progressFields = [
-  { fields: ['gentilicio','descripcion','codigo_dane'], ns: 'ns-general' },
-  { fields: ['alcalde','correo_alcalde'], ns: 'ns-alcalde' },
-  { fields: ['sitio_1'], ns: 'ns-sitios' },
-  { fields: ['hotel_1'], ns: 'ns-hoteles' },
+  { fields: ['gentilicio','codigo_dane','subregion'],    ns: 'ns-general' },
+  { fields: ['alcalde','correo_alcalde'],                ns: 'ns-autoridades' },
+  { fields: ['bandera_url','descripcion'],               ns: 'ns-identidad' },
+  { fields: ['latitud','longitud'],                      ns: 'ns-geo' },
+  { fields: ['sitio_1'],                                 ns: 'ns-sitios' },
+  { fields: ['hotel_1'],                                 ns: 'ns-hoteles' },
 ];
 function calcProgress() {
   let done = 0;
@@ -456,21 +603,48 @@ function calcProgress() {
 document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', calcProgress));
 calcProgress();
 
+// ── Preview bandera ────────────────────────────────────────────────────────
 function previewBandera(val) {
   const preview = document.getElementById('banderaPreview');
   if (!val.trim()) { preview.style.display = 'none'; return; }
   const url = val.startsWith('http') ? val : 'https://festquest-backend.onrender.com/' + val.replace(/^\\//, '');
-  preview.src = url; preview.style.display = 'block';
-  preview.onerror = () => preview.style.display = 'none';
+  preview.src = url;
+  preview.style.display = 'block';
+  preview.onerror = () => { preview.style.display = 'none'; };
 }
 
+// ── Preview mapa OSM ───────────────────────────────────────────────────────
+function updateMapPreview() {
+  const lat = parseFloat(document.getElementById('inputLat').value);
+  const lon = parseFloat(document.getElementById('inputLon').value);
+  const wrap  = document.getElementById('mapaWrap');
+  const frame = document.getElementById('mapaFrame');
+  const note  = document.getElementById('mapaCoordsNote');
+  const text  = document.getElementById('mapaCoordsText');
+  const link  = document.getElementById('mapaGmapsLink');
+
+  if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+    const bbox = (lon-0.03)+','+(lat-0.03)+','+(lon+0.03)+','+(lat+0.03);
+    frame.src = 'https://www.openstreetmap.org/export/embed.html?bbox='+bbox+'&layer=mapnik&marker='+lat+','+lon;
+    wrap.style.display  = 'block';
+    note.style.display  = 'flex';
+    text.textContent    = lat.toFixed(6) + ', ' + lon.toFixed(6);
+    link.href = 'https://www.google.com/maps/search/?api=1&query='+lat+','+lon;
+  } else {
+    wrap.style.display  = 'none';
+    note.style.display  = 'none';
+  }
+}
+
+// ── Validación URLs ────────────────────────────────────────────────────────
 function isValidUrl(s) { if (!s) return true; try { new URL(s); return true; } catch { return false; } }
-function isValidWa(s) { if (!s) return true; return /^https?:\\/\\/wa\\.me\\//.test(s); }
+function isValidWa(s)  { if (!s) return true; return /^https?:\\/\\/wa\\.me\\//.test(s); }
 
 function validateField(input) {
-  const val = input.value.trim();
-  const bad = input.dataset.type === 'wa' ? !isValidWa(val) : !isValidUrl(val);
-  const errEl = document.getElementById('err-' + input.name);
+  const val    = input.value.trim();
+  const isWa   = input.dataset.type === 'wa';
+  const bad    = isWa ? !isValidWa(val) : !isValidUrl(val);
+  const errEl  = document.getElementById('err-' + input.name);
   input.classList.toggle('error', bad);
   if (errEl) errEl.classList.toggle('show', bad);
   return !bad;
@@ -482,12 +656,14 @@ function validateUrls() {
 }
 document.querySelectorAll('[data-type]').forEach(input => input.addEventListener('input', () => validateField(input)));
 
+// ── Agregar festival ───────────────────────────────────────────────────────
 let festivalCount = 0;
 function agregarFestival() {
   const container = document.getElementById('festivalesNuevos');
   const idx = festivalCount++;
   const div = document.createElement('div');
-  div.className = 'festival-nuevo'; div.id = 'festival_' + idx;
+  div.className = 'festival-nuevo';
+  div.id = 'festival_' + idx;
   div.innerHTML = \`
     <button type="button" class="btn-remove" onclick="document.getElementById('festival_\${idx}').remove()">✕</button>
     <div class="festival-nuevo-num">Festival propuesto \${idx + 1}</div>
@@ -498,17 +674,21 @@ function agregarFestival() {
     </div>
     <div class="field"><label>Descripción breve (opcional)</label><input type="text" name="fest_desc_\${idx}" placeholder="Tipo de festival, tradición, año de fundación..."></div>
   \`;
-  container.appendChild(div); div.querySelector('input').focus();
+  container.appendChild(div);
+  div.querySelector('input').focus();
   const ns = document.getElementById('ns-festivales');
   if (ns) { ns.classList.add('partial'); ns.textContent = '•'; }
 }
 
+// ── Submit ─────────────────────────────────────────────────────────────────
 document.getElementById('mainForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   if (!validateUrls()) { alert('Corrija los errores de URL antes de guardar.'); return; }
+
   const btn = document.getElementById('btnEnviar');
   btn.disabled = true; btn.textContent = 'Guardando...';
-  const fd = new FormData(this);
+
+  const fd   = new FormData(this);
   const data = Object.fromEntries(fd.entries());
 
   const festivalesNuevos = [];
@@ -516,37 +696,66 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     if (!document.getElementById('festival_'+i)) continue;
     const nombre = (data['fest_nombre_'+i]||'').trim();
     if (!nombre) continue;
-    festivalesNuevos.push({ nombre, fecha_inicio: data['fest_inicio_'+i]||null, fecha_fin: data['fest_fin_'+i]||null, descripcion: data['fest_desc_'+i]||null });
+    festivalesNuevos.push({
+      nombre,
+      fecha_inicio: data['fest_inicio_'+i]||null,
+      fecha_fin:    data['fest_fin_'+i]||null,
+      descripcion:  data['fest_desc_'+i]||null,
+    });
   }
 
   const payload = {
-    token: data.token,
-    alcalde: data.alcalde||null, correo_alcalde: data.correo_alcalde||null, telefono: data.telefono||null,
-    descripcion: data.descripcion||null, gentilicio: data.gentilicio||null,
-    habitantes: data.habitantes||null, altura: data.altura||null,
-    temperatura_promedio: data.temperatura_promedio||null, subregion: data.subregion||null,
-    codigo_dane: data.codigo_dane||null, bandera_url: data.bandera_url||null,
+    token:               data.token,
+    // Sección 1
+    subregion:           data.subregion            || null,
+    codigo_dane:         data.codigo_dane           || null,
+    gentilicio:          data.gentilicio            || null,
+    habitantes:          data.habitantes            || null,
+    temperatura_promedio:data.temperatura_promedio  || null,
+    altura:              data.altura                || null,
+    // Sección 2
+    alcalde:             data.alcalde               || null,
+    correo_alcalde:      data.correo_alcalde        || null,
+    mandatario_local:    data.mandatario_local      || null,
+    mandatario:          data.mandatario            || null,
+    correo:              data.correo                || null,
+    telefono:            data.telefono              || null,
+    // Sección 3
+    bandera_url:         data.bandera_url           || null,
+    descripcion:         data.descripcion           || null,
+    // Sección 4
+    latitud:             data.latitud               || null,
+    longitud:            data.longitud              || null,
+    // Sección 5
     sitio_1: data.sitio_1||null, maps_1: data.maps_1||null,
     sitio_2: data.sitio_2||null, maps_2: data.maps_2||null,
     sitio_3: data.sitio_3||null, maps_3: data.maps_3||null,
+    // Sección 6
     hotel_1: data.hotel_1||null, wa_1: data.wa_1||null,
     hotel_2: data.hotel_2||null, wa_2: data.wa_2||null,
     hotel_3: data.hotel_3||null, wa_3: data.wa_3||null,
+    contacto_hoteles:    data.contacto_hoteles      || null,
+    // Festivales nuevos
     festivales_nuevos: festivalesNuevos,
   };
 
   try {
     const res = await fetch('/api/municipio/'+data.municipio_id+'/actualizar', {
-      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
     });
     const json = await res.json();
     if (json.ok) {
       document.getElementById('success').style.display = 'block';
-      document.getElementById('mainForm').style.display = 'none';
-      window.scrollTo({top:0,behavior:'smooth'});
-    } else throw new Error(json.error||'Error desconocido');
-  } catch(err) {
-    btn.disabled = false; btn.textContent = 'Guardar información del municipio';
+      document.getElementById('mainForm').style.display  = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      throw new Error(json.error || 'Error desconocido');
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'Guardar información del municipio';
     alert('Error al guardar: ' + err.message);
   }
 });
@@ -563,70 +772,87 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
 router.post('/api/municipio/:id/actualizar', async (req, res) => {
   const { id } = req.params;
   const {
-    token, alcalde, correo_alcalde, telefono, descripcion, gentilicio,
-    habitantes, altura, temperatura_promedio, subregion,
-    codigo_dane, bandera_url,
+    token,
+    subregion, codigo_dane, gentilicio,
+    habitantes, altura, temperatura_promedio,
+    alcalde, correo_alcalde,
+    mandatario_local, mandatario, correo, telefono,
+    bandera_url, descripcion,
+    latitud, longitud,
     sitio_1, maps_1, sitio_2, maps_2, sitio_3, maps_3,
     hotel_1, wa_1, hotel_2, wa_2, hotel_3, wa_3,
+    contacto_hoteles,
     festivales_nuevos,
   } = req.body;
 
   if (!token) return res.status(400).json({ ok: false, error: 'Token requerido' });
 
-  // Validate URLs
-  for (const [key, val] of [[maps_1,maps_1],[maps_2,maps_2],[maps_3,maps_3],[wa_1,wa_1],[wa_2,wa_2],[wa_3,wa_3]]) {
-    if (val && !isUrl(val)) return res.status(400).json({ ok:false, error:`URL inválida: ${key}` });
+  // Validar URLs
+  const urlFields = [['maps_1',maps_1],['maps_2',maps_2],['maps_3',maps_3]];
+  for (const [key, val] of urlFields) {
+    if (val && !isUrl(val)) return res.status(400).json({ ok: false, error: `URL inválida: ${key}` });
   }
-  for (const val of [wa_1,wa_2,wa_3]) {
-    if (val && !isWa(val)) return res.status(400).json({ ok:false, error:'wa debe ser https://wa.me/...' });
+  const waFields = [wa_1, wa_2, wa_3];
+  for (const val of waFields) {
+    if (val && !isWa(val)) return res.status(400).json({ ok: false, error: 'wa debe ser https://wa.me/…' });
   }
 
   try {
-    const { rows } = await pool.query('SELECT id FROM municipalities WHERE id=$1 AND token_edicion=$2', [id, token]);
-    if (!rows.length) return res.status(403).json({ ok:false, error:'Token inválido' });
+    const { rows } = await pool.query(
+      'SELECT id FROM municipalities WHERE id=$1 AND token_edicion=$2', [id, token]
+    );
+    if (!rows.length) return res.status(403).json({ ok: false, error: 'Token inválido' });
 
-    // Build legacy pipe-sep for backward compat
-    const sitios_turisticos = [sitio_1,sitio_2,sitio_3].filter(Boolean).join('|') || null;
-    const hoteles           = [hotel_1,hotel_2,hotel_3].filter(Boolean).join('|') || null;
-    const contacto_hoteles  = [wa_1,wa_2,wa_3].filter(Boolean).join('|') || null;
+    // Campos legacy pipe-separados (compatibilidad con versión anterior)
+    const sitios_turisticos = [sitio_1, sitio_2, sitio_3].filter(Boolean).join('|') || null;
+    const hoteles_legacy    = [hotel_1, hotel_2, hotel_3].filter(Boolean).join('|') || null;
 
     await pool.query(
       `UPDATE municipalities SET
-        alcalde               = COALESCE($1,  alcalde),
-        correo_alcalde        = COALESCE($2,  correo_alcalde),
-        telefono              = COALESCE($3,  telefono),
-        descripcion           = COALESCE($4,  descripcion),
-        gentilicio            = COALESCE($5,  gentilicio),
-        habitantes            = COALESCE($6::integer, habitantes),
-        altura                = COALESCE($7::integer, altura),
-        temperatura_promedio  = COALESCE($8::numeric, temperatura_promedio),
-        subregion             = COALESCE($9,  subregion),
-        codigo_dane           = COALESCE($10, codigo_dane),
-        bandera_url           = COALESCE($11, bandera_url),
-        sitio_1               = COALESCE($12, sitio_1),
-        maps_1                = COALESCE($13, maps_1),
-        sitio_2               = COALESCE($14, sitio_2),
-        maps_2                = COALESCE($15, maps_2),
-        sitio_3               = COALESCE($16, sitio_3),
-        maps_3                = COALESCE($17, maps_3),
-        hotel_1               = COALESCE($18, hotel_1),
-        wa_1                  = COALESCE($19, wa_1),
-        hotel_2               = COALESCE($20, hotel_2),
-        wa_2                  = COALESCE($21, wa_2),
-        hotel_3               = COALESCE($22, hotel_3),
-        wa_3                  = COALESCE($23, wa_3),
-        sitios_turisticos     = COALESCE($24, sitios_turisticos),
-        hoteles               = COALESCE($25, hoteles),
-        contacto_hoteles      = COALESCE($26, contacto_hoteles),
+        subregion             = COALESCE($1,  subregion),
+        codigo_dane           = COALESCE($2,  codigo_dane),
+        gentilicio            = COALESCE($3,  gentilicio),
+        habitantes            = COALESCE($4::integer,  habitantes),
+        altura                = COALESCE($5::integer,  altura),
+        temperatura_promedio  = COALESCE($6::numeric,  temperatura_promedio),
+        alcalde               = COALESCE($7,  alcalde),
+        correo_alcalde        = COALESCE($8,  correo_alcalde),
+        mandatario_local      = COALESCE($9,  mandatario_local),
+        mandatario            = COALESCE($10, mandatario),
+        correo                = COALESCE($11, correo),
+        telefono              = COALESCE($12, telefono),
+        bandera_url           = COALESCE($13, bandera_url),
+        descripcion           = COALESCE($14, descripcion),
+        latitud               = COALESCE($15::numeric, latitud),
+        longitud              = COALESCE($16::numeric, longitud),
+        sitio_1               = COALESCE($17, sitio_1),
+        maps_1                = COALESCE($18, maps_1),
+        sitio_2               = COALESCE($19, sitio_2),
+        maps_2                = COALESCE($20, maps_2),
+        sitio_3               = COALESCE($21, sitio_3),
+        maps_3                = COALESCE($22, maps_3),
+        hotel_1               = COALESCE($23, hotel_1),
+        wa_1                  = COALESCE($24, wa_1),
+        hotel_2               = COALESCE($25, hotel_2),
+        wa_2                  = COALESCE($26, wa_2),
+        hotel_3               = COALESCE($27, hotel_3),
+        wa_3                  = COALESCE($28, wa_3),
+        contacto_hoteles      = COALESCE($29, contacto_hoteles),
+        sitios_turisticos     = COALESCE($30, sitios_turisticos),
+        hoteles               = COALESCE($31, hoteles),
         fecha_actualizacion   = NOW()
-       WHERE id = $27`,
+       WHERE id = $32`,
       [
-        alcalde, correo_alcalde, telefono, descripcion, gentilicio,
-        habitantes||null, altura||null, temperatura_promedio||null, subregion,
-        codigo_dane, bandera_url,
+        subregion, codigo_dane, gentilicio,
+        habitantes||null, altura||null, temperatura_promedio||null,
+        alcalde, correo_alcalde,
+        mandatario_local, mandatario, correo, telefono,
+        bandera_url, descripcion,
+        latitud||null, longitud||null,
         sitio_1, maps_1, sitio_2, maps_2, sitio_3, maps_3,
         hotel_1, wa_1, hotel_2, wa_2, hotel_3, wa_3,
-        sitios_turisticos, hoteles, contacto_hoteles,
+        contacto_hoteles,
+        sitios_turisticos, hoteles_legacy,
         id,
       ]
     );
@@ -642,9 +868,9 @@ router.post('/api/municipio/:id/actualizar', async (req, res) => {
     }
 
     res.json({ ok: true });
-  } catch(err) {
+  } catch (err) {
     console.error('Error actualizando municipio:', err);
-    res.status(500).json({ ok:false, error: 'Error interno' });
+    res.status(500).json({ ok: false, error: 'Error interno' });
   }
 });
 
@@ -669,7 +895,7 @@ router.get('/festival/:id/editar', async (req, res) => {
     const f = rows[0];
 
     const formatDate = (d) => d ? new Date(d).toISOString().split('T')[0] : '';
-    const muniLabel = [f.muni_nombre, f.muni_dpto, f.muni_sub].filter(Boolean).join(' · ');
+    const muniLabel  = [f.muni_nombre, f.muni_dpto, f.muni_sub].filter(Boolean).join(' · ');
 
     const secStatus = {
       general:  ok(f.descripcion),
@@ -735,9 +961,8 @@ router.get('/festival/:id/editar', async (req, res) => {
 
     <form id="mainForm">
       <input type="hidden" name="festival_id" value="${f.id}">
-      <input type="hidden" name="admintoken" value="${admintoken}">
+      <input type="hidden" name="admintoken"   value="${admintoken}">
 
-      <!-- DATOS DEL FESTIVAL -->
       <div class="form-section" id="sec-general">
         <div class="section-head">
           <div class="section-icon-lg">🎊</div>
@@ -766,11 +991,10 @@ router.get('/festival/:id/editar', async (req, res) => {
         </div>
       </div>
 
-      <!-- LUGAR Y CONTACTO -->
       <div class="form-section" id="sec-contacto">
         <div class="section-head">
           <div class="section-icon-lg">📍</div>
-          <div><div class="section-title">Lugar y contacto</div><div class="section-desc">Venue del evento y canales de contacto para los asistentes.</div></div>
+          <div><div class="section-title">Lugar y contacto</div><div class="section-desc">Venue del evento y canales de contacto.</div></div>
         </div>
         <div class="section-card">
           <div class="field">
@@ -780,23 +1004,22 @@ router.get('/festival/:id/editar', async (req, res) => {
           <div class="grid-2">
             <div class="field">
               <label>Enlace Google Maps</label>
-              <input type="text" name="maps_link" placeholder="https://maps.google.com/..." value="${v(f.maps_link)}" data-type="text">
+              <input type="text" name="maps_link" placeholder="https://maps.app.goo.gl/..." value="${v(f.maps_link)}" data-type="url">
               <div class="field-error" id="err-maps_link">URL inválida</div>
             </div>
             <div class="field">
               <label>WhatsApp del organizador</label>
               <input type="text" name="whatsapp_link" placeholder="https://wa.me/573001234567" value="${v(f.whatsapp_link)}" data-type="wa">
-              <div class="field-error" id="err-whatsapp_link">Debe ser https://wa.me/...</div>
+              <div class="field-error" id="err-whatsapp_link">Debe ser https://wa.me/…</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- SITIOS RECOMENDADOS -->
       <div class="form-section" id="sec-sitios">
         <div class="section-head">
           <div class="section-icon-lg">🗺️</div>
-          <div><div class="section-title">Sitios recomendados</div><div class="section-desc">Lugares que los asistentes al festival deben conocer en el municipio.</div></div>
+          <div><div class="section-title">Sitios recomendados</div><div class="section-desc">Lugares que los asistentes deben conocer en el municipio.</div></div>
         </div>
         <div class="section-card">
           ${[[1, v(f.sitio_1), v(f.maps_1)],[2, v(f.sitio_2), v(f.maps_2)],[3, v(f.sitio_3), v(f.maps_3)]].map(([n,s,mp]) => `
@@ -809,20 +1032,18 @@ router.get('/festival/:id/editar', async (req, res) => {
               </div>
               <div class="field" style="margin:0">
                 <label>Enlace Google Maps</label>
-                <input type="text" name="maps_${n}" placeholder="https://maps.google.com/..." value="${mp}" data-type="text">
+                <input type="text" name="maps_${n}" placeholder="https://maps.app.goo.gl/..." value="${mp}" data-type="url">
                 <div class="field-error" id="err-maps_${n}">URL inválida</div>
               </div>
             </div>
           </div>`).join('')}
-          <div class="field-note">Parques, plazas, sitios de interés cultural o turístico cercanos al festival.</div>
         </div>
       </div>
 
-      <!-- HOSPEDAJE -->
       <div class="form-section" id="sec-hoteles">
         <div class="section-head">
           <div class="section-icon-lg">🏨</div>
-          <div><div class="section-title">Hospedaje</div><div class="section-desc">Hoteles y hospedajes recomendados para los asistentes al festival.</div></div>
+          <div><div class="section-title">Hospedaje</div><div class="section-desc">Hoteles y hospedajes recomendados para los asistentes.</div></div>
         </div>
         <div class="section-card">
           ${[[1, v(f.hotel_1), v(f.wa_1)],[2, v(f.hotel_2), v(f.wa_2)],[3, v(f.hotel_3), v(f.wa_3)]].map(([n,h,w]) => `
@@ -836,7 +1057,7 @@ router.get('/festival/:id/editar', async (req, res) => {
               <div class="field" style="margin:0">
                 <label>WhatsApp (https://wa.me/57…)</label>
                 <input type="text" name="wa_${n}" placeholder="https://wa.me/573001234567" value="${w}" data-type="wa">
-                <div class="field-error" id="err-wa_${n}">Debe ser https://wa.me/...</div>
+                <div class="field-error" id="err-wa_${n}">Debe ser https://wa.me/…</div>
               </div>
             </div>
           </div>`).join('')}
@@ -857,7 +1078,6 @@ function goTo(sectionId, navEl) {
   const section = document.getElementById(sectionId);
   if (section) { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); section.classList.add('highlight'); setTimeout(() => section.classList.remove('highlight'), 1500); }
 }
-
 const sections = ['sec-general','sec-contacto','sec-sitios','sec-hoteles'];
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -869,10 +1089,10 @@ const observer = new IntersectionObserver((entries) => {
 sections.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
 
 const progressFields = [
-  { fields: ['descripcion'], ns: 'ns-general' },
-  { fields: ['lugar_encuentro','maps_link'], ns: 'ns-contacto' },
-  { fields: ['sitio_1'], ns: 'ns-sitios' },
-  { fields: ['hotel_1'], ns: 'ns-hoteles' },
+  { fields: ['descripcion'],               ns: 'ns-general' },
+  { fields: ['lugar_encuentro','maps_link'],ns: 'ns-contacto' },
+  { fields: ['sitio_1'],                   ns: 'ns-sitios' },
+  { fields: ['hotel_1'],                   ns: 'ns-hoteles' },
 ];
 function calcProgress() {
   let done = 0;
@@ -888,8 +1108,7 @@ document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('
 calcProgress();
 
 function isValidUrl(s) { if (!s) return true; try { new URL(s); return true; } catch { return false; } }
-function isValidWa(s) { if (!s) return true; return /^https?:\\/\\/wa\\.me\\//.test(s); }
-
+function isValidWa(s)  { if (!s) return true; return /^https?:\\/\\/wa\\.me\\//.test(s); }
 function validateField(input) {
   const val = input.value.trim();
   const bad = input.dataset.type === 'wa' ? !isValidWa(val) : !isValidUrl(val);
@@ -910,7 +1129,7 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
   if (!validateUrls()) { alert('Corrija los errores de URL antes de guardar.'); return; }
   const btn = document.getElementById('btnEnviar');
   btn.disabled = true; btn.textContent = 'Guardando...';
-  const fd = new FormData(this);
+  const fd   = new FormData(this);
   const data = Object.fromEntries(fd.entries());
   const payload = {
     admintoken: data.admintoken, nombre: data.nombre||null,
@@ -931,7 +1150,7 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     const json = await res.json();
     if (json.ok) {
       document.getElementById('success').style.display = 'block';
-      document.getElementById('mainForm').style.display = 'none';
+      document.getElementById('mainForm').style.display  = 'none';
       window.scrollTo({top:0,behavior:'smooth'});
     } else throw new Error(json.error||'Error desconocido');
   } catch(err) {
@@ -959,20 +1178,20 @@ router.post('/api/festival/:id/actualizar', async (req, res) => {
   } = req.body;
 
   if (!admintoken || admintoken !== process.env.ADMIN_TOKEN) {
-    return res.status(403).json({ ok:false, error:'No autorizado' });
+    return res.status(403).json({ ok: false, error: 'No autorizado' });
   }
 
-  // Validate URLs
-  for (const [key, val] of [['maps_link',maps_link],['whatsapp_link',whatsapp_link],['maps_1',maps_1],['maps_2',maps_2],['maps_3',maps_3],['wa_1',wa_1],['wa_2',wa_2],['wa_3',wa_3]]) {
-    if (val && !isUrl(val)) return res.status(400).json({ ok:false, error:`URL inválida: ${key}` });
+  const urlFields = [['maps_link',maps_link],['whatsapp_link',whatsapp_link],['maps_1',maps_1],['maps_2',maps_2],['maps_3',maps_3],['wa_1',wa_1],['wa_2',wa_2],['wa_3',wa_3]];
+  for (const [key, val] of urlFields) {
+    if (val && !isUrl(val)) return res.status(400).json({ ok: false, error: `URL inválida: ${key}` });
   }
   for (const val of [whatsapp_link, wa_1, wa_2, wa_3]) {
-    if (val && !isWa(val)) return res.status(400).json({ ok:false, error:'wa/whatsapp debe ser https://wa.me/...' });
+    if (val && !isWa(val)) return res.status(400).json({ ok: false, error: 'wa/whatsapp debe ser https://wa.me/…' });
   }
 
   try {
     const festId = parseInt(id, 10);
-    if (!Number.isFinite(festId)) return res.status(400).json({ ok:false, error:'ID inválido' });
+    if (!Number.isFinite(festId)) return res.status(400).json({ ok: false, error: 'ID inválido' });
 
     const { rowCount } = await pool.query(
       `UPDATE festivals SET
@@ -1005,18 +1224,18 @@ router.post('/api/festival/:id/actualizar', async (req, res) => {
       ]
     );
 
-    if (!rowCount) return res.status(404).json({ ok:false, error:'Festival no encontrado' });
+    if (!rowCount) return res.status(404).json({ ok: false, error: 'Festival no encontrado' });
     res.json({ ok: true });
-  } catch(err) {
+  } catch (err) {
     console.error('Error actualizando festival:', err);
-    res.status(500).json({ ok:false, error:'Error interno' });
+    res.status(500).json({ ok: false, error: 'Error interno' });
   }
 });
 
 // ── ADMIN: estado municipios ───────────────────────────────────────────────
 router.get('/api/admin/municipios-estado', async (req, res) => {
   const { admintoken } = req.query;
-  if (admintoken !== process.env.ADMIN_TOKEN) return res.status(403).json({ error:'No autorizado' });
+  if (admintoken !== process.env.ADMIN_TOKEN) return res.status(403).json({ error: 'No autorizado' });
   try {
     const { rows } = await pool.query(`
       SELECT m.id, m.nombre, m.departamento, m.token_edicion, m.fecha_actualizacion,
@@ -1029,8 +1248,8 @@ router.get('/api/admin/municipios-estado', async (req, res) => {
       WHERE m.token_edicion IS NOT NULL GROUP BY m.id
       ORDER BY m.fecha_actualizacion DESC NULLS LAST, num_festivales DESC
     `);
-    res.json({ total:rows.length, completados:rows.filter(r=>r.tiene_alcalde&&r.tiene_sitios).length, municipios:rows });
-  } catch(err) { res.status(500).json({ error:err.message }); }
+    res.json({ total: rows.length, completados: rows.filter(r=>r.tiene_alcalde&&r.tiene_sitios).length, municipios: rows });
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── Helper ─────────────────────────────────────────────────────────────────
