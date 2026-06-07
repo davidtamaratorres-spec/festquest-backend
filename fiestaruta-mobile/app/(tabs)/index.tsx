@@ -4,6 +4,8 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  DateTimePickerAndroid,
+  Platform,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -265,29 +267,29 @@ export default function HomeScreen() {
   useEffect(() => { load(); }, [load]);
 
   const deptSugg = useMemo(() => {
-    if (deptInput.length < 2) return [];
+    if (!deptInput.trim()) return [];
     const q = normalize(deptInput);
-    return [...new Set(festivals.map(f => f.departamento).filter((d): d is string => !!d && normalize(d).includes(q)))].sort().slice(0, 5);
+    return [...new Set(festivals.map(f => f.departamento).filter((d): d is string => !!d && normalize(d).includes(q)))].sort().slice(0, 6);
   }, [festivals, deptInput]);
 
   const muniSugg = useMemo(() => {
-    if (muniInput.length < 2) return [];
+    if (!muniInput.trim()) return [];
     const q = normalize(muniInput);
     const base = selectedDept ? festivals.filter(f => f.departamento === selectedDept) : festivals;
-    return [...new Set(base.map(f => f.municipio).filter((m): m is string => !!m && normalize(m).includes(q)))].sort().slice(0, 5);
+    return [...new Set(base.map(f => f.municipio).filter((m): m is string => !!m && normalize(m).includes(q)))].sort().slice(0, 6);
   }, [festivals, muniInput, selectedDept]);
 
   const filtered = useMemo(() => {
     let r = festivals;
     if (selectedDept) {
       r = r.filter(f => f.departamento === selectedDept);
-    } else if (deptInput.trim().length >= 2) {
+    } else if (deptInput.trim()) {
       const q = normalize(deptInput.trim());
       r = r.filter(f => normalize(f.departamento ?? '').includes(q));
     }
     if (selectedMuni) {
       r = r.filter(f => f.municipio === selectedMuni);
-    } else if (muniInput.trim().length >= 2) {
+    } else if (muniInput.trim()) {
       const q = normalize(muniInput.trim());
       r = r.filter(f => normalize(f.municipio ?? '').includes(q));
     }
@@ -303,11 +305,40 @@ export default function HomeScreen() {
   const noDate = useMemo(() => filtered.filter(f => !f.date_start), [filtered]);
 
   const hasActiveFilters = !!(selectedDept || selectedMuni || filterFrom || filterTo ||
-    deptInput.trim().length >= 2 || muniInput.trim().length >= 2);
+    deptInput.trim() || muniInput.trim());
 
   function clearAll() {
     setSelectedDept(''); setDeptInput(''); setSelectedMuni(''); setMuniInput('');
     setFilterFrom(''); setFilterTo(''); setShowDeptDrop(false); setShowMuniDrop(false);
+  }
+
+  function isoToDate(iso: string): Date {
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function openDatePicker(which: 'from' | 'to') {
+    const current = which === 'from'
+      ? (filterFrom ? isoToDate(filterFrom) : new Date())
+      : (filterTo   ? isoToDate(filterTo)   : new Date());
+
+    if (Platform.OS === 'android') {
+      DateTimePickerAndroid.open({
+        value: current,
+        mode: 'date',
+        onChange: (_evt, date) => {
+          if (!date) return;
+          const iso = date.toISOString().slice(0, 10);
+          if (which === 'from') setFilterFrom(iso);
+          else                  setFilterTo(iso);
+        },
+      });
+    }
+  }
+
+  function clearDate(which: 'from' | 'to') {
+    if (which === 'from') setFilterFrom('');
+    else                  setFilterTo('');
   }
 
   return (
@@ -334,8 +365,8 @@ export default function HomeScreen() {
                     placeholder="Departamento..."
                     placeholderTextColor={C.textDim}
                     value={deptInput}
-                    onChangeText={t => { setDeptInput(t); setSelectedDept(''); setShowDeptDrop(t.length >= 2); }}
-                    onFocus={() => { if (deptInput.length >= 2) setShowDeptDrop(true); }}
+                    onChangeText={t => { setDeptInput(t); setSelectedDept(''); setShowDeptDrop(t.length >= 1); }}
+                    onFocus={() => { if (deptInput.length >= 1) setShowDeptDrop(true); }}
                     onBlur={() => setTimeout(() => setShowDeptDrop(false), 150)}
                     autoCorrect={false}
                   />
@@ -359,8 +390,8 @@ export default function HomeScreen() {
                     placeholder={selectedDept ? `En ${selectedDept.split(' ')[0]}…` : 'Municipio...'}
                     placeholderTextColor={C.textDim}
                     value={muniInput}
-                    onChangeText={t => { setMuniInput(t); setSelectedMuni(''); setShowMuniDrop(t.length >= 2); }}
-                    onFocus={() => { if (muniInput.length >= 2) setShowMuniDrop(true); }}
+                    onChangeText={t => { setMuniInput(t); setSelectedMuni(''); setShowMuniDrop(t.length >= 1); }}
+                    onFocus={() => { if (muniInput.length >= 1) setShowMuniDrop(true); }}
                     onBlur={() => setTimeout(() => setShowMuniDrop(false), 150)}
                     autoCorrect={false}
                   />
@@ -377,28 +408,28 @@ export default function HomeScreen() {
             </View>
 
             <View style={s.filterRow}>
-              <View style={[s.inputRow, s.inputRowSm, s.filterCell, filterFrom && s.inputRowSelected]}>
+              <Pressable style={[s.datePicker, filterFrom && s.inputRowSelected, s.filterCell]} onPress={() => openDatePicker('from')}>
                 <Ionicons name="calendar-outline" size={12} color={filterFrom ? C.orange : C.textDim} />
-                <TextInput
-                  style={[s.inputTxt, s.inputTxtSm]}
-                  placeholder="Desde"
-                  placeholderTextColor={C.textDim}
-                  value={filterFrom}
-                  onChangeText={setFilterFrom}
-                  keyboardType="numbers-and-punctuation"
-                />
-              </View>
-              <View style={[s.inputRow, s.inputRowSm, s.filterCell, filterTo && s.inputRowSelected]}>
+                <Text style={[s.datePickerTxt, !filterFrom && s.datePickerPlaceholder]}>
+                  {filterFrom ? filterFrom : 'Desde'}
+                </Text>
+                {filterFrom
+                  ? <Pressable onPress={() => clearDate('from')} hitSlop={8}>
+                      <Ionicons name="close-circle" size={13} color={C.textDim} />
+                    </Pressable>
+                  : null}
+              </Pressable>
+              <Pressable style={[s.datePicker, filterTo && s.inputRowSelected, s.filterCell]} onPress={() => openDatePicker('to')}>
                 <Ionicons name="calendar-outline" size={12} color={filterTo ? C.orange : C.textDim} />
-                <TextInput
-                  style={[s.inputTxt, s.inputTxtSm]}
-                  placeholder="Hasta"
-                  placeholderTextColor={C.textDim}
-                  value={filterTo}
-                  onChangeText={setFilterTo}
-                  keyboardType="numbers-and-punctuation"
-                />
-              </View>
+                <Text style={[s.datePickerTxt, !filterTo && s.datePickerPlaceholder]}>
+                  {filterTo ? filterTo : 'Hasta'}
+                </Text>
+                {filterTo
+                  ? <Pressable onPress={() => clearDate('to')} hitSlop={8}>
+                      <Ionicons name="close-circle" size={13} color={C.textDim} />
+                    </Pressable>
+                  : null}
+              </Pressable>
             </View>
 
             <Pressable
@@ -487,6 +518,15 @@ const s = StyleSheet.create({
   inputRowSelected: { borderColor: C.orangeBorder, backgroundColor: C.orangeDim },
   inputTxt:         { flex: 1, fontSize: 13, color: C.text, padding: 0 },
   inputTxtSm:       { fontSize: 12 },
+
+  datePicker: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: C.surface, borderWidth: 1, borderColor: C.border,
+    borderRadius: 13, paddingHorizontal: 13, paddingVertical: 8,
+    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 3, shadowOffset: { width: 0, height: 1 }, elevation: 1,
+  },
+  datePickerTxt: { flex: 1, fontSize: 12, color: C.text },
+  datePickerPlaceholder: { color: C.textDim },
 
   drop: {
     position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200,

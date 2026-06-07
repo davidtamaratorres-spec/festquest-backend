@@ -184,10 +184,12 @@ export default function FestivalDetail() {
         </View>
 
         {/* ── Botón volver ── */}
-        <Pressable style={s.volverBtn} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={20} color="#fff" />
-          <Text style={s.volverBtnTxt}>Volver</Text>
-        </Pressable>
+        <View style={s.backRow}>
+          <Pressable style={s.backBtn} onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={16} color={C.orange} />
+            <Text style={s.backBtnTxt}>Volver</Text>
+          </Pressable>
+        </View>
 
         {/* ── Fechas ── */}
         <View style={s.datesStrip}>
@@ -295,12 +297,13 @@ const s = StyleSheet.create({
   errorBtnTxt: { color: '#fff', fontWeight: '700' },
 
   hero: { height: 300, overflow: 'hidden' },
-  volverBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
-    backgroundColor: C.orange, height: 48,
-    shadowColor: C.orange, shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 4,
+  backRow: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 2, backgroundColor: C.bg },
+  backBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start',
+    paddingHorizontal: 12, paddingVertical: 8,
+    backgroundColor: C.orangeDim, borderWidth: 1, borderColor: C.orangeBorder, borderRadius: 10,
   },
-  volverBtnTxt: { fontFamily: 'Outfit_800ExtraBold', fontSize: 15, color: '#fff', letterSpacing: 0.3 },
+  backBtnTxt: { fontSize: 13, color: C.orange, fontWeight: '600', fontFamily: 'Outfit_700Bold' },
   heroContent: { position: 'absolute', bottom: 0, left: 0, right: 0, paddingHorizontal: 18, paddingBottom: 20 },
   regionPill: {
     alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.2)',
