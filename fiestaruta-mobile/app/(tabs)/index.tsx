@@ -4,8 +4,6 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  DateTimePickerAndroid,
-  Platform,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -111,6 +109,23 @@ function isUpcoming(dateStr: string | null) {
   const d = new Date(dateStr + 'T12:00:00');
   const today = new Date(); today.setHours(0, 0, 0, 0);
   return d >= today;
+}
+
+// ── Date mask helpers ──────────────────────────────────────────────────────
+function applyDateMask(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+
+function maskToIso(masked: string): string {
+  const digits = masked.replace(/\D/g, '');
+  if (digits.length !== 8) return '';
+  const d = digits.slice(0, 2), m = digits.slice(2, 4), y = digits.slice(4, 8);
+  const date = new Date(`${y}-${m}-${d}T12:00:00`);
+  if (isNaN(date.getTime())) return '';
+  return `${y}-${m}-${d}`;
 }
 
 // ── SuggestDrop ────────────────────────────────────────────────────────────
@@ -230,20 +245,30 @@ export default function HomeScreen() {
   const router = useRouter();
   const deptRef = useRef<TextInput>(null);
   const muniRef = useRef<TextInput>(null);
+  // Debounce timers for main-list filtering
+  const deptTid = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const muniTid = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const [festivals, setFestivals]   = useState<FestivalListItem[]>([]);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const [deptInput, setDeptInput]     = useState('');
+  // Immediate input state — drives TextInput display and dropdown visibility
+  const [deptInput, setDeptInput]       = useState('');
   const [selectedDept, setSelectedDept] = useState('');
   const [showDeptDrop, setShowDeptDrop] = useState(false);
-  const [muniInput, setMuniInput]     = useState('');
+  const [muniInput, setMuniInput]       = useState('');
   const [selectedMuni, setSelectedMuni] = useState('');
   const [showMuniDrop, setShowMuniDrop] = useState(false);
-  const [filterFrom, setFilterFrom]   = useState('');
-  const [filterTo, setFilterTo]       = useState('');
+
+  // Debounced filter values — drive the main list (150ms after typing stops)
+  const [deptFilter, setDeptFilter] = useState('');
+  const [muniFilter, setMuniFilter] = useState('');
+
+  // Date filter — stores masked display value DD/MM/AAAA; ISO derived in useMemo
+  const [filterFrom, setFilterFrom] = useState('');
+  const [filterTo, setFilterTo]     = useState('');
 
   const load = useCallback(async (isRefresh = false) => {
     if (!isRefresh) setLoading(true);
@@ -266,37 +291,45 @@ export default function HomeScreen() {
 
   useEffect(() => { load(); }, [load]);
 
+  // Suggestions use IMMEDIATE input — instant dropdown response
   const deptSugg = useMemo(() => {
     if (!deptInput.trim()) return [];
     const q = normalize(deptInput);
-    return [...new Set(festivals.map(f => f.departamento).filter((d): d is string => !!d && normalize(d).includes(q)))].sort().slice(0, 6);
+    return [...new Set(
+      festivals.map(f => f.departamento).filter((d): d is string => !!d && normalize(d).includes(q))
+    )].sort().slice(0, 6);
   }, [festivals, deptInput]);
 
   const muniSugg = useMemo(() => {
     if (!muniInput.trim()) return [];
     const q = normalize(muniInput);
     const base = selectedDept ? festivals.filter(f => f.departamento === selectedDept) : festivals;
-    return [...new Set(base.map(f => f.municipio).filter((m): m is string => !!m && normalize(m).includes(q)))].sort().slice(0, 6);
+    return [...new Set(
+      base.map(f => f.municipio).filter((m): m is string => !!m && normalize(m).includes(q))
+    )].sort().slice(0, 6);
   }, [festivals, muniInput, selectedDept]);
 
+  // Main list uses DEBOUNCED filter values — avoids re-render on every keystroke
   const filtered = useMemo(() => {
     let r = festivals;
     if (selectedDept) {
       r = r.filter(f => f.departamento === selectedDept);
-    } else if (deptInput.trim()) {
-      const q = normalize(deptInput.trim());
+    } else if (deptFilter.trim()) {
+      const q = normalize(deptFilter.trim());
       r = r.filter(f => normalize(f.departamento ?? '').includes(q));
     }
     if (selectedMuni) {
       r = r.filter(f => f.municipio === selectedMuni);
-    } else if (muniInput.trim()) {
-      const q = normalize(muniInput.trim());
+    } else if (muniFilter.trim()) {
+      const q = normalize(muniFilter.trim());
       r = r.filter(f => normalize(f.municipio ?? '').includes(q));
     }
-    if (filterFrom) r = r.filter(f => !!f.date_start && f.date_start >= filterFrom);
-    if (filterTo)   r = r.filter(f => !f.date_end   || f.date_end   <= filterTo);
+    const fromIso = maskToIso(filterFrom);
+    const toIso   = maskToIso(filterTo);
+    if (fromIso) r = r.filter(f => !!f.date_start && f.date_start >= fromIso);
+    if (toIso)   r = r.filter(f => !f.date_end   || f.date_end   <= toIso);
     return r;
-  }, [festivals, selectedDept, selectedMuni, deptInput, muniInput, filterFrom, filterTo]);
+  }, [festivals, selectedDept, selectedMuni, deptFilter, muniFilter, filterFrom, filterTo]);
 
   const featured = useMemo(() =>
     filtered.filter(f => !!f.date_start).sort((a, b) => a.date_start! > b.date_start! ? 1 : -1),
@@ -304,41 +337,36 @@ export default function HomeScreen() {
 
   const noDate = useMemo(() => filtered.filter(f => !f.date_start), [filtered]);
 
-  const hasActiveFilters = !!(selectedDept || selectedMuni || filterFrom || filterTo ||
-    deptInput.trim() || muniInput.trim());
+  const hasActiveFilters = !!(
+    selectedDept || selectedMuni || filterFrom || filterTo ||
+    deptInput.trim() || muniInput.trim()
+  );
 
+  // Debounced change handlers
+  const handleDeptChange = useCallback((t: string) => {
+    setDeptInput(t);
+    setSelectedDept('');
+    setShowDeptDrop(t.length >= 1);
+    clearTimeout(deptTid.current);
+    deptTid.current = setTimeout(() => setDeptFilter(t), 150);
+  }, []);
+
+  const handleMuniChange = useCallback((t: string) => {
+    setMuniInput(t);
+    setSelectedMuni('');
+    setShowMuniDrop(t.length >= 1);
+    clearTimeout(muniTid.current);
+    muniTid.current = setTimeout(() => setMuniFilter(t), 150);
+  }, []);
+
+  // Clear all filter state immediately (bypass debounce)
   function clearAll() {
-    setSelectedDept(''); setDeptInput(''); setSelectedMuni(''); setMuniInput('');
-    setFilterFrom(''); setFilterTo(''); setShowDeptDrop(false); setShowMuniDrop(false);
-  }
-
-  function isoToDate(iso: string): Date {
-    const [y, m, d] = iso.split('-').map(Number);
-    return new Date(y, m - 1, d);
-  }
-
-  function openDatePicker(which: 'from' | 'to') {
-    const current = which === 'from'
-      ? (filterFrom ? isoToDate(filterFrom) : new Date())
-      : (filterTo   ? isoToDate(filterTo)   : new Date());
-
-    if (Platform.OS === 'android') {
-      DateTimePickerAndroid.open({
-        value: current,
-        mode: 'date',
-        onChange: (_evt, date) => {
-          if (!date) return;
-          const iso = date.toISOString().slice(0, 10);
-          if (which === 'from') setFilterFrom(iso);
-          else                  setFilterTo(iso);
-        },
-      });
-    }
-  }
-
-  function clearDate(which: 'from' | 'to') {
-    if (which === 'from') setFilterFrom('');
-    else                  setFilterTo('');
+    clearTimeout(deptTid.current);
+    clearTimeout(muniTid.current);
+    setSelectedDept('');  setDeptInput('');  setDeptFilter('');
+    setSelectedMuni('');  setMuniInput('');  setMuniFilter('');
+    setFilterFrom('');    setFilterTo('');
+    setShowDeptDrop(false); setShowMuniDrop(false);
   }
 
   return (
@@ -355,91 +383,129 @@ export default function HomeScreen() {
       {/* ── Zona interactiva ── */}
       <View style={s.interactiveZone}>
         <View style={s.filterPanel}>
-            <View style={s.filterRow}>
-              <View style={[s.filterCell, { zIndex: showDeptDrop ? 30 : 10 }]}>
-                <View style={[s.inputRow, s.inputRowSm, selectedDept && s.inputRowSelected, showDeptDrop && deptSugg.length > 0 && s.inputRowOpen]}>
-                  <Ionicons name="business-outline" size={12} color={selectedDept ? C.orange : C.textDim} />
-                  <TextInput
-                    ref={deptRef}
-                    style={[s.inputTxt, s.inputTxtSm]}
-                    placeholder="Departamento..."
-                    placeholderTextColor={C.textDim}
-                    value={deptInput}
-                    onChangeText={t => { setDeptInput(t); setSelectedDept(''); setShowDeptDrop(t.length >= 1); }}
-                    onFocus={() => { if (deptInput.length >= 1) setShowDeptDrop(true); }}
-                    onBlur={() => setTimeout(() => setShowDeptDrop(false), 150)}
-                    autoCorrect={false}
-                  />
-                  {deptInput.length > 0 && (
-                    <Pressable onPress={() => { setSelectedDept(''); setDeptInput(''); setSelectedMuni(''); setMuniInput(''); }}>
-                      <Ionicons name="close-circle" size={13} color={C.textDim} />
-                    </Pressable>
-                  )}
-                </View>
-                {showDeptDrop && (
-                  <SuggestDrop items={deptSugg} onSelect={v => { setSelectedDept(v); setDeptInput(v); setShowDeptDrop(false); setSelectedMuni(''); setMuniInput(''); }} icon="business-outline" />
+
+          {/* Departamento + Municipio */}
+          <View style={s.filterRow}>
+            <View style={[s.filterCell, { zIndex: showDeptDrop ? 30 : 10 }]}>
+              <View style={[s.inputRow, s.inputRowSm, selectedDept && s.inputRowSelected, showDeptDrop && deptSugg.length > 0 && s.inputRowOpen]}>
+                <Ionicons name="business-outline" size={12} color={selectedDept ? C.orange : C.textDim} />
+                <TextInput
+                  ref={deptRef}
+                  style={[s.inputTxt, s.inputTxtSm]}
+                  placeholder="Departamento..."
+                  placeholderTextColor={C.textDim}
+                  value={deptInput}
+                  onChangeText={handleDeptChange}
+                  onFocus={() => { if (deptInput.length >= 1) setShowDeptDrop(true); }}
+                  onBlur={() => setTimeout(() => setShowDeptDrop(false), 150)}
+                  autoCorrect={false}
+                />
+                {deptInput.length > 0 && (
+                  <Pressable onPress={() => {
+                    clearTimeout(deptTid.current);
+                    setSelectedDept(''); setDeptInput(''); setDeptFilter('');
+                    setSelectedMuni(''); setMuniInput(''); setMuniFilter('');
+                  }}>
+                    <Ionicons name="close-circle" size={13} color={C.textDim} />
+                  </Pressable>
                 )}
               </View>
+              {showDeptDrop && (
+                <SuggestDrop
+                  items={deptSugg}
+                  icon="business-outline"
+                  onSelect={v => {
+                    clearTimeout(deptTid.current);
+                    setSelectedDept(v); setDeptInput(v); setDeptFilter(v);
+                    setShowDeptDrop(false);
+                    setSelectedMuni(''); setMuniInput(''); setMuniFilter('');
+                  }}
+                />
+              )}
+            </View>
 
-              <View style={[s.filterCell, { zIndex: showMuniDrop ? 30 : 10 }]}>
-                <View style={[s.inputRow, s.inputRowSm, selectedMuni && s.inputRowSelected, showMuniDrop && muniSugg.length > 0 && s.inputRowOpen]}>
-                  <Ionicons name="location-outline" size={12} color={selectedMuni ? C.orange : C.textDim} />
-                  <TextInput
-                    ref={muniRef}
-                    style={[s.inputTxt, s.inputTxtSm]}
-                    placeholder={selectedDept ? `En ${selectedDept.split(' ')[0]}…` : 'Municipio...'}
-                    placeholderTextColor={C.textDim}
-                    value={muniInput}
-                    onChangeText={t => { setMuniInput(t); setSelectedMuni(''); setShowMuniDrop(t.length >= 1); }}
-                    onFocus={() => { if (muniInput.length >= 1) setShowMuniDrop(true); }}
-                    onBlur={() => setTimeout(() => setShowMuniDrop(false), 150)}
-                    autoCorrect={false}
-                  />
-                  {muniInput.length > 0 && (
-                    <Pressable onPress={() => { setSelectedMuni(''); setMuniInput(''); }}>
-                      <Ionicons name="close-circle" size={13} color={C.textDim} />
-                    </Pressable>
-                  )}
-                </View>
-                {showMuniDrop && (
-                  <SuggestDrop items={muniSugg} onSelect={v => { setSelectedMuni(v); setMuniInput(v); setShowMuniDrop(false); }} icon="location-outline" />
+            <View style={[s.filterCell, { zIndex: showMuniDrop ? 30 : 10 }]}>
+              <View style={[s.inputRow, s.inputRowSm, selectedMuni && s.inputRowSelected, showMuniDrop && muniSugg.length > 0 && s.inputRowOpen]}>
+                <Ionicons name="location-outline" size={12} color={selectedMuni ? C.orange : C.textDim} />
+                <TextInput
+                  ref={muniRef}
+                  style={[s.inputTxt, s.inputTxtSm]}
+                  placeholder={selectedDept ? `En ${selectedDept.split(' ')[0]}…` : 'Municipio...'}
+                  placeholderTextColor={C.textDim}
+                  value={muniInput}
+                  onChangeText={handleMuniChange}
+                  onFocus={() => { if (muniInput.length >= 1) setShowMuniDrop(true); }}
+                  onBlur={() => setTimeout(() => setShowMuniDrop(false), 150)}
+                  autoCorrect={false}
+                />
+                {muniInput.length > 0 && (
+                  <Pressable onPress={() => {
+                    clearTimeout(muniTid.current);
+                    setSelectedMuni(''); setMuniInput(''); setMuniFilter('');
+                  }}>
+                    <Ionicons name="close-circle" size={13} color={C.textDim} />
+                  </Pressable>
                 )}
               </View>
+              {showMuniDrop && (
+                <SuggestDrop
+                  items={muniSugg}
+                  icon="location-outline"
+                  onSelect={v => {
+                    clearTimeout(muniTid.current);
+                    setSelectedMuni(v); setMuniInput(v); setMuniFilter(v);
+                    setShowMuniDrop(false);
+                  }}
+                />
+              )}
             </View>
-
-            <View style={s.filterRow}>
-              <Pressable style={[s.datePicker, filterFrom && s.inputRowSelected, s.filterCell]} onPress={() => openDatePicker('from')}>
-                <Ionicons name="calendar-outline" size={12} color={filterFrom ? C.orange : C.textDim} />
-                <Text style={[s.datePickerTxt, !filterFrom && s.datePickerPlaceholder]}>
-                  {filterFrom ? filterFrom : 'Desde'}
-                </Text>
-                {filterFrom
-                  ? <Pressable onPress={() => clearDate('from')} hitSlop={8}>
-                      <Ionicons name="close-circle" size={13} color={C.textDim} />
-                    </Pressable>
-                  : null}
-              </Pressable>
-              <Pressable style={[s.datePicker, filterTo && s.inputRowSelected, s.filterCell]} onPress={() => openDatePicker('to')}>
-                <Ionicons name="calendar-outline" size={12} color={filterTo ? C.orange : C.textDim} />
-                <Text style={[s.datePickerTxt, !filterTo && s.datePickerPlaceholder]}>
-                  {filterTo ? filterTo : 'Hasta'}
-                </Text>
-                {filterTo
-                  ? <Pressable onPress={() => clearDate('to')} hitSlop={8}>
-                      <Ionicons name="close-circle" size={13} color={C.textDim} />
-                    </Pressable>
-                  : null}
-              </Pressable>
-            </View>
-
-            <Pressable
-              style={[s.clearBtn, !hasActiveFilters && s.clearBtnOff]}
-              onPress={hasActiveFilters ? clearAll : undefined}
-            >
-              <Ionicons name="close-circle-outline" size={13} color={hasActiveFilters ? C.orange : C.textDim} />
-              <Text style={[s.clearBtnTxt, !hasActiveFilters && { color: C.textDim }]}>Limpiar filtros</Text>
-            </Pressable>
           </View>
+
+          {/* Fechas con máscara DD/MM/AAAA */}
+          <View style={s.filterRow}>
+            <View style={[s.inputRow, s.inputRowSm, s.filterCell, !!maskToIso(filterFrom) && s.inputRowSelected]}>
+              <Ionicons name="calendar-outline" size={12} color={maskToIso(filterFrom) ? C.orange : C.textDim} />
+              <TextInput
+                style={[s.inputTxt, s.inputTxtSm]}
+                placeholder="Desde  DD/MM/AAAA"
+                placeholderTextColor={C.textDim}
+                value={filterFrom}
+                onChangeText={t => setFilterFrom(applyDateMask(t))}
+                keyboardType="numeric"
+                maxLength={10}
+              />
+              {filterFrom.length > 0 && (
+                <Pressable onPress={() => setFilterFrom('')} hitSlop={8}>
+                  <Ionicons name="close-circle" size={13} color={C.textDim} />
+                </Pressable>
+              )}
+            </View>
+            <View style={[s.inputRow, s.inputRowSm, s.filterCell, !!maskToIso(filterTo) && s.inputRowSelected]}>
+              <Ionicons name="calendar-outline" size={12} color={maskToIso(filterTo) ? C.orange : C.textDim} />
+              <TextInput
+                style={[s.inputTxt, s.inputTxtSm]}
+                placeholder="Hasta  DD/MM/AAAA"
+                placeholderTextColor={C.textDim}
+                value={filterTo}
+                onChangeText={t => setFilterTo(applyDateMask(t))}
+                keyboardType="numeric"
+                maxLength={10}
+              />
+              {filterTo.length > 0 && (
+                <Pressable onPress={() => setFilterTo('')} hitSlop={8}>
+                  <Ionicons name="close-circle" size={13} color={C.textDim} />
+                </Pressable>
+              )}
+            </View>
+          </View>
+
+          {/* Limpiar — siempre visible */}
+          <Pressable style={[s.clearBtn, !hasActiveFilters && s.clearBtnOff]} onPress={clearAll}>
+            <Ionicons name="close-circle-outline" size={13} color={hasActiveFilters ? C.orange : C.textDim} />
+            <Text style={[s.clearBtnTxt, !hasActiveFilters && { color: C.textDim }]}>Limpiar filtros</Text>
+          </Pressable>
+
+        </View>
       </View>
 
       {/* ── Lista ── */}
@@ -469,7 +535,7 @@ export default function HomeScreen() {
         {!loading && !error && featured.map(f => <FestCard key={f.id} f={f} onPress={() => router.push(`/festival/${f.id}`)} />)}
         {!loading && !error && noDate.map(f => <MiniCard key={f.id} f={f} onPress={() => router.push(`/festival/${f.id}`)} />)}
 
-        {!loading && !error && featured.length === 0 && noDate.length === 0 && !loading && (
+        {!loading && !error && featured.length === 0 && noDate.length === 0 && (
           <View style={s.center}>
             <Text style={{ fontSize: 32 }}>🔍</Text>
             <Text style={s.emptyTxt}>
@@ -518,15 +584,6 @@ const s = StyleSheet.create({
   inputRowSelected: { borderColor: C.orangeBorder, backgroundColor: C.orangeDim },
   inputTxt:         { flex: 1, fontSize: 13, color: C.text, padding: 0 },
   inputTxtSm:       { fontSize: 12 },
-
-  datePicker: {
-    flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: C.surface, borderWidth: 1, borderColor: C.border,
-    borderRadius: 13, paddingHorizontal: 13, paddingVertical: 8,
-    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 3, shadowOffset: { width: 0, height: 1 }, elevation: 1,
-  },
-  datePickerTxt: { flex: 1, fontSize: 12, color: C.text },
-  datePickerPlaceholder: { color: C.textDim },
 
   drop: {
     position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200,
