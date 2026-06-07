@@ -6,7 +6,6 @@ import {
   Linking,
   Pressable,
   ScrollView,
-  Share,
   StatusBar,
   StyleSheet,
   Text,
@@ -166,61 +165,72 @@ export default function MunicipioDetail() {
 
         {/* ── Hero naranja ── */}
         <View style={s.muniHero}>
-          <View style={s.heroNav}>
-            <Pressable style={s.navBtn} onPress={() => router.back()}>
-              <Ionicons name="chevron-back" size={20} color="#fff" />
-            </Pressable>
-            <Pressable style={s.navBtn} onPress={() => Share.share({ title: m.nombre, message: `${m.nombre} — FestQuest` })}>
-              <Ionicons name="share-social-outline" size={18} color="#fff" />
-            </Pressable>
+          {/* Fila: bandera + nombre + escudo */}
+          <View style={s.heroTopRow}>
+            <View style={s.banderaWrap}>
+              {present(m.bandera_url) ? (
+                <Image source={{ uri: m.bandera_url }} style={s.bandera} contentFit="contain" />
+              ) : (
+                <View style={[s.bandera, s.banderaPlaceholder]} />
+              )}
+            </View>
+            <Text style={s.muniName} numberOfLines={3}>{m.nombre}</Text>
+            <View style={s.escudoWrap}>
+              {present(m.escudo_url) ? (
+                <Image source={{ uri: m.escudo_url }} style={s.escudo} contentFit="contain" />
+              ) : (
+                <View style={[s.escudo, s.escudoPlaceholder]}>
+                  <Text style={s.escudoIni}>{m.nombre.slice(0, 2).toUpperCase()}</Text>
+                </View>
+              )}
+            </View>
           </View>
 
-          {/* Escudo */}
-          <View style={s.escudoWrap}>
-            {present(m.escudo_url) ? (
-              <Image source={{ uri: m.escudo_url }} style={s.escudo} contentFit="contain" />
-            ) : (
-              <View style={[s.escudo, s.escudoPlaceholder]}>
-                <Text style={s.escudoIni}>{m.nombre.slice(0, 2).toUpperCase()}</Text>
-              </View>
-            )}
-          </View>
-
-          <Text style={s.muniName}>{m.nombre}</Text>
+          {/* Departamento · subregión */}
           <View style={s.muniMeta}>
             <Ionicons name="location-outline" size={12} color="rgba(255,255,255,0.85)" />
             <Text style={s.muniMetaTxt}>
               {m.departamento}{present(m.subregion) ? ` · ${m.subregion}` : ''}
             </Text>
           </View>
+
+          {/* Gentilicio badge */}
           {present(m.gentilicio) && (
             <View style={s.gentilicioBadge}>
               <Text style={s.gentilicioTxt}>{m.gentilicio}</Text>
             </View>
           )}
+
+          {/* Alcalde card dentro del hero */}
+          <View style={s.alcaldeHeroCard}>
+            <View style={s.alcaldeHeroAvatar}>
+              <Text style={{ fontSize: 16 }}>👤</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={s.alcaldeHeroRol}>Alcalde / Alcaldesa</Text>
+              <Text style={s.alcaldeHeroName}>{present(m.alcalde) ? m.alcalde : 'Pendiente de registro'}</Text>
+              {present(m.correo_alcalde)
+                ? <Text style={s.alcaldeHeroEmail}>{m.correo_alcalde}</Text>
+                : <Text style={s.alcaldeHeroEmailNull}>correo no registrado</Text>}
+            </View>
+            {present(m.correo_alcalde) && (
+              <Pressable style={s.alcaldeHeroBtn} onPress={() => openLink(`mailto:${m.correo_alcalde}`)}>
+                <Ionicons name="mail-outline" size={14} color="#fff" />
+              </Pressable>
+            )}
+          </View>
+        </View>
+
+        {/* ── Botón volver ── */}
+        <View style={s.backRow}>
+          <Pressable style={s.backBtn} onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={16} color={C.orange} />
+            <Text style={s.backBtnTxt}>Volver</Text>
+          </Pressable>
         </View>
 
         {/* ── Body ── */}
         <View style={s.body}>
-
-          {/* Alcalde */}
-          <View style={s.alcaldeCard}>
-            <View style={s.alcaldeAvatar}>
-              <Text style={{ fontSize: 18 }}>👤</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={s.alcaldeRol}>Alcalde / Alcaldesa</Text>
-              <Text style={s.alcaldeName}>{present(m.alcalde) ? m.alcalde : 'Pendiente de registro'}</Text>
-              {present(m.correo_alcalde)
-                ? <Text style={s.alcaldeEmail}>{m.correo_alcalde}</Text>
-                : <Text style={s.alcaldeEmailNull}>correo no registrado</Text>}
-            </View>
-            {present(m.correo_alcalde) && (
-              <Pressable style={s.alcaldeBtn} onPress={() => openLink(`mailto:${m.correo_alcalde}`)}>
-                <Ionicons name="mail-outline" size={14} color={C.orange} />
-              </Pressable>
-            )}
-          </View>
 
           {/* Stats grid */}
           <View style={s.statsGrid}>
@@ -310,57 +320,71 @@ const s = StyleSheet.create({
 
   // Hero naranja
   muniHero: {
-    backgroundColor: C.orange, paddingTop: 55, paddingBottom: 28, paddingHorizontal: 18,
-    alignItems: 'center', gap: 8,
+    backgroundColor: C.orange, paddingTop: 22, paddingBottom: 20, paddingHorizontal: 18,
+    alignItems: 'center', gap: 10,
   },
-  heroNav: {
-    position: 'absolute', top: 12, left: 0, right: 0,
-    flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16,
+  heroTopRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 12, width: '100%',
   },
-  navBtn: {
-    width: 38, height: 38, borderRadius: 19,
-    backgroundColor: 'rgba(0,0,0,0.2)', alignItems: 'center', justifyContent: 'center',
+  banderaWrap: {
+    width: 60, height: 40, borderRadius: 6, overflow: 'hidden', backgroundColor: '#fff',
+    shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 4,
+    flexShrink: 0,
   },
+  bandera: { width: 60, height: 40 },
+  banderaPlaceholder: { backgroundColor: 'rgba(255,255,255,0.25)' },
   escudoWrap: {
-    width: 90, height: 90, borderRadius: 16, overflow: 'hidden', backgroundColor: '#fff',
-    shadowColor: '#000', shadowOpacity: 0.22, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 6,
+    width: 50, height: 60, borderRadius: 8, overflow: 'hidden', backgroundColor: '#fff',
+    shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 4,
+    flexShrink: 0,
   },
-  escudo: { width: 90, height: 90 },
+  escudo: { width: 50, height: 60 },
   escudoPlaceholder: { backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
-  escudoIni: { fontSize: 26, fontWeight: '900', color: '#fff', fontFamily: 'Outfit_900Black' },
+  escudoIni: { fontSize: 18, fontWeight: '900', color: '#fff', fontFamily: 'Outfit_900Black' },
   muniName: {
-    fontFamily: 'Outfit_900Black', fontSize: 26, color: '#fff',
-    textAlign: 'center', lineHeight: 28,
+    fontFamily: 'Outfit_900Black', fontSize: 22, color: '#fff',
+    textAlign: 'center', lineHeight: 26, flex: 1,
   },
   muniMeta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   muniMetaTxt: { fontSize: 13, color: 'rgba(255,255,255,0.85)' },
   gentilicioBadge: {
-    backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 20,
-    paddingHorizontal: 12, paddingVertical: 3,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)', borderRadius: 20,
+    paddingHorizontal: 12, paddingVertical: 4,
   },
   gentilicioTxt: { fontSize: 11, fontWeight: '600', color: '#fff', letterSpacing: 0.8 },
 
-  body: { paddingHorizontal: 16, paddingTop: 16, gap: 16 },
-
-  alcaldeCard: {
-    backgroundColor: C.surface, borderWidth: 1, borderColor: C.border,
-    borderRadius: 14, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 12,
-    shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
+  // Alcalde dentro del hero
+  alcaldeHeroCard: {
+    width: '100%', backgroundColor: 'rgba(255,255,255,0.15)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 14, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 11,
+    marginTop: 4,
   },
-  alcaldeAvatar: {
-    width: 42, height: 42, borderRadius: 21,
-    backgroundColor: C.orangeDim, borderWidth: 1, borderColor: C.orangeBorder,
+  alcaldeHeroAvatar: {
+    width: 38, height: 38, borderRadius: 19,
+    backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)',
     alignItems: 'center', justifyContent: 'center',
   },
-  alcaldeRol: { fontSize: 9, textTransform: 'uppercase', letterSpacing: 1.2, color: C.textDim, fontWeight: '600', marginBottom: 2 },
-  alcaldeName: { fontFamily: 'Outfit_700Bold', fontSize: 14, color: C.text },
-  alcaldeEmail: { fontSize: 11, color: C.orange, marginTop: 2 },
-  alcaldeEmailNull: { fontSize: 11, color: C.textDim, fontStyle: 'italic', marginTop: 2 },
-  alcaldeBtn: {
+  alcaldeHeroRol: { fontSize: 9, textTransform: 'uppercase', letterSpacing: 1.2, color: 'rgba(255,255,255,0.65)', fontWeight: '600', marginBottom: 2 },
+  alcaldeHeroName: { fontFamily: 'Outfit_700Bold', fontSize: 13, color: '#fff' },
+  alcaldeHeroEmail: { fontSize: 11, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
+  alcaldeHeroEmailNull: { fontSize: 11, color: 'rgba(255,255,255,0.45)', fontStyle: 'italic', marginTop: 2 },
+  alcaldeHeroBtn: {
     width: 32, height: 32, borderRadius: 16,
-    backgroundColor: C.orangeDim, borderWidth: 1, borderColor: C.orangeBorder,
+    backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.35)',
     alignItems: 'center', justifyContent: 'center',
   },
+
+  // Botón volver
+  backRow: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 2, backgroundColor: C.bg },
+  backBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start',
+    paddingHorizontal: 12, paddingVertical: 8,
+    backgroundColor: C.orangeDim, borderWidth: 1, borderColor: C.orangeBorder, borderRadius: 10,
+  },
+  backBtnTxt: { fontSize: 13, color: C.orange, fontWeight: '600', fontFamily: 'Outfit_700Bold' },
+
+  body: { paddingHorizontal: 16, paddingTop: 14, gap: 16 },
 
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   statItem: {
