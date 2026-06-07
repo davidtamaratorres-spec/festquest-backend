@@ -246,9 +246,20 @@ export default function HomeScreen() {
   const load = useCallback(async (isRefresh = false) => {
     if (!isRefresh) setLoading(true);
     setError(null);
-    try { setFestivals(await getFestivals()); }
-    catch (e: any) { setError(e?.message ?? 'Error cargando festivales'); }
-    finally { setLoading(false); setRefreshing(false); }
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 60000);
+    try {
+      setFestivals(await getFestivals(ctrl.signal));
+    } catch (e: any) {
+      const isTimeout = e?.name === 'AbortError';
+      setError(isTimeout
+        ? 'El servidor tardó demasiado (60s). Toca Reintentar.'
+        : (e?.message ?? 'Error cargando festivales'));
+    } finally {
+      clearTimeout(tid);
+      setLoading(false);
+      setRefreshing(false);
+    }
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -268,12 +279,22 @@ export default function HomeScreen() {
 
   const filtered = useMemo(() => {
     let r = festivals;
-    if (selectedDept) r = r.filter(f => f.departamento === selectedDept);
-    if (selectedMuni) r = r.filter(f => f.municipio === selectedMuni);
-    if (filterFrom)   r = r.filter(f => !!f.date_start && f.date_start >= filterFrom);
-    if (filterTo)     r = r.filter(f => !f.date_start || f.date_start <= filterTo);
+    if (selectedDept) {
+      r = r.filter(f => f.departamento === selectedDept);
+    } else if (deptInput.trim().length >= 2) {
+      const q = normalize(deptInput.trim());
+      r = r.filter(f => normalize(f.departamento ?? '').includes(q));
+    }
+    if (selectedMuni) {
+      r = r.filter(f => f.municipio === selectedMuni);
+    } else if (muniInput.trim().length >= 2) {
+      const q = normalize(muniInput.trim());
+      r = r.filter(f => normalize(f.municipio ?? '').includes(q));
+    }
+    if (filterFrom) r = r.filter(f => !!f.date_start && f.date_start >= filterFrom);
+    if (filterTo)   r = r.filter(f => !f.date_end   || f.date_end   <= filterTo);
     return r;
-  }, [festivals, selectedDept, selectedMuni, filterFrom, filterTo]);
+  }, [festivals, selectedDept, selectedMuni, deptInput, muniInput, filterFrom, filterTo]);
 
   const featured = useMemo(() =>
     filtered.filter(f => !!f.date_start).sort((a, b) => a.date_start! > b.date_start! ? 1 : -1),
@@ -281,7 +302,8 @@ export default function HomeScreen() {
 
   const noDate = useMemo(() => filtered.filter(f => !f.date_start), [filtered]);
 
-  const hasActiveFilters = !!(selectedDept || selectedMuni || filterFrom || filterTo);
+  const hasActiveFilters = !!(selectedDept || selectedMuni || filterFrom || filterTo ||
+    deptInput.trim().length >= 2 || muniInput.trim().length >= 2);
 
   function clearAll() {
     setSelectedDept(''); setDeptInput(''); setSelectedMuni(''); setMuniInput('');
@@ -379,12 +401,13 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            {hasActiveFilters && (
-              <Pressable style={s.clearBtn} onPress={clearAll}>
-                <Ionicons name="close-circle-outline" size={12} color={C.orange} />
-                <Text style={s.clearBtnTxt}>Limpiar filtros</Text>
-              </Pressable>
-            )}
+            <Pressable
+              style={[s.clearBtn, !hasActiveFilters && s.clearBtnOff]}
+              onPress={hasActiveFilters ? clearAll : undefined}
+            >
+              <Ionicons name="close-circle-outline" size={13} color={hasActiveFilters ? C.orange : C.textDim} />
+              <Text style={[s.clearBtnTxt, !hasActiveFilters && { color: C.textDim }]}>Limpiar filtros</Text>
+            </Pressable>
           </View>
       </View>
 
@@ -476,11 +499,12 @@ const s = StyleSheet.create({
   dropTxt: { flex: 1, fontSize: 13, color: C.text },
 
   clearBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: 5, alignSelf: 'flex-start',
-    paddingHorizontal: 11, paddingVertical: 6,
-    backgroundColor: C.orangeDim, borderRadius: 8, borderWidth: 1, borderColor: C.orangeBorder,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+    paddingHorizontal: 14, paddingVertical: 9,
+    backgroundColor: C.orangeDim, borderRadius: 10, borderWidth: 1, borderColor: C.orangeBorder,
   },
-  clearBtnTxt: { fontSize: 11, color: C.orange, fontWeight: '600' },
+  clearBtnOff: { backgroundColor: 'rgba(0,0,0,0.04)', borderColor: C.border },
+  clearBtnTxt: { fontSize: 12, color: C.orange, fontWeight: '600' },
 
   festCard: {
     marginHorizontal: 16, marginBottom: 14,
