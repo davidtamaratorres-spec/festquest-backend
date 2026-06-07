@@ -78,8 +78,8 @@ export type MunicipioResponse = {
   festivals: FestivalMini[];
 };
 
-async function apiFetch<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`);
+async function apiFetch<T>(path: string, signal?: AbortSignal): Promise<T> {
+  const res = await fetch(`${BASE}${path}`, signal ? { signal } : undefined);
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
     throw new Error(err.error || `HTTP ${res.status}`);
@@ -87,8 +87,8 @@ async function apiFetch<T>(path: string): Promise<T> {
   return res.json();
 }
 
-export const getFestivals = () =>
-  apiFetch<FestivalListItem[]>('/api/festivals');
+export const getFestivals = (signal?: AbortSignal) =>
+  apiFetch<FestivalListItem[]>('/api/festivals', signal);
 
 export const getFestival = (id: string | number) =>
   apiFetch<Festival>(`/api/festivals/${id}`);

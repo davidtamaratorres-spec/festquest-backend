@@ -7,7 +7,6 @@ import {
   Linking,
   Pressable,
   ScrollView,
-  Share,
   StatusBar,
   StyleSheet,
   Text,
@@ -167,16 +166,6 @@ export default function FestivalDetail() {
             style={StyleSheet.absoluteFillObject}
           />
 
-          {/* Nav */}
-          <View style={s.heroNav}>
-            <Pressable style={s.navBtn} onPress={() => router.back()}>
-              <Ionicons name="chevron-back" size={20} color="#fff" />
-            </Pressable>
-            <Pressable style={s.navBtn} onPress={() => Share.share({ title: f.nombre, message: `${f.nombre} — FestQuest` })}>
-              <Ionicons name="share-social-outline" size={18} color="#fff" />
-            </Pressable>
-          </View>
-
           {/* Contenido hero */}
           <View style={s.heroContent}>
             {present(f.subregion) && (
@@ -193,6 +182,12 @@ export default function FestivalDetail() {
             </View>
           </View>
         </View>
+
+        {/* ── Botón volver ── */}
+        <Pressable style={s.volverBtn} onPress={() => router.back()}>
+          <Ionicons name="chevron-back" size={20} color="#fff" />
+          <Text style={s.volverBtnTxt}>Volver</Text>
+        </Pressable>
 
         {/* ── Fechas ── */}
         <View style={s.datesStrip}>
@@ -300,14 +295,12 @@ const s = StyleSheet.create({
   errorBtnTxt: { color: '#fff', fontWeight: '700' },
 
   hero: { height: 300, overflow: 'hidden' },
-  heroNav: {
-    position: 'absolute', top: 14, left: 0, right: 0,
-    flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16,
+  volverBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+    backgroundColor: C.orange, height: 48,
+    shadowColor: C.orange, shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 4,
   },
-  navBtn: {
-    width: 38, height: 38, borderRadius: 19,
-    backgroundColor: 'rgba(0,0,0,0.35)', alignItems: 'center', justifyContent: 'center',
-  },
+  volverBtnTxt: { fontFamily: 'Outfit_800ExtraBold', fontSize: 15, color: '#fff', letterSpacing: 0.3 },
   heroContent: { position: 'absolute', bottom: 0, left: 0, right: 0, paddingHorizontal: 18, paddingBottom: 20 },
   regionPill: {
     alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.2)',
