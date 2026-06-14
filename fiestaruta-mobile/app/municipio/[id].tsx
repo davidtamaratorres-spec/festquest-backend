@@ -165,25 +165,19 @@ export default function MunicipioDetail() {
 
         {/* ── Hero naranja ── */}
         <View style={s.muniHero}>
-          {/* Fila: bandera + nombre + escudo */}
+          {/* Fila: bandera + nombre + escudo — se omiten si no tienen URL */}
           <View style={s.heroTopRow}>
-            <View style={s.banderaWrap}>
-              {present(m.bandera_url) ? (
+            {present(m.bandera_url) && (
+              <View style={s.banderaWrap}>
                 <Image source={{ uri: m.bandera_url }} style={s.bandera} contentFit="contain" />
-              ) : (
-                <View style={[s.bandera, s.banderaPlaceholder]} />
-              )}
-            </View>
+              </View>
+            )}
             <Text style={s.muniName} numberOfLines={3}>{m.nombre}</Text>
-            <View style={s.escudoWrap}>
-              {present(m.escudo_url) ? (
+            {present(m.escudo_url) && (
+              <View style={s.escudoWrap}>
                 <Image source={{ uri: m.escudo_url }} style={s.escudo} contentFit="contain" />
-              ) : (
-                <View style={[s.escudo, s.escudoPlaceholder]}>
-                  <Text style={s.escudoIni}>{m.nombre.slice(0, 2).toUpperCase()}</Text>
-                </View>
-              )}
-            </View>
+              </View>
+            )}
           </View>
 
           {/* Departamento · subregión */}
