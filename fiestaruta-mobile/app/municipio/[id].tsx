@@ -104,6 +104,8 @@ export default function MunicipioDetail() {
   const [data, setData] = useState<MunicipioResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [banderaVisible, setBanderaVisible] = useState(false);
+  const [escudoVisible, setEscudoVisible] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -165,15 +167,33 @@ export default function MunicipioDetail() {
 
         {/* ── Hero naranja ── */}
         <View style={s.muniHero}>
-          {/* Fila: bandera + nombre + escudo — se omiten si no tienen URL */}
+          {/* Preloaders invisibles: detectan si la imagen carga antes de mostrar el contenedor */}
+          {present(m.bandera_url) && (
+            <Image
+              style={{ position: 'absolute', width: 0, height: 0 }}
+              source={{ uri: m.bandera_url }}
+              onLoad={() => setBanderaVisible(true)}
+              onError={() => setBanderaVisible(false)}
+            />
+          )}
+          {present(m.escudo_url) && (
+            <Image
+              style={{ position: 'absolute', width: 0, height: 0 }}
+              source={{ uri: m.escudo_url }}
+              onLoad={() => setEscudoVisible(true)}
+              onError={() => setEscudoVisible(false)}
+            />
+          )}
+
+          {/* Fila: bandera + nombre + escudo — solo visible si cargó correctamente */}
           <View style={s.heroTopRow}>
-            {present(m.bandera_url) && (
+            {banderaVisible && present(m.bandera_url) && (
               <View style={s.banderaWrap}>
                 <Image source={{ uri: m.bandera_url }} style={s.bandera} contentFit="contain" />
               </View>
             )}
             <Text style={s.muniName} numberOfLines={3}>{m.nombre}</Text>
-            {present(m.escudo_url) && (
+            {escudoVisible && present(m.escudo_url) && (
               <View style={s.escudoWrap}>
                 <Image source={{ uri: m.escudo_url }} style={s.escudo} contentFit="contain" />
               </View>
