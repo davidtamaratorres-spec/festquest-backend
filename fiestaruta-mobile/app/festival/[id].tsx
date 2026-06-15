@@ -73,20 +73,6 @@ function SitioItem({ nombre, sub, icon, onPress, muted }: {
   );
 }
 
-function HotelItem({ nombre, wa, muted }: { nombre: string; wa?: string | null; muted?: boolean }) {
-  return (
-    <Pressable style={[s.sitioItem, muted && s.nullItem]} onPress={() => openLink(wa)}>
-      <View style={s.sitioIcon}><Text style={s.sitioIconTxt}>🏨</Text></View>
-      <View style={s.sitioInfo}>
-        <Text style={[s.sitioName, muted && { color: C.textDim, fontStyle: 'italic' }]}>{nombre}</Text>
-        {wa && !muted ? <Text style={s.hotelWa}>💬 WhatsApp →</Text> : null}
-        {muted ? <Text style={s.sitioSub}>Próximamente</Text> : null}
-      </View>
-      {wa && !muted ? <Ionicons name="chevron-forward" size={13} color={C.textDim} /> : null}
-    </Pressable>
-  );
-}
-
 // ── Screen ─────────────────────────────────────────────────────────────────
 export default function FestivalDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -135,12 +121,6 @@ export default function FestivalDetail() {
     present(f.sitio_2) ? { nombre: f.sitio_2, maps: f.maps_2 } : null,
     present(f.sitio_3) ? { nombre: f.sitio_3, maps: f.maps_3 } : null,
   ] as const).filter(Boolean) as { nombre: string; maps: string | null }[];
-
-  const hoteles = ([
-    present(f.hotel_1) ? { nombre: f.hotel_1, wa: f.wa_1 } : null,
-    present(f.hotel_2) ? { nombre: f.hotel_2, wa: f.wa_2 } : null,
-    present(f.hotel_3) ? { nombre: f.hotel_3, wa: f.wa_3 } : null,
-  ] as const).filter(Boolean) as { nombre: string; wa: string | null }[];
 
   return (
     <View style={s.screen}>
@@ -261,13 +241,6 @@ export default function FestivalDetail() {
               : <SitioItem nombre="Sin registrar" sub="Próximamente" muted />}
           </View>
 
-          {/* Hospedaje */}
-          <View style={s.secBlock}>
-            <SecLabel>🏨 Hospedaje</SecLabel>
-            {hoteles.length > 0
-              ? hoteles.map((h, i) => <HotelItem key={i} nombre={h.nombre} wa={h.wa} />)
-              : <HotelItem nombre="Sin registrar" muted />}
-          </View>
         </View>
 
         {/* ── CTA ── */}
@@ -364,7 +337,6 @@ const s = StyleSheet.create({
   sitioInfo: { flex: 1 },
   sitioName: { fontSize: 13, fontWeight: '600', color: C.text, marginBottom: 2 },
   sitioSub: { fontSize: 11, color: C.orange },
-  hotelWa: { fontSize: 11, color: C.green },
   nullItem: { opacity: 0.35 },
 
   ctaWrap: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 20 },

@@ -63,26 +63,6 @@ function StatItem({ label, value, unit, accent }: {
   );
 }
 
-function SitioItemWithPhoto({ nombre, maps, foto, muted }: {
-  nombre: string; maps?: string | null; foto?: string | null; muted?: boolean;
-}) {
-  return (
-    <Pressable style={[s.sitioItem, muted && s.nullItem]} onPress={maps && !muted ? () => openLink(maps) : undefined}>
-      {foto && !muted ? (
-        <Image source={{ uri: foto }} style={s.sitioFoto} contentFit="cover" />
-      ) : (
-        <View style={s.sitioIcon}><Text style={s.sitioIconTxt}>📍</Text></View>
-      )}
-      <View style={s.sitioInfo}>
-        <Text style={[s.sitioName, muted && { color: C.textDim, fontStyle: 'italic' }]}>{nombre}</Text>
-        {maps && !muted ? <Text style={s.sitioSub}>Ver en Maps →</Text> : null}
-        {muted ? <Text style={s.sitioSub}>Pendiente de carga</Text> : null}
-      </View>
-      {maps && !muted ? <Ionicons name="chevron-forward" size={13} color={C.textDim} /> : null}
-    </Pressable>
-  );
-}
-
 function HotelItem({ nombre, wa, muted }: { nombre: string; wa?: string | null; muted?: boolean }) {
   return (
     <Pressable style={[s.sitioItem, muted && s.nullItem]} onPress={wa && !muted ? () => openLink(wa) : undefined}>
@@ -104,8 +84,8 @@ export default function MunicipioDetail() {
   const [data, setData] = useState<MunicipioResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [banderaVisible, setBanderaVisible] = useState(false);
-  const [escudoVisible, setEscudoVisible] = useState(false);
+  const [banderaState, setBanderaState] = useState<'idle'|'ok'|'error'>('idle');
+  const [escudoState, setEscudoState] = useState<'idle'|'ok'|'error'>('idle');
 
   useEffect(() => {
     let active = true;
@@ -142,12 +122,6 @@ export default function MunicipioDetail() {
 
   const { municipio: m, festivals = [] } = data;
 
-  const sitios = [
-    present(m.sitio_1) ? { nombre: m.sitio_1, maps: m.maps_1, foto: m.foto_sitio_1 } : null,
-    present(m.sitio_2) ? { nombre: m.sitio_2, maps: m.maps_2, foto: m.foto_sitio_2 } : null,
-    present(m.sitio_3) ? { nombre: m.sitio_3, maps: m.maps_3, foto: m.foto_sitio_3 } : null,
-  ].filter(Boolean) as { nombre: string; maps: string | null; foto: string | null }[];
-
   const hoteles = ([
     present(m.hotel_1) ? { nombre: m.hotel_1, wa: m.wa_1 } : null,
     present(m.hotel_2) ? { nombre: m.hotel_2, wa: m.wa_2 } : null,
@@ -167,35 +141,28 @@ export default function MunicipioDetail() {
 
         {/* ── Hero naranja ── */}
         <View style={s.muniHero}>
-          {/* Preloaders invisibles: detectan si la imagen carga antes de mostrar el contenedor */}
-          {present(m.bandera_url) && (
-            <Image
-              style={{ position: 'absolute', width: 0, height: 0 }}
-              source={{ uri: m.bandera_url }}
-              onLoad={() => setBanderaVisible(true)}
-              onError={() => setBanderaVisible(false)}
-            />
-          )}
-          {present(m.escudo_url) && (
-            <Image
-              style={{ position: 'absolute', width: 0, height: 0 }}
-              source={{ uri: m.escudo_url }}
-              onLoad={() => setEscudoVisible(true)}
-              onError={() => setEscudoVisible(false)}
-            />
-          )}
-
-          {/* Fila: bandera + nombre + escudo — solo visible si cargó correctamente */}
           <View style={s.heroTopRow}>
-            {banderaVisible && present(m.bandera_url) && (
-              <View style={s.banderaWrap}>
-                <Image source={{ uri: m.bandera_url }} style={s.bandera} contentFit="contain" />
+            {present(m.bandera_url) && banderaState !== 'error' && (
+              <View style={[s.banderaWrap, banderaState === 'idle' && { opacity: 0, position: 'absolute' }]}>
+                <Image
+                  source={{ uri: m.bandera_url }}
+                  style={s.bandera}
+                  contentFit="contain"
+                  onLoad={() => setBanderaState('ok')}
+                  onError={() => setBanderaState('error')}
+                />
               </View>
             )}
             <Text style={s.muniName} numberOfLines={3}>{m.nombre}</Text>
-            {escudoVisible && present(m.escudo_url) && (
-              <View style={s.escudoWrap}>
-                <Image source={{ uri: m.escudo_url }} style={s.escudo} contentFit="contain" />
+            {present(m.escudo_url) && escudoState !== 'error' && (
+              <View style={[s.escudoWrap, escudoState === 'idle' && { opacity: 0, position: 'absolute' }]}>
+                <Image
+                  source={{ uri: m.escudo_url }}
+                  style={s.escudo}
+                  contentFit="contain"
+                  onLoad={() => setEscudoState('ok')}
+                  onError={() => setEscudoState('error')}
+                />
               </View>
             )}
           </View>
@@ -298,14 +265,6 @@ export default function MunicipioDetail() {
               ))}
             </View>
           )}
-
-          {/* Sitios turísticos */}
-          <View style={s.secBlock}>
-            <SecLabel>🗺️ Sitios turísticos</SecLabel>
-            {sitios.length > 0
-              ? sitios.map((st, i) => <SitioItemWithPhoto key={i} nombre={st.nombre} maps={st.maps} foto={st.foto} />)
-              : <SitioItemWithPhoto nombre="Sin registrar" muted />}
-          </View>
 
           {/* Hospedaje */}
           <View style={s.secBlock}>
@@ -446,7 +405,6 @@ const s = StyleSheet.create({
     borderRadius: 12, padding: 11, flexDirection: 'row', alignItems: 'center', gap: 10,
     shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 3, shadowOffset: { width: 0, height: 1 }, elevation: 1,
   },
-  sitioFoto: { width: 44, height: 44, borderRadius: 10 },
   sitioIcon: { width: 36, height: 36, backgroundColor: C.surface2, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   sitioIconTxt: { fontSize: 16 },
   sitioInfo: { flex: 1 },
