@@ -341,14 +341,14 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 12, width: '100%',
   },
   banderaWrap: {
-    width: 60, height: 40, borderRadius: 6, overflow: 'hidden', backgroundColor: '#fff',
+    width: 60, height: 40, borderRadius: 6, overflow: 'hidden', backgroundColor: 'transparent',
     shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 4,
     flexShrink: 0,
   },
   bandera: { width: 60, height: 40 },
   banderaPlaceholder: { backgroundColor: 'rgba(255,255,255,0.25)' },
   escudoWrap: {
-    width: 50, height: 60, borderRadius: 8, overflow: 'hidden', backgroundColor: '#fff',
+    width: 50, height: 60, borderRadius: 8, overflow: 'hidden', backgroundColor: 'transparent',
     shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 4,
     flexShrink: 0,
   },
