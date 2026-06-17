@@ -247,251 +247,6 @@
     .stat strong { display: block; font-size: 32px; color: #c2410c; margin-bottom: 8px; }
     .stat span { color: #6b7280; font-weight: 700; font-size: 14px; }
 
-    /* ── CATALOG ── */
-    .catalog { background: #0f172a; color: #f8fafc; padding: 64px 0 72px; }
-    .catalog-head {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 24px;
-      margin-bottom: 24px;
-    }
-    .catalog h2 { color: #fff; font-size: 36px; margin-bottom: 10px; }
-    .catalog-subtitle { color: #cbd5e1; max-width: 720px; font-size: 17px; }
-    .catalog-counter {
-      min-width: 190px;
-      border: 1px solid rgba(251,146,60,0.32);
-      background: rgba(251,146,60,0.12);
-      border-radius: 18px;
-      padding: 16px 18px;
-      text-align: center;
-    }
-    .catalog-counter strong { display: block; font-size: 34px; color: #fb923c; line-height: 1; margin-bottom: 6px; }
-    .catalog-counter span { color: #fed7aa; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
-
-    /* ── FILTERS ── */
-    .catalog-filters {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-      padding: 14px 18px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-    }
-    .filter-select {
-      background: rgba(0,0,0,0.45);
-      border: 1px solid rgba(148,163,184,0.22);
-      border-radius: 10px;
-      color: #e2e8f0;
-      padding: 9px 14px;
-      font-size: 14px;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      outline: none;
-      min-width: 210px;
-    }
-    .filter-select:focus { border-color: #fb923c; }
-    .filter-select option { background: #1e293b; }
-    .mes-chips { display: flex; gap: 5px; flex-wrap: wrap; flex: 1; }
-    .mes-chip {
-      padding: 7px 11px;
-      border-radius: 20px;
-      border: 1px solid rgba(148,163,184,0.18);
-      background: transparent;
-      color: #64748b;
-      font-size: 12px;
-      font-weight: 700;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .mes-chip:hover { border-color: #fb923c; color: #fb923c; }
-    .mes-chip.active { background: #fb923c; border-color: #fb923c; color: #fff; }
-    .filter-clear {
-      background: transparent;
-      border: 1px solid rgba(148,163,184,0.18);
-      color: #64748b;
-      border-radius: 10px;
-      padding: 9px 14px;
-      font-size: 13px;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.15s;
-    }
-    .filter-clear:hover { border-color: #ef4444; color: #ef4444; }
-
-    .catalog-status {
-      color: #94a3b8;
-      margin-bottom: 18px;
-      font-size: 14px;
-      font-weight: 600;
-      min-height: 20px;
-    }
-
-    /* ── FESTIVAL CARDS ── */
-    .festival-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    .festival-card {
-      display: flex;
-      flex-direction: column;
-      background: linear-gradient(180deg, rgba(30,41,59,0.96), rgba(15,23,42,0.98));
-      border: 1px solid rgba(148,163,184,0.22);
-      border-radius: 20px;
-      padding: 22px;
-      box-shadow: 0 18px 42px rgba(0,0,0,0.24);
-      cursor: pointer;
-      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    }
-    .festival-card:hover {
-      border-color: rgba(251,146,60,0.45);
-      transform: translateY(-3px);
-      box-shadow: 0 28px 56px rgba(0,0,0,0.34);
-    }
-    .festival-card:focus-visible { outline: 2px solid #fb923c; outline-offset: 2px; }
-    .festival-past-badge {
-      align-self: flex-start;
-      background: rgba(100,116,139,0.2);
-      color: #64748b;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 999px;
-      margin-bottom: 8px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-    }
-    .festival-date {
-      align-self: flex-start;
-      border-radius: 999px;
-      padding: 7px 12px;
-      margin-bottom: 16px;
-      background: rgba(251,146,60,0.16);
-      color: #fed7aa;
-      font-size: 13px;
-      font-weight: 800;
-    }
-    .festival-card h3 { color: #fff; font-size: 21px; line-height: 1.2; margin-bottom: 10px; }
-    .festival-place { color: #94a3b8; font-weight: 600; font-size: 14px; margin-bottom: 14px; }
-    .festival-description {
-      color: #cbd5e1;
-      font-size: 14px;
-      line-height: 1.65;
-      margin-bottom: 14px;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      flex: 1;
-    }
-    .festival-empty { color: #475569; font-size: 14px; margin-bottom: 14px; flex: 1; }
-    .festival-hint { margin-top: auto; padding-top: 10px; font-size: 12px; color: #334155; font-weight: 600; }
-
-    /* ── MODAL ── */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.80);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      padding: 16px;
-      backdrop-filter: blur(6px);
-      animation: fadeIn 0.15s ease;
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .modal-box {
-      background: #1e293b;
-      border: 1px solid rgba(148,163,184,0.2);
-      border-radius: 24px;
-      padding: 36px;
-      max-width: 620px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      position: relative;
-      animation: slideUp 0.2s ease;
-    }
-    @keyframes slideUp {
-      from { transform: translateY(18px); opacity: 0; }
-      to   { transform: translateY(0); opacity: 1; }
-    }
-    .modal-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: rgba(255,255,255,0.08);
-      border: none;
-      color: #94a3b8;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      font-size: 22px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.15s, color 0.15s;
-    }
-    .modal-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
-    .modal-past-badge {
-      display: inline-flex;
-      background: rgba(100,116,139,0.2);
-      color: #64748b;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 999px;
-      margin-bottom: 12px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-    }
-    .modal-date-badge {
-      display: inline-flex;
-      background: rgba(251,146,60,0.16);
-      color: #fed7aa;
-      font-size: 13px;
-      font-weight: 800;
-      padding: 7px 14px;
-      border-radius: 999px;
-      margin-bottom: 16px;
-    }
-    .modal-title {
-      color: #fff;
-      font-family: 'Syne', sans-serif;
-      font-size: 26px;
-      font-weight: 800;
-      line-height: 1.2;
-      margin-bottom: 12px;
-      padding-right: 32px;
-    }
-    .modal-location { color: #94a3b8; font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-    .modal-lugar { color: #cbd5e1; font-size: 14px; margin-bottom: 4px; }
-    .modal-divider { border: none; border-top: 1px solid rgba(148,163,184,0.1); margin: 20px 0; }
-    .modal-label { color: #fb923c; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
-    .modal-description { color: #cbd5e1; font-size: 15px; line-height: 1.7; }
-    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    .modal-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 15px;
-      font-family: 'DM Sans', sans-serif;
-      text-decoration: none;
-      transition: transform 0.15s, opacity 0.15s;
-      border: none;
-      cursor: pointer;
-    }
-    .modal-btn:hover { transform: translateY(-1px); opacity: 0.9; }
-    .modal-btn-map { background: #ea580c; color: #fff; }
-    .modal-btn-whatsapp { background: #16a34a; color: #fff; }
-
     /* ── CTA ── */
     .cta { padding: 40px 0 80px; }
     .cta-box {
@@ -764,62 +519,25 @@
       .hero-right { display: none; }
     }
     @media (max-width: 980px) {
-      .grid-3, .stats, .festival-grid { grid-template-columns: 1fr; }
-      .catalog-head { align-items: stretch; flex-direction: column; }
-      .catalog-counter { text-align: left; }
+      .grid-3, .stats { grid-template-columns: 1fr; }
       .header-row { align-items: flex-start; flex-direction: column; }
     }
     @media (max-width: 640px) {
-.section-title { font-size: 28px; }
+      .section-title { font-size: 28px; }
       .cta-box h2 { font-size: 30px; }
-      .modal-box { padding: 24px 18px; border-radius: 20px; }
-      .modal-title { font-size: 22px; }
-      .catalog-filters { gap: 8px; }
-      .filter-select { min-width: 100%; }
     }
-
-    /* ── MUNICIPIO VIEW ── */
-    .municipio-overlay { z-index: 300; }
-    .muni-gentilicio { color: #fb923c; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-    .muni-chips-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 6px; }
-    .muni-chip {
-      background: rgba(251,146,60,0.1);
-      border: 1px solid rgba(251,146,60,0.2);
-      border-radius: 12px;
-      padding: 10px 14px;
-      flex: 1;
-      min-width: 110px;
-    }
-    .muni-chip-label { display: block; color: #fb923c; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
-    .muni-chip-val   { display: block; color: #f1f5f9; font-size: 14px; font-weight: 700; }
-    .muni-email { display: block; color: #fb923c; font-size: 14px; margin-top: 4px; text-decoration: underline; word-break: break-all; }
-    .muni-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-    .muni-list-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(148,163,184,0.1);
-      border-radius: 10px;
-      padding: 10px 12px;
-      gap: 10px;
-      font-size: 14px;
-      color: #cbd5e1;
-    }
-    .muni-list-link { flex-shrink: 0; font-size: 12px; font-weight: 700; color: #fb923c; text-decoration: none; white-space: nowrap; }
-    .muni-list-link:hover { text-decoration: underline; }
-    .muni-list-link-wa { color: #22c55e; }
-    .modal-btn-muni { background: rgba(255,255,255,0.07); color: #e2e8f0; border: 1px solid rgba(148,163,184,0.18); width: 100%; justify-content: center; }
-    .modal-btn-muni:hover { background: rgba(255,255,255,0.13); }
   </style>
 </head>
 <body>
 
   <header>
     <div class="container header-row">
-      <div class="brand">
-        FestQuest
-        <small>Festivales y cultura de Colombia</small>
+      <div class="brand" style="display:flex;align-items:center;gap:10px">
+        <img src="/logo.png" alt="FestQuest" style="height:44px;width:auto">
+        <div>
+          FestQuest
+          <small>Festivales y cultura de Colombia</small>
+        </div>
       </div>
       <nav class="nav">
         <a class="btn btn-secondary" href="#como-funciona">Cómo funciona</a>
@@ -844,7 +562,7 @@
             <h1>Descubre, vive<br>y celebra lo <em>mejor</em><br>de Colombia</h1>
             <p class="hero-sub">Festividades, cultura, turismo y más. Más de 1.100 municipios, un solo lugar.</p>
 
-            <a class="hero-cta-btn" href="#catalogo">
+            <a class="hero-cta-btn" href="#como-funciona">
               Explorar festivales
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>
@@ -897,38 +615,70 @@
       </div>
     </section>
 
-    <!-- CATÁLOGO -->
-    <section id="catalogo" class="catalog">
+    <section style="padding:48px 0;background:#fff">
       <div class="container">
-        <div class="catalog-head">
-          <div>
-            <h2>Festivales disponibles</h2>
-            <p class="catalog-subtitle">
-              Explora el catálogo activo de festivales en Colombia, ordenado del más próximo al más lejano.
-              Usa los filtros o el buscador para encontrar tu destino. Haz clic en cualquier festival para ver el detalle.
-            </p>
-          </div>
-          <div class="catalog-counter" aria-live="polite">
-            <strong id="festival-count">0</strong>
-            <span>festivales cargados</span>
-          </div>
-        </div>
+        <h2 class="section-title">Colombia, un país de festivales</h2>
+        <p class="section-subtitle">
+          Seis grandes regiones, una sola identidad festiva.
+          Descubre los festivales de cada rincón del país.
+        </p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
 
-        <div class="catalog-filters">
-          <select id="filter-departamento" class="filter-select" aria-label="Filtrar por departamento">
-            <option value="">Todos los departamentos</option>
-          </select>
-          <div class="mes-chips" id="mes-chips" role="group" aria-label="Filtrar por fecha">
-            <button class="mes-chip" data-datefilter="">Todos</button>
-            <button class="mes-chip" data-datefilter="week">Esta semana</button>
-            <button class="mes-chip" data-datefilter="month">Este mes</button>
-            <button class="mes-chip" data-datefilter="nextmonth">Próximo mes</button>
+          <div style="border-radius:20px;overflow:hidden;position:relative;min-height:160px;background-image:url('https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center">
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.15),rgba(220,70,10,.85))"></div>
+            <div style="position:relative;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+              <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🏔️ Andina</div>
+              <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:2px">142 festivales</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.8)">Antioquia, Boyacá, Cundinamarca y más</div>
+            </div>
           </div>
-          <button class="filter-clear" id="clear-filters">Limpiar filtros</button>
-        </div>
 
-        <p id="festival-status" class="catalog-status">Cargando festivales...</p>
-        <div id="festival-grid" class="festival-grid"></div>
+          <div style="border-radius:20px;overflow:hidden;position:relative;min-height:160px;background-image:url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center">
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.15),rgba(29,78,216,.85))"></div>
+            <div style="position:relative;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+              <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🌊 Caribe</div>
+              <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:2px">98 festivales</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.8)">Barranquilla, Valledupar, Cartagena</div>
+            </div>
+          </div>
+
+          <div style="border-radius:20px;overflow:hidden;position:relative;min-height:160px;background-image:url('https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center">
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.15),rgba(6,95,70,.85))"></div>
+            <div style="position:relative;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+              <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🌿 Llanos</div>
+              <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:2px">52 festivales</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.8)">Meta, Casanare, Arauca</div>
+            </div>
+          </div>
+
+          <div style="border-radius:20px;overflow:hidden;position:relative;min-height:160px;background-image:url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center">
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.15),rgba(109,28,209,.85))"></div>
+            <div style="position:relative;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+              <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🌺 Pacífico</div>
+              <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:2px">44 festivales</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.8)">Chocó, Cauca, Nariño</div>
+            </div>
+          </div>
+
+          <div style="border-radius:20px;overflow:hidden;position:relative;min-height:160px;background-image:url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center">
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.15),rgba(20,83,45,.85))"></div>
+            <div style="position:relative;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+              <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🌳 Amazonia</div>
+              <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:2px">18 festivales</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.8)">Amazonas, Caquetá, Putumayo</div>
+            </div>
+          </div>
+
+          <div style="border-radius:20px;overflow:hidden;position:relative;min-height:160px;background-image:url('https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center">
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.15),rgba(180,83,9,.85))"></div>
+            <div style="position:relative;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+              <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🏝️ Insular</div>
+              <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:2px">10 festivales</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.8)">San Andrés y Providencia</div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -996,42 +746,18 @@
 
   <footer>
     <div class="container footer-row">
-      <div>© 2026 FestQuest. Todos los derechos reservados.</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <img src="/logo.png" alt="FestQuest" style="height:28px;width:auto">
+        <span>© 2026 FestQuest. Todos los derechos reservados.</span>
+      </div>
       <div>Contacto: gerencia@festquest.app · WhatsApp: +57 315 390 5194</div>
     </div>
   </footer>
 
-  <!-- MODAL DETALLE -->
-  <div id="festival-modal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title-el">
-    <div class="modal-box">
-      <button class="modal-close" aria-label="Cerrar">×</button>
-      <div id="modal-content"></div>
-    </div>
-  </div>
-
-  <!-- MUNICIPIO VIEW OVERLAY -->
-  <div id="municipio-overlay" class="modal-overlay municipio-overlay" hidden role="dialog" aria-modal="true" aria-label="Detalle del municipio">
-    <div class="modal-box">
-      <button class="modal-close" id="municipio-close" aria-label="Cerrar">×</button>
-      <div id="municipio-content"></div>
-    </div>
-  </div>
-
   <script>
   // ── STATE ──────────────────────────────────────────────────────────────
   let allFestivals = [];
-  let activeDateFilter = null;
   const festivalsById = new Map();
-
-  // ── ELEMENTS ───────────────────────────────────────────────────────────
-  const festivalGrid   = document.getElementById('festival-grid');
-  const festivalCount  = document.getElementById('festival-count');
-  const festivalStatus = document.getElementById('festival-status');
-  const deptSelect     = document.getElementById('filter-departamento');
-  const clearBtn       = document.getElementById('clear-filters');
-  const modal          = document.getElementById('festival-modal');
-  const modalContent   = document.getElementById('modal-content');
-  const modalClose     = modal.querySelector('.modal-close');
 
   // ── HELPERS ────────────────────────────────────────────────────────────
   function escapeHtml(v) {
@@ -1062,208 +788,6 @@
     const u = raw.trim();
     return /^https?:\/\//i.test(u) ? u : 'https://' + u;
   }
-
-  // ── SORT: próximos ASC → pasados DESC → sin fecha ──────────────────────
-  function sortFestivals(list) {
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const upcoming = [], past = [], noDate = [];
-
-    for (const f of list) {
-      if (!hasValue(f.date_start)) { noDate.push(f); continue; }
-      const start = new Date(f.date_start);
-      if (isNaN(start.getTime())) { noDate.push(f); continue; }
-      const end = hasValue(f.date_end) ? new Date(f.date_end) : start;
-      (end < today ? past : upcoming).push(f);
-    }
-
-    upcoming.sort((a, b) => new Date(a.date_start) - new Date(b.date_start));
-    // most recently passed first
-    past.sort((a, b) => new Date(b.date_end || b.date_start) - new Date(a.date_end || a.date_start));
-    return [...upcoming, ...past, ...noDate];
-  }
-
-  function isPast(f) {
-    if (!hasValue(f.date_start)) return false;
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const d = hasValue(f.date_end) ? new Date(f.date_end) : new Date(f.date_start);
-    return !isNaN(d.getTime()) && d < today;
-  }
-
-  // ── FILTER ─────────────────────────────────────────────────────────────
-  function getFiltered() {
-    const q    = '';
-    const dept = deptSelect?.value || '';
-    return allFestivals.filter(f => {
-      if (q && ![f.nombre, f.municipio, f.departamento, f.descripcion]
-              .some(v => String(v || '').toLowerCase().includes(q))) return false;
-      if (dept && f.departamento !== dept) return false;
-      if (activeDateFilter) {
-        if (!hasValue(f.date_start)) return false;
-        const d = new Date(f.date_start);
-        if (isNaN(d.getTime())) return false;
-        const today = new Date(); today.setHours(0,0,0,0);
-        if (activeDateFilter === 'week') {
-          const wEnd = new Date(today); wEnd.setDate(wEnd.getDate() + 7);
-          if (d < today || d > wEnd) return false;
-        } else if (activeDateFilter === 'month') {
-          if (d.getMonth() !== today.getMonth() || d.getFullYear() !== today.getFullYear()) return false;
-        } else if (activeDateFilter === 'nextmonth') {
-          const nm = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-          if (d.getMonth() !== nm.getMonth() || d.getFullYear() !== nm.getFullYear()) return false;
-        }
-      }
-      return true;
-    });
-  }
-
-  // ── BUILD CARD ─────────────────────────────────────────────────────────
-  function buildFestivalCard(f) {
-    const past = isPast(f);
-    const desc = hasValue(f.descripcion)
-      ? `<p class="festival-description">${escapeHtml(f.descripcion)}</p>`
-      : `<p class="festival-empty">Información turística en actualización</p>`;
-    return `
-      <article class="festival-card" data-festival-id="${escapeHtml(String(f.id))}"
-               role="button" tabindex="0" aria-label="${escapeHtml(f.nombre || 'Festival')}">
-        ${past ? '<span class="festival-past-badge">Pasado</span>' : ''}
-        <div class="festival-date">${formatDate(f.date_start, f.date_end)}</div>
-        <h3>${escapeHtml(f.nombre || 'Festival por confirmar')}</h3>
-        <p class="festival-place">📍 ${escapeHtml(f.municipio || '—')} · ${escapeHtml(f.departamento || '—')}</p>
-        ${desc}
-        <p class="festival-hint">Ver detalle →</p>
-      </article>`;
-  }
-
-  // ── RENDER ─────────────────────────────────────────────────────────────
-  function renderFestivals(list) {
-    const ordered = sortFestivals(list);
-    festivalCount.textContent = allFestivals.length;
-    festivalStatus.textContent = ordered.length === allFestivals.length
-      ? `${ordered.length} festivales`
-      : `${ordered.length} de ${allFestivals.length} festivales`;
-
-    if (!ordered.length) {
-      festivalGrid.innerHTML = `
-        <div style="grid-column:1/-1;color:#475569;padding:48px 0;text-align:center;font-size:16px;">
-          No se encontraron festivales con los filtros seleccionados.
-        </div>`;
-      return;
-    }
-    festivalGrid.innerHTML = ordered.map(buildFestivalCard).join('');
-  }
-
-  function filterAndRender() { renderFestivals(getFiltered()); }
-
-  // ── POPULATE DEPARTAMENTOS ──────────────────────────────────────────────
-  function populateDepartamentos() {
-    const depts = [...new Set(allFestivals.map(f => f.departamento).filter(Boolean))]
-      .sort((a, b) => a.localeCompare(b, 'es'));
-    deptSelect.innerHTML = '<option value="">Todos los departamentos</option>' +
-      depts.map(d => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join('');
-  }
-
-  // ── MODAL ──────────────────────────────────────────────────────────────
-  function openModal(f) {
-    const past = isPast(f);
-    const actions = [];
-
-    const mapUrl = safeUrl(f.maps_link);
-    if (mapUrl) {
-      actions.push(`
-        <a class="modal-btn modal-btn-map" href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener noreferrer">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
-          </svg>
-          Ver en mapa
-        </a>`);
-    }
-
-    const waUrl = safeUrl(f.whatsapp_link);
-    if (waUrl) {
-      actions.push(`
-        <a class="modal-btn modal-btn-whatsapp" href="${escapeHtml(waUrl)}" target="_blank" rel="noopener noreferrer">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-          WhatsApp
-        </a>`);
-    }
-
-    const lugar = hasValue(f.lugar_encuentro)
-      ? `<p class="modal-lugar">📌 ${escapeHtml(f.lugar_encuentro)}</p>` : '';
-    const desc  = hasValue(f.descripcion)
-      ? `<hr class="modal-divider"><p class="modal-label">Descripción</p>
-         <p class="modal-description">${escapeHtml(f.descripcion)}</p>` : '';
-    const actHtml = actions.length
-      ? `<hr class="modal-divider"><div class="modal-actions">${actions.join('')}</div>` : '';
-
-    const muniId = parseInt(f.municipio_id, 10);
-    const muniBtn = Number.isFinite(muniId)
-      ? `<hr class="modal-divider"><button class="modal-btn modal-btn-muni" onclick="openMunicipioView(${muniId})">Ver municipio →</button>`
-      : '';
-
-    modalContent.innerHTML = `
-      ${past ? '<span class="modal-past-badge">Festival pasado</span>' : ''}
-      <div class="modal-date-badge">${formatDate(f.date_start, f.date_end)}</div>
-      <h2 class="modal-title" id="modal-title-el">${escapeHtml(f.nombre || 'Festival')}</h2>
-      <p class="modal-location">📍 ${escapeHtml(f.municipio || '—')} · ${escapeHtml(f.departamento || '—')}</p>
-      ${lugar}${desc}${actHtml}${muniBtn}`;
-
-    modal.hidden = false;
-    document.body.style.overflow = 'hidden';
-    modalClose.focus();
-  }
-
-  function closeModal() {
-    modal.hidden = true;
-    document.body.style.overflow = '';
-  }
-
-  // ── EVENTS ─────────────────────────────────────────────────────────────
-  deptSelect?.addEventListener('change', filterAndRender);
-
-  document.querySelectorAll('.mes-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.mes-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      activeDateFilter = chip.dataset.datefilter || null;
-      filterAndRender();
-    });
-  });
-
-  clearBtn?.addEventListener('click', () => {
-    if (deptSelect)  deptSelect.value  = '';
-    activeDateFilter = null;
-    document.querySelectorAll('.mes-chip').forEach(c => c.classList.remove('active'));
-    filterAndRender();
-  });
-
-  // Card clicks via event delegation
-  festivalGrid.addEventListener('click', (e) => {
-    const card = e.target.closest('[data-festival-id]');
-    if (card) {
-      const f = festivalsById.get(card.dataset.festivalId);
-      if (f) openModal(f);
-    }
-  });
-
-  festivalGrid.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      const card = e.target.closest('[data-festival-id]');
-      if (card) {
-        e.preventDefault();
-        const f = festivalsById.get(card.dataset.festivalId);
-        if (f) openModal(f);
-      }
-    }
-  });
-
-  modalClose.addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    const muniOv = document.getElementById('municipio-overlay');
-    if (muniOv && !muniOv.hidden) { closeMunicipioView(); return; }
-    if (!modal.hidden) closeModal();
-  });
 
   // ── PHONE MOCKUP ───────────────────────────────────────────────────────
   let phoneActiveDept = '';
@@ -1385,14 +909,15 @@
   }
 
   function initPhoneChips() {
-    // Dept chips: top 3 departamentos por número de festivales
     const counts = {};
     allFestivals.forEach(f => { if (f.departamento) counts[f.departamento] = (counts[f.departamento]||0)+1; });
-    const top3 = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([d])=>d);
+    const allDepts = Object.keys(counts).sort((a,b)=>a.localeCompare(b,'es'));
 
     const deptEl = document.getElementById('phone-dept-chips');
     if (deptEl) {
-      deptEl.innerHTML = ['Todos',...top3].map(d =>
+      deptEl.style.overflowX = 'auto';
+      deptEl.style.scrollbarWidth = 'none';
+      deptEl.innerHTML = ['Todos',...allDepts].map(d =>
         `<span class="app-chip${d==='Todos'?' app-chip-active':''}" data-pdept="${d==='Todos'?'':escapeHtml(d)}">${escapeHtml(d)}</span>`
       ).join('');
       deptEl.addEventListener('click', e => {
@@ -1442,9 +967,6 @@
   }
 
   // ── LOAD DATA ──────────────────────────────────────────────────────────
-  // Render free tier puede tardar hasta 60s en despertar — timeout generoso
-  festivalStatus.textContent = 'Cargando festivales... (puede tardar hasta 60 segundos la primera vez)';
-
   const abortCtrl = new AbortController();
   const loadTimeout = setTimeout(() => abortCtrl.abort(), 60000);
 
@@ -1453,112 +975,9 @@
     .then(data => {
       allFestivals = Array.isArray(data) ? data : [];
       allFestivals.forEach(f => festivalsById.set(String(f.id), f));
-      populateDepartamentos();
-      filterAndRender();
       initPhoneChips();
     })
-    .catch(err => {
-      clearTimeout(loadTimeout);
-      festivalStatus.textContent = err.name === 'AbortError'
-        ? 'El servidor tardó demasiado. Recarga la página para intentar de nuevo.'
-        : 'No fue posible cargar los festivales. Intenta recargar la página.';
-      festivalCount.textContent = '0';
-    });
-
-  // ── MUNICIPIO VIEW ────────────────────────────────────────────────────
-  const municipioOverlay = document.getElementById('municipio-overlay');
-  const municipioContent = document.getElementById('municipio-content');
-  const municipioClose   = document.getElementById('municipio-close');
-
-  function closeMunicipioView() {
-    municipioOverlay.hidden = true;
-    // body overflow stays hidden — festival modal is still open
-  }
-
-  municipioClose.addEventListener('click', closeMunicipioView);
-  municipioOverlay.addEventListener('click', (e) => { if (e.target === municipioOverlay) closeMunicipioView(); });
-
-  async function openMunicipioView(id) {
-    municipioContent.innerHTML = '<p style="color:#94a3b8;padding:24px 0;text-align:center;">Cargando municipio…</p>';
-    municipioOverlay.hidden = false;
-    municipioClose.focus();
-
-    try {
-      const r = await fetch(`/api/municipalities/${id}`);
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const { municipio: m, places = [], hotels = [] } = await r.json();
-
-      const ok = (v) => v !== null && v !== undefined && String(v).trim() !== '' && String(v).trim().toLowerCase() !== 'n/a';
-
-      // Chips
-      const chips = [];
-      if (ok(m.habitantes))           chips.push(`<div class="muni-chip"><span class="muni-chip-label">Habitantes</span><span class="muni-chip-val">${Number(m.habitantes).toLocaleString('es-CO')}</span></div>`);
-      if (ok(m.temperatura_promedio)) chips.push(`<div class="muni-chip"><span class="muni-chip-label">Temperatura</span><span class="muni-chip-val">${parseFloat(m.temperatura_promedio)}°C</span></div>`);
-      if (ok(m.altura))               chips.push(`<div class="muni-chip"><span class="muni-chip-label">Altura</span><span class="muni-chip-val">${Number(m.altura).toLocaleString('es-CO')} msnm</span></div>`);
-
-      const chipsHtml = chips.length ? `<div class="muni-chips-row">${chips.join('')}</div>` : '';
-
-      // Alcalde
-      let alcaldeHtml = '';
-      if (ok(m.alcalde) || ok(m.correo_alcalde)) {
-        alcaldeHtml = `<hr class="modal-divider">
-          <p class="modal-label">Alcalde / Mandatario</p>
-          ${ok(m.alcalde) ? `<p class="modal-description">${escapeHtml(m.alcalde)}</p>` : ''}
-          ${ok(m.correo_alcalde) ? `<a href="mailto:${escapeHtml(m.correo_alcalde)}" class="muni-email">${escapeHtml(m.correo_alcalde)}</a>` : ''}`;
-      }
-
-      // Sitios turísticos
-      let placesHtml = '';
-      if (places.length) {
-        placesHtml = `<hr class="modal-divider">
-          <p class="modal-label">Sitios Turísticos</p>
-          <ul class="muni-list">
-            ${places.map(p => `<li class="muni-list-item">
-              <span>📍 ${escapeHtml(p.nombre)}</span>
-              <a href="${escapeHtml(p.maps_link)}" target="_blank" rel="noopener noreferrer" class="muni-list-link">Ver mapa →</a>
-            </li>`).join('')}
-          </ul>`;
-      }
-
-      // Hoteles
-      let hotelsHtml = '';
-      if (hotels.length) {
-        hotelsHtml = `<hr class="modal-divider">
-          <p class="modal-label">Hoteles</p>
-          <ul class="muni-list">
-            ${hotels.map(h => `<li class="muni-list-item">
-              <span>🏨 ${escapeHtml(h.nombre)}</span>
-              <a href="${escapeHtml(safeUrl(h.whatsapp_link) || '#')}" target="_blank" rel="noopener noreferrer" class="muni-list-link muni-list-link-wa">WhatsApp →</a>
-            </li>`).join('')}
-          </ul>`;
-      }
-
-      const subtitle = [
-        ok(m.departamento) ? escapeHtml(m.departamento) : '',
-        ok(m.subregion)    ? escapeHtml(m.subregion)    : ''
-      ].filter(Boolean).join(' · ');
-
-      const noEnrichment = !alcaldeHtml && !placesHtml && !hotelsHtml;
-      const pendingNote = noEnrichment
-        ? `<hr class="modal-divider"><p style="color:#475569;font-size:13px;text-align:center;padding:6px 0;">
-            ℹ️ Información turística de este municipio en proceso de actualización.
-           </p>`
-        : '';
-
-      municipioContent.innerHTML = `
-        ${ok(m.gentilicio) ? `<p class="muni-gentilicio">${escapeHtml(m.gentilicio)}</p>` : ''}
-        <h2 class="modal-title">${escapeHtml(m.nombre)}</h2>
-        ${subtitle ? `<p class="modal-location">${subtitle}</p>` : ''}
-        ${chipsHtml}
-        ${alcaldeHtml}
-        ${placesHtml}
-        ${hotelsHtml}
-        ${pendingNote}`;
-
-    } catch {
-      municipioContent.innerHTML = '<p style="color:#ef4444;padding:24px 0;text-align:center;">No se pudo cargar la información del municipio.</p>';
-    }
-  }
+    .catch(() => { clearTimeout(loadTimeout); });
   </script>
 </body>
 </html>
