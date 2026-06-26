@@ -2,19 +2,36 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const db = require("./db");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 const app = express();
 
+app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: "cross-origin" } }));
+
+const ALLOWED_ORIGINS = [
+  "https://festquest.app",
+  "https://www.festquest.app",
+  "http://localhost:3000",
+  "http://localhost:8081",
+  "exp://localhost:8081",
+];
 app.use(cors({
-  origin: [
-    'https://festquest.app',
-    'https://www.festquest.app',
-    'http://localhost:3000',
-    'http://localhost:8081'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  origin(origin, cb) {
+    if (!origin) return cb(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    cb(new Error("CORS bloqueado: " + origin));
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  maxAge: 86400,
 }));
+app.options("*", cors());
+
+app.use("/api/", rateLimit({ windowMs: 15 * 60 * 1000, max: 300, standardHeaders: true, legacyHeaders: false, message: { error: "Demasiadas solicitudes." } }));
+app.use("/api/municipio/:id/actualizar", rateLimit({ windowMs: 60 * 1000, max: 10 }));
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -191,8 +208,52 @@ app.use("/api/analytics", require("./routes/analytics"));
 app.use("/api/partners", require("./routes/partners"));
 
 // Rutas formulario municipios
-const municipioForm = require('./routes/municipioForm');
-app.use('/', municipioForm);
+const municipioForm = require("./routes/municipioForm");
+app.use("/", municipioForm);
+
+// Política de privacidad
+app.get("/privacidad", (req, res) => {
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Privacidad — FestQuest</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 780px; margin: 48px auto; padding: 0 24px; color: #1f2937; line-height: 1.7; }
+    h1 { color: #c2410c; font-size: 2rem; margin-bottom: 4px; }
+    h2 { color: #c2410c; font-size: 1.2rem; margin-top: 2rem; }
+    a { color: #ea580c; }
+    .updated { color: #6b7280; font-size: 0.9rem; margin-bottom: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>Política de Privacidad</h1>
+  <p class="updated">Última actualización: junio de 2026</p>
+
+  <p>FestQuest (<strong>festquest.app</strong>) es una plataforma de descubrimiento de festividades y cultura colombiana. Nos comprometemos a proteger tu privacidad.</p>
+
+  <h2>1. Datos personales</h2>
+  <p>FestQuest <strong>no recopila, almacena ni procesa datos personales</strong> de sus visitantes. No existen formularios de registro, cuentas de usuario ni sistemas de autenticación para el público general.</p>
+
+  <h2>2. Análisis de tráfico (Google Analytics 4)</h2>
+  <p>Utilizamos Google Analytics 4 (GA4) con <strong>anonimización de IP activada</strong> para entender el uso general de la plataforma (páginas visitadas, tiempo en sitio, dispositivos). GA4 no nos permite identificar a usuarios individuales. Para más información, consulta la <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">política de privacidad de Google</a>.</p>
+
+  <h2>3. Cookies</h2>
+  <p>GA4 puede establecer cookies de análisis anónimas (<code>_ga</code>, <code>_gid</code>). No utilizamos cookies de publicidad ni de seguimiento de terceros.</p>
+
+  <h2>4. Datos de municipios y festivales</h2>
+  <p>La información de municipios, festivales y autoridades locales que aparece en la plataforma proviene de fuentes públicas y bases de datos oficiales de Colombia. No corresponde a datos personales de usuarios de la plataforma.</p>
+
+  <h2>5. Contacto</h2>
+  <p>Para cualquier consulta relacionada con privacidad, escríbenos a: <a href="mailto:gerencia@festquest.app">gerencia@festquest.app</a></p>
+
+  <h2>6. Cambios a esta política</h2>
+  <p>Podemos actualizar esta política ocasionalmente. La fecha de última actualización siempre estará indicada al inicio del documento.</p>
+</body>
+</html>`);
+});
 
 const PORT = process.env.PORT || 3000;
 
