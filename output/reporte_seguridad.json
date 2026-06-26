@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-06-26T19:05:29.079Z",
+  "seguridad": {
+    "helmet": true,
+    "cors_estricto": true,
+    "rate_limit": true,
+    "rls_activo": true,
+    "privacidad": true
+  }
+}
