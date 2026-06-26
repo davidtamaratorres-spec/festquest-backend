@@ -1,0 +1,2502 @@
+[
+  {
+    "id": 10638,
+    "nombre": "El Encanto",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "sin_datos"
+    }
+  },
+  {
+    "id": 10639,
+    "nombre": "La Chorrera",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "sin_datos"
+    }
+  },
+  {
+    "id": 10640,
+    "nombre": "La Pedrera",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "sin_datos"
+    }
+  },
+  {
+    "id": 10641,
+    "nombre": "La Victoria",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "sin_datos"
+    }
+  },
+  {
+    "id": 10642,
+    "nombre": "Leticia",
+    "datos": {
+      "mandatario": "Elquin Jadrian Uni Heredia",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 (8) 592 8064",
+      "confianza": "alta"
+    }
+  },
+  {
+    "id": 10643,
+    "nombre": "Miriti - Paraná",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "sin_datos"
+    }
+  },
+  {
+    "id": 10644,
+    "nombre": "Puerto Alegría",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10645,
+    "nombre": "Puerto Arica",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "sin_datos"
+    }
+  },
+  {
+    "id": 10646,
+    "nombre": "Puerto Nariño",
+    "datos": {
+      "mandatario": "Edilberto Suárez Pinto",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 312 3859178",
+      "confianza": "alta"
+    }
+  },
+  {
+    "id": 10647,
+    "nombre": "Puerto Santander",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "sin_datos"
+    }
+  },
+  {
+    "id": 10648,
+    "nombre": "Tarapacá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "sin_datos"
+    }
+  },
+  {
+    "id": 10600,
+    "nombre": "Abejorral",
+    "datos": {
+      "mandatario": "Manuel Alberto Guzmán Marín",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 4 8647611",
+      "confianza": "alta"
+    }
+  },
+  {
+    "id": 10601,
+    "nombre": "Abriaquí",
+    "datos": {
+      "mandatario": "Daniel Salas Gallego",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 4 8520024",
+      "confianza": "alta"
+    }
+  },
+  {
+    "id": 10602,
+    "nombre": "Alejandría",
+    "datos": {
+      "mandatario": "Gloria Cecilia Naranjo Osorio",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "+57 6048660016",
+      "confianza": "alta"
+    }
+  },
+  {
+    "id": 10603,
+    "nombre": "Amagá",
+    "datos": {
+      "mandatario": "Wilser Darío Molina Molina",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 4 8472122",
+      "confianza": "alta"
+    }
+  },
+  {
+    "id": 10604,
+    "nombre": "Amalfi",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10605,
+    "nombre": "Andes",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10606,
+    "nombre": "Angelópolis",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10607,
+    "nombre": "Angostura",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10608,
+    "nombre": "Anorí",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10610,
+    "nombre": "Anza",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10594,
+    "nombre": "Apartadó",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10611,
+    "nombre": "Arboletes",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10612,
+    "nombre": "Argelia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10613,
+    "nombre": "Armenia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10614,
+    "nombre": "Barbosa",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10598,
+    "nombre": "Bello",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10615,
+    "nombre": "Belmira",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10616,
+    "nombre": "Betania",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10617,
+    "nombre": "Betulia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10618,
+    "nombre": "Briceño",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10619,
+    "nombre": "Buriticá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10620,
+    "nombre": "Cáceres",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10621,
+    "nombre": "Caicedo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10622,
+    "nombre": "Caldas",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10623,
+    "nombre": "Campamento",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10624,
+    "nombre": "Cañasgordas",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10625,
+    "nombre": "Caracolí",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10676,
+    "nombre": "Caramanta",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10626,
+    "nombre": "Carepa",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10678,
+    "nombre": "Carolina",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10628,
+    "nombre": "Caucasia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10629,
+    "nombre": "Chigorodó",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10630,
+    "nombre": "Cisneros",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10682,
+    "nombre": "Ciudad Bolívar",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10631,
+    "nombre": "Cocorná",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10632,
+    "nombre": "Concepción",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10685,
+    "nombre": "Concordia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10599,
+    "nombre": "Copacabana",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10633,
+    "nombre": "Dabeiba",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10627,
+    "nombre": "El Carmen de Viboral",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10581,
+    "nombre": "Medellín",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10609,
+    "nombre": "Santafé de Antioquia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10782,
+    "nombre": "San Andrés",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10589,
+    "nombre": "Barranquilla",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10806,
+    "nombre": "D.C.\"",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10588,
+    "nombre": "Cartagena",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10591,
+    "nombre": "Tunja",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10584,
+    "nombre": "Manizales",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11018,
+    "nombre": "Aguazul",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11019,
+    "nombre": "Chameza",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11020,
+    "nombre": "Hato Corozal",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11021,
+    "nombre": "La Salina",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11022,
+    "nombre": "Maní",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11023,
+    "nombre": "Monterrey",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11024,
+    "nombre": "Nunchía",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11025,
+    "nombre": "Orocué",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11026,
+    "nombre": "Paz de Ariporo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11027,
+    "nombre": "Pore",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11028,
+    "nombre": "Recetor",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11029,
+    "nombre": "Sabanalarga",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11030,
+    "nombre": "Sácama",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11031,
+    "nombre": "San Luis de Palenque",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11032,
+    "nombre": "Támara",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11033,
+    "nombre": "Tauramena",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11034,
+    "nombre": "Trinidad",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11035,
+    "nombre": "Villanueva",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11036,
+    "nombre": "Yopal",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11062,
+    "nombre": "Popayán",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10587,
+    "nombre": "Valledupar",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11125,
+    "nombre": "Quibdó",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10592,
+    "nombre": "Montería",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11162,
+    "nombre": "Agua de Dios",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11163,
+    "nombre": "Albán",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11164,
+    "nombre": "Anapoima",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11165,
+    "nombre": "Anolaima",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11167,
+    "nombre": "Arbeláez",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11168,
+    "nombre": "Beltrán",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11169,
+    "nombre": "Bituima",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11170,
+    "nombre": "Bojacá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11171,
+    "nombre": "Cabrera",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11172,
+    "nombre": "Cachipay",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11173,
+    "nombre": "Cajicá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11174,
+    "nombre": "Caparrapí",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11175,
+    "nombre": "Caqueza",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11176,
+    "nombre": "Carmen de Carupa",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11177,
+    "nombre": "Chaguaní",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11178,
+    "nombre": "Chía",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11179,
+    "nombre": "Chipaque",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11180,
+    "nombre": "Choachí",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11181,
+    "nombre": "Chocontá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11182,
+    "nombre": "Cogua",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11183,
+    "nombre": "Cota",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11184,
+    "nombre": "Cucunubá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11185,
+    "nombre": "El Colegio",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11186,
+    "nombre": "El Peñón",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11187,
+    "nombre": "El Rosal",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11188,
+    "nombre": "Facatativá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11189,
+    "nombre": "Fomeque",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11190,
+    "nombre": "Fosca",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11191,
+    "nombre": "Funza",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11192,
+    "nombre": "Fúquene",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11193,
+    "nombre": "Fusagasugá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11194,
+    "nombre": "Gachala",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11195,
+    "nombre": "Gachancipá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11196,
+    "nombre": "Gachetá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11197,
+    "nombre": "Gama",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11198,
+    "nombre": "Girardot",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11199,
+    "nombre": "Granada",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11200,
+    "nombre": "Guachetá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11201,
+    "nombre": "Guaduas",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11202,
+    "nombre": "Guasca",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11203,
+    "nombre": "Guataquí",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11287,
+    "nombre": "Calamar",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11288,
+    "nombre": "El Retorno",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11289,
+    "nombre": "Miraflores",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11290,
+    "nombre": "San José del Guaviare",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10593,
+    "nombre": "Neiva",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11328,
+    "nombre": "Albania",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11329,
+    "nombre": "Barrancas",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11330,
+    "nombre": "Dibulla",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11331,
+    "nombre": "Distracción",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11332,
+    "nombre": "El Molino",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11333,
+    "nombre": "Fonseca",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11334,
+    "nombre": "Hatonuevo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11335,
+    "nombre": "La Jagua del Pilar",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11336,
+    "nombre": "Maicao",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11337,
+    "nombre": "Manaure",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11338,
+    "nombre": "Riohacha",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11339,
+    "nombre": "San Juan del Cesar",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11340,
+    "nombre": "Uribia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11343,
+    "nombre": "Algarrobo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11344,
+    "nombre": "Aracataca",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11345,
+    "nombre": "Ariguaní",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11346,
+    "nombre": "Cerro San Antonio",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11347,
+    "nombre": "Chibolo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11348,
+    "nombre": "Ciénaga",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11349,
+    "nombre": "Concordia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11350,
+    "nombre": "El Banco",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11351,
+    "nombre": "El Piñon",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11352,
+    "nombre": "El Retén",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11353,
+    "nombre": "Fundación",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11354,
+    "nombre": "Guamal",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11355,
+    "nombre": "Nueva Granada",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11356,
+    "nombre": "Pedraza",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11357,
+    "nombre": "Pijiño del Carmen",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11358,
+    "nombre": "Pivijay",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11359,
+    "nombre": "Plato",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11360,
+    "nombre": "Puebloviejo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11361,
+    "nombre": "Remolino",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11362,
+    "nombre": "Sabanas de San Angel",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11368,
+    "nombre": "Santa Marta",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11369,
+    "nombre": "Sitionuevo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11370,
+    "nombre": "Tenerife",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11371,
+    "nombre": "Zapayán",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11373,
+    "nombre": "Acacías",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11374,
+    "nombre": "Barranca de Upía",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11375,
+    "nombre": "Cabuyaro",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11376,
+    "nombre": "Castilla la Nueva",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11377,
+    "nombre": "Cubarral",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11378,
+    "nombre": "Cumaral",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11379,
+    "nombre": "El Calvario",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11380,
+    "nombre": "El Castillo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11381,
+    "nombre": "El Dorado",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11382,
+    "nombre": "Fuente de Oro",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11383,
+    "nombre": "Granada",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11384,
+    "nombre": "Guamal",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11385,
+    "nombre": "La Macarena",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11386,
+    "nombre": "Lejanías",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11387,
+    "nombre": "Mapiripán",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11388,
+    "nombre": "Mesetas",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11389,
+    "nombre": "Puerto Concordia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11390,
+    "nombre": "Puerto Gaitán",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11391,
+    "nombre": "Puerto Lleras",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11392,
+    "nombre": "Puerto López",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11393,
+    "nombre": "Puerto Rico",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11394,
+    "nombre": "Restrepo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11395,
+    "nombre": "San Carlos de Guaroa",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11396,
+    "nombre": "San Juan de Arama",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11397,
+    "nombre": "San Juanito",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11398,
+    "nombre": "San Martín",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11399,
+    "nombre": "Uribe",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11400,
+    "nombre": "Villavicencio",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11401,
+    "nombre": "Vistahermosa",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11467,
+    "nombre": "Abrego",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11468,
+    "nombre": "Arboledas",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11469,
+    "nombre": "Bochalema",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11470,
+    "nombre": "Bucarasica",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11471,
+    "nombre": "Cachirá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11472,
+    "nombre": "Cácota",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11473,
+    "nombre": "Chinácota",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11474,
+    "nombre": "Chitagá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11475,
+    "nombre": "Convención",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10585,
+    "nombre": "Cúcuta",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11477,
+    "nombre": "Cucutilla",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11478,
+    "nombre": "Durania",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11479,
+    "nombre": "El Carmen",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11480,
+    "nombre": "El Tarra",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11481,
+    "nombre": "El Zulia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11482,
+    "nombre": "Gramalote",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11483,
+    "nombre": "Hacarí",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11484,
+    "nombre": "Herrán",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11487,
+    "nombre": "Labateca",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11485,
+    "nombre": "La Esperanza",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11486,
+    "nombre": "La Playa",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11488,
+    "nombre": "Los Patios",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11489,
+    "nombre": "Lourdes",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11490,
+    "nombre": "Mutiscua",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11491,
+    "nombre": "Ocaña",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11492,
+    "nombre": "Pamplona",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11493,
+    "nombre": "Pamplonita",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11494,
+    "nombre": "Puerto Santander",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11495,
+    "nombre": "Ragonvalia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11496,
+    "nombre": "Salazar",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11497,
+    "nombre": "San Calixto",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11498,
+    "nombre": "San Cayetano",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11499,
+    "nombre": "Santiago",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11500,
+    "nombre": "Sardinata",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11501,
+    "nombre": "Silos",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11502,
+    "nombre": "Teorama",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11503,
+    "nombre": "Tibú",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11504,
+    "nombre": "Toledo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11505,
+    "nombre": "Villa Caro",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11506,
+    "nombre": "Villa del Rosario",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11520,
+    "nombre": "Armenia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10583,
+    "nombre": "Pereira",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11546,
+    "nombre": "Aguada",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11547,
+    "nombre": "Albania",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11548,
+    "nombre": "Aratoca",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11549,
+    "nombre": "Barbosa",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11550,
+    "nombre": "Barichara",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11551,
+    "nombre": "Barrancabermeja",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11552,
+    "nombre": "Betulia",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11553,
+    "nombre": "Bolívar",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 10582,
+    "nombre": "Bucaramanga",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11555,
+    "nombre": "Cabrera",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11556,
+    "nombre": "California",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11557,
+    "nombre": "Capitanejo",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11558,
+    "nombre": "Carcasí",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11559,
+    "nombre": "Cepitá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  }
+]

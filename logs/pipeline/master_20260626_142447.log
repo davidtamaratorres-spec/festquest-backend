@@ -191,3 +191,13 @@ Municipios a procesar: 1
   OK La Pedrera
 Municipios actualizados: 1
 [14:49:36] PASO 7 â€” Mandatarios
+python-dotenv could not parse statement starting at line 8
+MANDATARIOS — CLAUDE + WEB SEARCH
+Municipios a procesar: 250
+  OK Leticia: Elquin Jadrian Uni Heredia
+  OK Puerto Nariño: Edilberto Suárez Pinto
+  OK Abejorral: Manuel Alberto Guzmán Marín
+  OK Abriaquí: Daniel Salas Gallego
+  OK Alejandría: Gloria Cecilia Naranjo Osorio
+  OK Amagá: Wilser Darío Molina Molina
+Municipios actualizados: 6
