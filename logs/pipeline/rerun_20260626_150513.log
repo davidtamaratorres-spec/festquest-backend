@@ -205,3 +205,12 @@ Municipios a procesar: 250
   OK Mesetas: Camilo Antonio Pulgarín
   OK Puerto Concordia: Mirto Elio Urrea Roldán
 Municipios actualizados: 150
+[15:43:23] PASO 8 â€” ValidaciÃ³n final
+python-dotenv could not parse statement starting at line 8
+VALIDACION FINAL — SOLO DATOS REALES
+Campos pendientes:
+  mandatario: 50 municipios
+  escudo_url: 18 municipios
+  bandera_url: 9 municipios
+  gentilicio: 7 municipios
+Municipios actualizados: 4

@@ -1,0 +1,438 @@
+{
+  "municipios_actualizados": 4,
+  "municipios_con_pendientes": 58,
+  "pendientes": [
+    {
+      "id": 10583,
+      "nombre": "Pereira",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 10585,
+      "nombre": "Cúcuta",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 10586,
+      "nombre": "Ibagué",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 10591,
+      "nombre": "Tunja",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 10601,
+      "nombre": "Abriaquí",
+      "pendiente": [
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 10609,
+      "nombre": "Santafé de Antioquia",
+      "pendiente": [
+        "bandera_url",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 10638,
+      "nombre": "El Encanto",
+      "pendiente": [
+        "gentilicio",
+        "mandatario",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 10644,
+      "nombre": "Puerto Alegría",
+      "pendiente": [
+        "gentilicio",
+        "mandatario",
+        "bandera_url",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 10645,
+      "nombre": "Puerto Arica",
+      "pendiente": [
+        "mandatario",
+        "bandera_url",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 10782,
+      "nombre": "San Andrés",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11125,
+      "nombre": "Quibdó",
+      "pendiente": [
+        "gentilicio"
+      ]
+    },
+    {
+      "id": 11163,
+      "nombre": "Albán",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11167,
+      "nombre": "Arbeláez",
+      "pendiente": [
+        "bandera_url"
+      ]
+    },
+    {
+      "id": 11177,
+      "nombre": "Chaguaní",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11179,
+      "nombre": "Chipaque",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11287,
+      "nombre": "Calamar",
+      "pendiente": [
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11352,
+      "nombre": "El Retén",
+      "pendiente": [
+        "bandera_url",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11360,
+      "nombre": "Puebloviejo",
+      "pendiente": [
+        "mandatario",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11377,
+      "nombre": "Cubarral",
+      "pendiente": [
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11389,
+      "nombre": "Puerto Concordia",
+      "pendiente": [
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11391,
+      "nombre": "Puerto Lleras",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11392,
+      "nombre": "Puerto López",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11394,
+      "nombre": "Restrepo",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11400,
+      "nombre": "Villavicencio",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11470,
+      "nombre": "Bucarasica",
+      "pendiente": [
+        "mandatario",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11474,
+      "nombre": "Chitagá",
+      "pendiente": [
+        "mandatario",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11479,
+      "nombre": "El Carmen",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11487,
+      "nombre": "Labateca",
+      "pendiente": [
+        "mandatario",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11520,
+      "nombre": "Armenia",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11549,
+      "nombre": "Barbosa",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11557,
+      "nombre": "Capitanejo",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11561,
+      "nombre": "Charalá",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11564,
+      "nombre": "Chipatá",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11566,
+      "nombre": "Concepción",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11570,
+      "nombre": "Curití",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11577,
+      "nombre": "Florián",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11582,
+      "nombre": "Guaca",
+      "pendiente": [
+        "mandatario",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11583,
+      "nombre": "Guadalupe",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11588,
+      "nombre": "Jesús María",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11706,
+      "nombre": "Alcalá",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11716,
+      "nombre": "Candelaria",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11717,
+      "nombre": "Cartago",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11723,
+      "nombre": "Florida",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11725,
+      "nombre": "Guacarí",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11731,
+      "nombre": "Obando",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11737,
+      "nombre": "San Pedro",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11740,
+      "nombre": "Trujillo",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11744,
+      "nombre": "Vijes",
+      "pendiente": [
+        "mandatario",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11747,
+      "nombre": "Zarzal",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11748,
+      "nombre": "Caruru",
+      "pendiente": [
+        "gentilicio",
+        "mandatario",
+        "bandera_url",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11749,
+      "nombre": "Mitú",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11750,
+      "nombre": "Pacoa",
+      "pendiente": [
+        "gentilicio",
+        "mandatario",
+        "bandera_url",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11751,
+      "nombre": "Papunaua",
+      "pendiente": [
+        "gentilicio",
+        "mandatario",
+        "bandera_url",
+        "escudo_url"
+      ]
+    },
+    {
+      "id": 11752,
+      "nombre": "Taraira",
+      "pendiente": [
+        "gentilicio",
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11754,
+      "nombre": "Cumaribo",
+      "pendiente": [
+        "mandatario",
+        "bandera_url"
+      ]
+    },
+    {
+      "id": 11755,
+      "nombre": "La Primavera",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11756,
+      "nombre": "Puerto Carreño",
+      "pendiente": [
+        "mandatario"
+      ]
+    },
+    {
+      "id": 11757,
+      "nombre": "Santa Rosalía",
+      "pendiente": [
+        "mandatario"
+      ]
+    }
+  ]
+}
