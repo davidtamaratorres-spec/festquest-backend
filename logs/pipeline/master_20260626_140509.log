@@ -34,3 +34,14 @@ psycopg2.errors.UndefinedColumn: column f.municipality_id does not exist
 LINE 4: ...OM festivals f LEFT JOIN municipalities m ON m.id=f.municipa...
                                                              ^
 
+[14:05:14] PASO 3 — Enriquecer festivales
+python-dotenv could not parse statement starting at line 8
+ENRIQUECIMIENTO DE FESTIVALES
+Traceback (most recent call last):
+  File "D:\festquest-backend\scripts\03_enriquecer_festivales.py", line 75, in <module>
+    enriquecer()
+    ~~~~~~~~~~^^
+  File "D:\festquest-backend\scripts\03_enriquecer_festivales.py", line 47, in enriquecer
+    with open(f"{OUT_DIR}/festivales_seleccionados.json",encoding="utf-8") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: './output/festivales_seleccionados.json'
