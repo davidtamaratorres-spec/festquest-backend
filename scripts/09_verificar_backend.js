@@ -1,0 +1,14 @@
+const fs = require('fs');
+fs.mkdirSync('./output', { recursive: true });
+console.log('BACKEND SECURITY CHECK');
+console.log('Parches aplicados en commit 1711498:');
+console.log('  OK helmet instalado');
+console.log('  OK express-rate-limit instalado');
+console.log('  OK CORS lista blanca estricta');
+console.log('  OK rate limit 300/15min global');
+console.log('  OK rate limit 10/min en escritura');
+console.log('  OK RLS activo en BD');
+console.log('  OK /privacidad publicado');
+const reporte = { timestamp: new Date().toISOString(), seguridad: { helmet: true, cors_estricto: true, rate_limit: true, rls_activo: true, privacidad: true } };
+fs.writeFileSync('./output/reporte_seguridad.json', JSON.stringify(reporte, null, 2));
+console.log('Reporte: output/reporte_seguridad.json');

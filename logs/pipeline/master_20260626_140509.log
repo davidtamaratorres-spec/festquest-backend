@@ -1,0 +1,16 @@
+[14:05:09] Instalando dependencias...
+[14:05:10] PASO 1 — Auditoría
+python-dotenv could not parse statement starting at line 8
+AUDITOR FESTQUEST
+Festivales: 364
+Traceback (most recent call last):
+  File "D:\festquest-backend\scripts\01_auditor.py", line 57, in <module>
+    auditar()
+    ~~~~~~~^^
+  File "D:\festquest-backend\scripts\01_auditor.py", line 17, in auditar
+    cur.execute("SELECT COUNT(*) FROM municipalities WHERE id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL)")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "municipality_id" does not exist
+LINE 1: ... FROM municipalities WHERE id IN (SELECT DISTINCT municipali...
+                                                             ^
+
