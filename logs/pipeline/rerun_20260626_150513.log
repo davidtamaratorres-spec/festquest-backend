@@ -50,3 +50,158 @@ python-dotenv could not parse statement starting at line 8
 GOOGLE PLACES — SITIOS Y HOTELES
 Municipios a procesar: 0
 Municipios actualizados: 0
+[15:08:28] PASO 7 â€” Mandatarios
+python-dotenv could not parse statement starting at line 8
+MANDATARIOS — CLAUDE + WEB SEARCH
+Municipios a procesar: 250
+  OK Amalfi: Wilmar Alonso Vélez Londoño
+  OK Andes: Germán Alexander Vélez Orozco
+  OK Angelópolis: Jose Luis Montoya Quiceno
+  OK Angostura: Víctor Ignacio Medina Gómez
+  OK Anorí: Gustavo Silva Gutiérrez
+  OK Anza: Juan Guillermo Hincapié Figueroa
+  OK Arboletes: Álvaro González Ávila
+  OK Barbosa: Juan David Rojas Agudelo
+  OK Bello: Lorena González Ospina
+  OK Belmira: Esteban Arboleda Rúa
+  OK Betania: Diego Arley de Jesús Guerra Gutiérrez
+  OK Betulia: Néstor Camilo Serna Hernández
+  OK Briceño: Noe de Jesús Espinosa Vásquez
+  OK Buriticá: José Luis Rodríguez Usuga
+  OK Cáceres: Damiana María Monterrosa Pérez
+  OK Caicedo: Yuber Felipe Molina Murillo
+  OK Caldas: Jorge Mario Rendón Vélez
+  OK Campamento: Cristian Agudelo
+  OK Cañasgordas: Diego Alonso Vanegas Arango
+  OK Caracolí: Rodrigo Alveiro Cadavid Herrera
+  OK Caramanta: Juan Esteban Correa Cárdenas
+  OK Carepa: Agapito Murillo Palacio
+  OK Carolina: Ana Isabel Avendaño Duque
+  OK Caucasia: Jhoan Oderis Montes Cortés
+  OK Chigorodó: Tulia Irene Ruiz García
+  OK Cisneros: Lina María Correa Valencia
+  OK Ciudad Bolívar: León Darío Acevedo Vargas
+  OK Cocorná: David Alejandro Gómez Hoyos
+  OK Concepción: Adrián Henao Carvajal
+  OK Concordia: Alexandra María Herrera Quijano
+  OK Copacabana: Johnnatan Andrés Pineda Agudelo
+  OK Dabeiba: Daniel Higuita Herrera
+  OK El Carmen de Viboral: Hugo Alfonso Jiménez Cuervo
+  OK Medellín: Federico Gutiérrez Zuluaga
+  OK Santafé de Antioquia: Yamid Carvajal Carvajal
+  OK Barranquilla: Alejandro Char Chaljub
+  OK D.C.": Carlos Fernando Galán Pachón
+  OK Cartagena: Dumek José Turbay Paz
+  OK Manizales: Jorge Eduardo Rojas Giraldo
+  OK Aguazul: Nelson Enrique Camacho Caicedo
+  OK Chameza: Bernardo Pérez Fonseca
+  OK Hato Corozal: Ludy Tatiana Pirabán Gutiérrez
+  OK La Salina: Reynaldo Emel Chaparro Díaz
+  OK Maní: Ferney Chaparro Perdomo
+  OK Monterrey: Orlando Martínez Ávila
+  OK Nunchía: Yeison Guicón Barrera
+  OK Orocué: Anderson Salvador Bernal Tello
+  OK Paz de Ariporo: Jorge Camilo Abril Tarache
+  OK Pore: Jorge Ezequiel Garzón
+  OK Recetor: Diego Peña
+  OK Sabanalarga: Carlos Efrén Espinosa Bernal
+  OK Sácama: Freddy Avellaneda Lizarazo
+  OK San Luis de Palenque: Ediber Vásquez Rincón
+  OK Támara: William Forero Benítez
+  OK Tauramena: Javier Augusto Alvarez Alfonso
+  OK Villanueva: Héctor Fernando Vizcaíno Cagüeño
+  OK Yopal: Marco Tulio Ruiz Riaño
+  OK Popayán: Juan Carlos Muñoz Bravo
+  OK Valledupar: Ernesto Miguel Orozco Durán
+  OK Quibdó: Rafael Andrés Bolaños Pino
+  OK Montería: Hugo Fernando Kerguelén García
+  OK Agua de Dios: Eliana Andrea Manzanarez Góngora
+  OK Anapoima: Camilo Andrés Ferro Calderón
+  OK Anolaima: Carlos Alexys González Chacón
+  OK Arbeláez: Hugo Efrén Novoa Villamil
+  OK Beltrán: Nury Barragán Suárez
+  OK Bituima: William Guillermo Barrera
+  OK Bojacá: Gabriel Hernán González Rojas
+  OK Cabrera: Enyer Camilo Sánchez Pastor
+  OK Cachipay: Luis Orlando Garzón Acuña
+  OK Cajicá: Fabiola Jácome Rincón
+  OK Caparrapí: Andrés Ardila Sánchez
+  OK Caqueza: Alba Yolima Benito Clavijo
+  OK Chía: Leonardo Donoso Ruiz
+  OK Choachí: Álvaro Pulido Rodríguez
+  OK Chocontá: Javier Garzón Farfán
+  OK Cogua: Cristian Chávez Salas
+  OK Cota: Néstor Orlando Balsero García
+  OK Cucunubá: Mario Alexander Bello Velásquez
+  OK El Colegio: Diego Andrés López Suárez
+  OK El Peñón: Nilson Javier Triana Buitrago
+  OK Facatativá: Luis Carlos Casas Alvarado
+  OK Fomeque: Eduar Esneider Acosta Vargas
+  OK Fosca: Milton Albino Barbosa Rey
+  OK Funza: Jeimmy Sulgey Villamil Buitrago
+  OK Fúquene: Walter Jeison Mora Castiblanco
+  OK Fusagasugá: William García Fayad
+  OK Gachala: Pedro Antonio Rodríguez Rojas
+  OK Gachancipá: Alfonso López Sánchez
+  OK Gachetá: Daniel Orlando Beltrán Beltrán
+  OK Gama: Ernesto Avelino Ruíz Martínez
+  OK Girardot: Salomón Said Arias
+  OK Granada: Sandra Rueda Acosta
+  OK Guachetá: Pablo Enrique Quicazan Ballesteros
+  OK Guaduas: Diego Ariel Jiménez
+  OK Guasca: Wilfrido Rafael Cotes Prada
+  OK Guataquí: Elvin Audiver Mosquera Palacios
+  OK Calamar: Farid Camilo Castaño García
+  OK El Retorno: Jhonny Jaiber Casanova López
+  OK Miraflores: Edwin Iovanni Díaz
+  OK San José del Guaviare: Willy Alejandro Rodríguez Rojas
+  OK Neiva: Germán Casagua Bonilla
+  OK Albania: Nera Eloísa Robles Bonivento
+  OK Barrancas: Vicente Francisco Berardinelli Carrillo
+  OK Dibulla: Alberto Montero Molina
+  OK Distracción: Jacob Arnaldo Brito Brito
+  OK El Molino: Rafael Manjarrez Aponte
+  OK Hatonuevo: Hassan Palmezano Romero
+  OK La Jagua del Pilar: Ivón Rosana Manjarrez Ustáriz
+  OK Maicao: Miguel Felipe Aragón González
+  OK Manaure: Jhon Galvis Pimienta Jusayú
+  OK Riohacha: Genaro David Redondo Choles
+  OK San Juan del Cesar: Enrique Camilo Urbina Suárez
+  OK Uribia: Jaime Luis Buitrago García
+  OK Algarrobo: Juan Pablo Vargas Arias
+  OK Aracataca: Leiter Salgado Pacheco
+  OK Ariguaní: María Paola Álvarez Puerta
+  OK Cerro San Antonio: Mirith Cecilia Lafaurie Hurtado
+  OK Chibolo: Alberto Andrés Escobar Mora
+  OK Ciénaga: Luis Alberto Fernández Quinto
+  OK Concordia: Pedro Jesús Ospino Castro
+  OK El Banco: Ronald Darío Flórez Sierra
+  OK El Piñon: Lorena Luz Rada De La Hoz
+  OK El Retén: Jesús Antonio Galindo Vanstrahlen
+  OK Fundación: Luz Helena Andrade Campo
+  OK Guamal: José Luis Ramos Gómez
+  OK Nueva Granada: Joaquín Emilio Ariza Muñoz
+  OK Pedraza: Gustavo Aquileo Osorio Osorio
+  OK Pijiño del Carmen: Orlando Machado Machado
+  OK Pivijay: Jorge Iván Salah Ropaín
+  OK Plato: Armando Campuzano Restrepo
+  OK Remolino: José David Escorcia Pérez
+  OK Sabanas de San Angel: Shirley Patricia Pimienta Charris
+  OK Santa Marta: Carlos Pinedo Cuello
+  OK Acacías: Carlos Julio Plata Becerra
+  OK Barranca de Upía: Fredy Enrique Castro Gómez
+  OK Cabuyaro: José Andrés Castañeda Martínez
+  OK Castilla la Nueva: Lenito Eliecer Castro Cifuentes
+  OK Cubarral: Brayhann Camilo Velásquez Suárez
+  OK Cumaral: José Albeiro Serna Restrepo
+  OK El Calvario: Héctor Yesid Rincón Velásquez
+  OK El Castillo: Daimer Otálora Vera
+  OK El Dorado: Oscar Olaya López
+  OK Fuente de Oro: Ana Shirley González González
+  OK Granada: Juan Carlos Mendoza Rendón
+  OK Guamal: José Fernando Peña Rabelo
+  OK Lejanías: Nick Jefree Martínez Alba
+  OK Mapiripán: César Julio Arenas Redondo
+  OK Mesetas: Camilo Antonio Pulgarín
+  OK Puerto Concordia: Mirto Elio Urrea Roldán
+Municipios actualizados: 150

@@ -40,16 +40,6 @@
     }
   },
   {
-    "id": 10642,
-    "nombre": "Leticia",
-    "datos": {
-      "mandatario": "Elquin Jadrian Uni Heredia",
-      "cargo": "Alcalde",
-      "telefono_alcaldia": "60(8)5928064",
-      "confianza": "alta"
-    }
-  },
-  {
     "id": 10643,
     "nombre": "Miriti - Paraná",
     "datos": {
@@ -66,7 +56,7 @@
       "mandatario": null,
       "cargo": null,
       "telefono_alcaldia": null,
-      "confianza": "sin_datos"
+      "confianza": "error"
     }
   },
   {
@@ -76,17 +66,7 @@
       "mandatario": null,
       "cargo": null,
       "telefono_alcaldia": null,
-      "confianza": "sin_datos"
-    }
-  },
-  {
-    "id": 10646,
-    "nombre": "Puerto Nariño",
-    "datos": {
-      "mandatario": "Edilberto Suárez Pinto",
-      "cargo": "Alcalde",
-      "telefono_alcaldia": "+57 312 3859178",
-      "confianza": "alta"
+      "confianza": "error"
     }
   },
   {
@@ -96,7 +76,7 @@
       "mandatario": null,
       "cargo": null,
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "sin_datos"
     }
   },
   {
@@ -110,103 +90,63 @@
     }
   },
   {
-    "id": 10600,
-    "nombre": "Abejorral",
-    "datos": {
-      "mandatario": "Manuel Alberto Guzmán Marín",
-      "cargo": "Alcalde",
-      "telefono_alcaldia": "+57 4 8647611",
-      "confianza": "alta"
-    }
-  },
-  {
-    "id": 10601,
-    "nombre": "Abriaquí",
-    "datos": {
-      "mandatario": "Daniel Salas Gallego",
-      "cargo": "Alcalde",
-      "telefono_alcaldia": "+57 4 8520024",
-      "confianza": "alta"
-    }
-  },
-  {
-    "id": 10602,
-    "nombre": "Alejandría",
-    "datos": {
-      "mandatario": "Gloria Cecilia Naranjo Osorio",
-      "cargo": "Alcaldesa",
-      "telefono_alcaldia": "+57 6048660016",
-      "confianza": "alta"
-    }
-  },
-  {
-    "id": 10603,
-    "nombre": "Amagá",
-    "datos": {
-      "mandatario": "Wilser Darío Molina Molina",
-      "cargo": "Alcalde",
-      "telefono_alcaldia": "+57 4 8472122",
-      "confianza": "alta"
-    }
-  },
-  {
     "id": 10604,
     "nombre": "Amalfi",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Wilmar Alonso Vélez Londoño",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8301805",
+      "confianza": "alta"
     }
   },
   {
     "id": 10605,
     "nombre": "Andes",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Germán Alexander Vélez Orozco",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+576048414036",
+      "confianza": "alta"
     }
   },
   {
     "id": 10606,
     "nombre": "Angelópolis",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Jose Luis Montoya Quiceno",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 10607,
     "nombre": "Angostura",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Víctor Ignacio Medina Gómez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8645161",
+      "confianza": "alta"
     }
   },
   {
     "id": 10608,
     "nombre": "Anorí",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Gustavo Silva Gutiérrez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 4 8350842",
+      "confianza": "alta"
     }
   },
   {
     "id": 10610,
     "nombre": "Anza",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Juan Guillermo Hincapié Figueroa",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "852 20 82",
+      "confianza": "alta"
     }
   },
   {
@@ -223,10 +163,10 @@
     "id": 10611,
     "nombre": "Arboletes",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Álvaro González Ávila",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8200367 - 8200973 - 8201289 - 8200130",
+      "confianza": "alta"
     }
   },
   {
@@ -253,280 +193,280 @@
     "id": 10614,
     "nombre": "Barbosa",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Juan David Rojas Agudelo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 4 454 83 00",
+      "confianza": "alta"
     }
   },
   {
     "id": 10598,
     "nombre": "Bello",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Lorena González Ospina",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "(604) 6047944",
+      "confianza": "alta"
     }
   },
   {
     "id": 10615,
     "nombre": "Belmira",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Esteban Arboleda Rúa",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(604) 8674030",
+      "confianza": "alta"
     }
   },
   {
     "id": 10616,
     "nombre": "Betania",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Diego Arley de Jesús Guerra Gutiérrez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(57-4) 843-5127 / 843-5180",
+      "confianza": "alta"
     }
   },
   {
     "id": 10617,
     "nombre": "Betulia",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Néstor Camilo Serna Hernández",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 604 843 66 99",
+      "confianza": "alta"
     }
   },
   {
     "id": 10618,
     "nombre": "Briceño",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Noe de Jesús Espinosa Vásquez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(57+4) 8570054 - (57+4) 8570051",
+      "confianza": "alta"
     }
   },
   {
     "id": 10619,
     "nombre": "Buriticá",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "José Luis Rodríguez Usuga",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(57-4) 8527015",
+      "confianza": "alta"
     }
   },
   {
     "id": 10620,
     "nombre": "Cáceres",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Damiana María Monterrosa Pérez",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "8362201 / 8362203 / 8362202",
+      "confianza": "alta"
     }
   },
   {
     "id": 10621,
     "nombre": "Caicedo",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Yuber Felipe Molina Murillo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 6048572002",
+      "confianza": "alta"
     }
   },
   {
     "id": 10622,
     "nombre": "Caldas",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Jorge Mario Rendón Vélez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 604 3788500",
+      "confianza": "alta"
     }
   },
   {
     "id": 10623,
     "nombre": "Campamento",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Cristian Agudelo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(57)(4) 8614020",
+      "confianza": "alta"
     }
   },
   {
     "id": 10624,
     "nombre": "Cañasgordas",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Diego Alonso Vanegas Arango",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8564101",
+      "confianza": "alta"
     }
   },
   {
     "id": 10625,
     "nombre": "Caracolí",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Rodrigo Alveiro Cadavid Herrera",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8336025 Ext 102 - 8336045",
+      "confianza": "alta"
     }
   },
   {
     "id": 10676,
     "nombre": "Caramanta",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Juan Esteban Correa Cárdenas",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8553358",
+      "confianza": "alta"
     }
   },
   {
     "id": 10626,
     "nombre": "Carepa",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Agapito Murillo Palacio",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 10678,
     "nombre": "Carolina",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Ana Isabel Avendaño Duque",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "+57 604 863 4033",
+      "confianza": "alta"
     }
   },
   {
     "id": 10628,
     "nombre": "Caucasia",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Jhoan Oderis Montes Cortés",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 4-814 9140",
+      "confianza": "alta"
     }
   },
   {
     "id": 10629,
     "nombre": "Chigorodó",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Tulia Irene Ruiz García",
+      "cargo": "Alcaldesa",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 10630,
     "nombre": "Cisneros",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Lina María Correa Valencia",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "+57 314 2660818",
+      "confianza": "alta"
     }
   },
   {
     "id": 10682,
     "nombre": "Ciudad Bolívar",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "León Darío Acevedo Vargas",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "841 11 83",
+      "confianza": "alta"
     }
   },
   {
     "id": 10631,
     "nombre": "Cocorná",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "David Alejandro Gómez Hoyos",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "300 919 89 45",
+      "confianza": "alta"
     }
   },
   {
     "id": 10632,
     "nombre": "Concepción",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Adrián Henao Carvajal",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 10685,
     "nombre": "Concordia",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Alexandra María Herrera Quijano",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "+57 316 3920401",
+      "confianza": "alta"
     }
   },
   {
     "id": 10599,
     "nombre": "Copacabana",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Johnnatan Andrés Pineda Agudelo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 (4) 274 0069",
+      "confianza": "alta"
     }
   },
   {
     "id": 10633,
     "nombre": "Dabeiba",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Daniel Higuita Herrera",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 300 9125415",
+      "confianza": "alta"
     }
   },
   {
     "id": 10627,
     "nombre": "El Carmen de Viboral",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Hugo Alfonso Jiménez Cuervo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(604) 543-2000",
+      "confianza": "alta"
     }
   },
   {
     "id": 10581,
     "nombre": "Medellín",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Federico Gutiérrez Zuluaga",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 (604) 44 44 144",
+      "confianza": "alta"
     }
   },
   {
     "id": 10609,
     "nombre": "Santafé de Antioquia",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Yamid Carvajal Carvajal",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "6048531101",
+      "confianza": "alta"
     }
   },
   {
@@ -543,30 +483,30 @@
     "id": 10589,
     "nombre": "Barranquilla",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Alejandro Char Chaljub",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 (605) 4010205",
+      "confianza": "alta"
     }
   },
   {
     "id": 10806,
     "nombre": "D.C.\"",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Carlos Fernando Galán Pachón",
+      "cargo": "Alcalde Mayor",
+      "telefono_alcaldia": "+57 (601) 381-3000",
+      "confianza": "alta"
     }
   },
   {
     "id": 10588,
     "nombre": "Cartagena",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Dumek José Turbay Paz",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 605 641 13 70",
+      "confianza": "alta"
     }
   },
   {
@@ -583,170 +523,170 @@
     "id": 10584,
     "nombre": "Manizales",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Jorge Eduardo Rojas Giraldo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57(606) 892 80 00",
+      "confianza": "alta"
     }
   },
   {
     "id": 11018,
     "nombre": "Aguazul",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Nelson Enrique Camacho Caicedo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 6384000",
+      "confianza": "alta"
     }
   },
   {
     "id": 11019,
     "nombre": "Chameza",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Bernardo Pérez Fonseca",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3144208153",
+      "confianza": "alta"
     }
   },
   {
     "id": 11020,
     "nombre": "Hato Corozal",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Ludy Tatiana Pirabán Gutiérrez",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "6378012",
+      "confianza": "alta"
     }
   },
   {
     "id": 11021,
     "nombre": "La Salina",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Reynaldo Emel Chaparro Díaz",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3134810421",
+      "confianza": "alta"
     }
   },
   {
     "id": 11022,
     "nombre": "Maní",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Ferney Chaparro Perdomo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 8 6381016",
+      "confianza": "alta"
     }
   },
   {
     "id": 11023,
     "nombre": "Monterrey",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Orlando Martínez Ávila",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11024,
     "nombre": "Nunchía",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Yeison Guicón Barrera",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 3106006586",
+      "confianza": "alta"
     }
   },
   {
     "id": 11025,
     "nombre": "Orocué",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Anderson Salvador Bernal Tello",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(+57) 8 636 5203",
+      "confianza": "alta"
     }
   },
   {
     "id": 11026,
     "nombre": "Paz de Ariporo",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Jorge Camilo Abril Tarache",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11027,
     "nombre": "Pore",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Jorge Ezequiel Garzón",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 313 4339737",
+      "confianza": "alta"
     }
   },
   {
     "id": 11028,
     "nombre": "Recetor",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Diego Peña",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "media"
     }
   },
   {
     "id": 11029,
     "nombre": "Sabanalarga",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Carlos Efrén Espinosa Bernal",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11030,
     "nombre": "Sácama",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Freddy Avellaneda Lizarazo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "313 2237047",
+      "confianza": "alta"
     }
   },
   {
     "id": 11031,
     "nombre": "San Luis de Palenque",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Ediber Vásquez Rincón",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+5786370017",
+      "confianza": "alta"
     }
   },
   {
     "id": 11032,
     "nombre": "Támara",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "William Forero Benítez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "6361179",
+      "confianza": "alta"
     }
   },
   {
     "id": 11033,
     "nombre": "Tauramena",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Javier Augusto Alvarez Alfonso",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(+57) 8 6247113",
+      "confianza": "alta"
     }
   },
   {
@@ -763,70 +703,70 @@
     "id": 11035,
     "nombre": "Villanueva",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Héctor Fernando Vizcaíno Cagüeño",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(57+8) 6241204",
+      "confianza": "alta"
     }
   },
   {
     "id": 11036,
     "nombre": "Yopal",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Marco Tulio Ruiz Riaño",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(60+8) 6345913",
+      "confianza": "alta"
     }
   },
   {
     "id": 11062,
     "nombre": "Popayán",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Juan Carlos Muñoz Bravo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 2 8206200",
+      "confianza": "alta"
     }
   },
   {
     "id": 10587,
     "nombre": "Valledupar",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Ernesto Miguel Orozco Durán",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+(57)(5) 5842444",
+      "confianza": "alta"
     }
   },
   {
     "id": 11125,
     "nombre": "Quibdó",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Rafael Andrés Bolaños Pino",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 10592,
     "nombre": "Montería",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Hugo Fernando Kerguelén García",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 (604) 7920707",
+      "confianza": "alta"
     }
   },
   {
     "id": 11162,
     "nombre": "Agua de Dios",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Eliana Andrea Manzanarez Góngora",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "+57 (1) 834-5110",
+      "confianza": "alta"
     }
   },
   {
@@ -843,110 +783,110 @@
     "id": 11164,
     "nombre": "Anapoima",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Camilo Andrés Ferro Calderón",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 316 3129990",
+      "confianza": "alta"
     }
   },
   {
     "id": 11165,
     "nombre": "Anolaima",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Carlos Alexys González Chacón",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8454001",
+      "confianza": "alta"
     }
   },
   {
     "id": 11167,
     "nombre": "Arbeláez",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Hugo Efrén Novoa Villamil",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8686030",
+      "confianza": "alta"
     }
   },
   {
     "id": 11168,
     "nombre": "Beltrán",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Nury Barragán Suárez",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "8373077 - 8373115",
+      "confianza": "alta"
     }
   },
   {
     "id": 11169,
     "nombre": "Bituima",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "William Guillermo Barrera",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 3108568770",
+      "confianza": "alta"
     }
   },
   {
     "id": 11170,
     "nombre": "Bojacá",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Gabriel Hernán González Rojas",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8243575",
+      "confianza": "alta"
     }
   },
   {
     "id": 11171,
     "nombre": "Cabrera",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Enyer Camilo Sánchez Pastor",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11172,
     "nombre": "Cachipay",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Luis Orlando Garzón Acuña",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "057-3142979334",
+      "confianza": "alta"
     }
   },
   {
     "id": 11173,
     "nombre": "Cajicá",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Fabiola Jácome Rincón",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "8837077",
+      "confianza": "alta"
     }
   },
   {
     "id": 11174,
     "nombre": "Caparrapí",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Andrés Ardila Sánchez",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11175,
     "nombre": "Caqueza",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Alba Yolima Benito Clavijo",
+      "cargo": "Alcaldesa",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
@@ -973,10 +913,10 @@
     "id": 11178,
     "nombre": "Chía",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Leonardo Donoso Ruiz",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(601) 8844444",
+      "confianza": "alta"
     }
   },
   {
@@ -993,70 +933,70 @@
     "id": 11180,
     "nombre": "Choachí",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Álvaro Pulido Rodríguez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 1 8486806",
+      "confianza": "alta"
     }
   },
   {
     "id": 11181,
     "nombre": "Chocontá",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Javier Garzón Farfán",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "856 2125",
+      "confianza": "alta"
     }
   },
   {
     "id": 11182,
     "nombre": "Cogua",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Cristian Chávez Salas",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(57)(1) 854-8121",
+      "confianza": "alta"
     }
   },
   {
     "id": 11183,
     "nombre": "Cota",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Néstor Orlando Balsero García",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(+57) 601 3161800",
+      "confianza": "alta"
     }
   },
   {
     "id": 11184,
     "nombre": "Cucunubá",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Mario Alexander Bello Velásquez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3212010209",
+      "confianza": "alta"
     }
   },
   {
     "id": 11185,
     "nombre": "El Colegio",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Diego Andrés López Suárez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3183530524",
+      "confianza": "alta"
     }
   },
   {
     "id": 11186,
     "nombre": "El Peñón",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Nilson Javier Triana Buitrago",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 310 303 7291",
+      "confianza": "alta"
     }
   },
   {
@@ -1073,260 +1013,260 @@
     "id": 11188,
     "nombre": "Facatativá",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Luis Carlos Casas Alvarado",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+576018439101",
+      "confianza": "alta"
     }
   },
   {
     "id": 11189,
     "nombre": "Fomeque",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Eduar Esneider Acosta Vargas",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 320 3331920",
+      "confianza": "alta"
     }
   },
   {
     "id": 11190,
     "nombre": "Fosca",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Milton Albino Barbosa Rey",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 323 2250017",
+      "confianza": "alta"
     }
   },
   {
     "id": 11191,
     "nombre": "Funza",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Jeimmy Sulgey Villamil Buitrago",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "57 (601) 823-4070",
+      "confianza": "alta"
     }
   },
   {
     "id": 11192,
     "nombre": "Fúquene",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Walter Jeison Mora Castiblanco",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11193,
     "nombre": "Fusagasugá",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "William García Fayad",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 (1) 886 8181",
+      "confianza": "alta"
     }
   },
   {
     "id": 11194,
     "nombre": "Gachala",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Pedro Antonio Rodríguez Rojas",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8538503",
+      "confianza": "alta"
     }
   },
   {
     "id": 11195,
     "nombre": "Gachancipá",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Alfonso López Sánchez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 313 2934625",
+      "confianza": "alta"
     }
   },
   {
     "id": 11196,
     "nombre": "Gachetá",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Daniel Orlando Beltrán Beltrán",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3142205965",
+      "confianza": "alta"
     }
   },
   {
     "id": 11197,
     "nombre": "Gama",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Ernesto Avelino Ruíz Martínez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8536551 / 8536559",
+      "confianza": "alta"
     }
   },
   {
     "id": 11198,
     "nombre": "Girardot",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Salomón Said Arias",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 (1) 8314134",
+      "confianza": "alta"
     }
   },
   {
     "id": 11199,
     "nombre": "Granada",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Sandra Rueda Acosta",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "8669335",
+      "confianza": "alta"
     }
   },
   {
     "id": 11200,
     "nombre": "Guachetá",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Pablo Enrique Quicazan Ballesteros",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "8556125",
+      "confianza": "alta"
     }
   },
   {
     "id": 11201,
     "nombre": "Guaduas",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Diego Ariel Jiménez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 1 846 6796",
+      "confianza": "alta"
     }
   },
   {
     "id": 11202,
     "nombre": "Guasca",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Wilfrido Rafael Cotes Prada",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 1 8835541",
+      "confianza": "alta"
     }
   },
   {
     "id": 11203,
     "nombre": "Guataquí",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Elvin Audiver Mosquera Palacios",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 322 3482335",
+      "confianza": "alta"
     }
   },
   {
     "id": 11287,
     "nombre": "Calamar",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Farid Camilo Castaño García",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(608) 5602037",
+      "confianza": "alta"
     }
   },
   {
     "id": 11288,
     "nombre": "El Retorno",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Jhonny Jaiber Casanova López",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "5840771",
+      "confianza": "alta"
     }
   },
   {
     "id": 11289,
     "nombre": "Miraflores",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Edwin Iovanni Díaz",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(608) 5600052",
+      "confianza": "alta"
     }
   },
   {
     "id": 11290,
     "nombre": "San José del Guaviare",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Willy Alejandro Rodríguez Rojas",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 (608) 5840616",
+      "confianza": "alta"
     }
   },
   {
     "id": 10593,
     "nombre": "Neiva",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Germán Casagua Bonilla",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "018000915538",
+      "confianza": "alta"
     }
   },
   {
     "id": 11328,
     "nombre": "Albania",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Nera Eloísa Robles Bonivento",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "(60)(5)7775286",
+      "confianza": "alta"
     }
   },
   {
     "id": 11329,
     "nombre": "Barrancas",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Vicente Francisco Berardinelli Carrillo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(57) 5 7748891",
+      "confianza": "alta"
     }
   },
   {
     "id": 11330,
     "nombre": "Dibulla",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Alberto Montero Molina",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 5 7200315",
+      "confianza": "alta"
     }
   },
   {
     "id": 11331,
     "nombre": "Distracción",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Jacob Arnaldo Brito Brito",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 3158392455",
+      "confianza": "alta"
     }
   },
   {
     "id": 11332,
     "nombre": "El Molino",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Rafael Manjarrez Aponte",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
@@ -1343,240 +1283,240 @@
     "id": 11334,
     "nombre": "Hatonuevo",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Hassan Palmezano Romero",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(+57)(5) 775 9302",
+      "confianza": "alta"
     }
   },
   {
     "id": 11335,
     "nombre": "La Jagua del Pilar",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Ivón Rosana Manjarrez Ustáriz",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "5705997",
+      "confianza": "alta"
     }
   },
   {
     "id": 11336,
     "nombre": "Maicao",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Miguel Felipe Aragón González",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 5 7775286",
+      "confianza": "alta"
     }
   },
   {
     "id": 11337,
     "nombre": "Manaure",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Jhon Galvis Pimienta Jusayú",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 5 7178025",
+      "confianza": "alta"
     }
   },
   {
     "id": 11338,
     "nombre": "Riohacha",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Genaro David Redondo Choles",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(+57) 5727 6658",
+      "confianza": "alta"
     }
   },
   {
     "id": 11339,
     "nombre": "San Juan del Cesar",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Enrique Camilo Urbina Suárez",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11340,
     "nombre": "Uribia",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Jaime Luis Buitrago García",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 5 717 7255",
+      "confianza": "alta"
     }
   },
   {
     "id": 11343,
     "nombre": "Algarrobo",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Juan Pablo Vargas Arias",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3136289786",
+      "confianza": "alta"
     }
   },
   {
     "id": 11344,
     "nombre": "Aracataca",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Leiter Salgado Pacheco",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 5 4270727",
+      "confianza": "alta"
     }
   },
   {
     "id": 11345,
     "nombre": "Ariguaní",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "María Paola Álvarez Puerta",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "3126193746",
+      "confianza": "alta"
     }
   },
   {
     "id": 11346,
     "nombre": "Cerro San Antonio",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Mirith Cecilia Lafaurie Hurtado",
+      "cargo": "Alcaldesa",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11347,
     "nombre": "Chibolo",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Alberto Andrés Escobar Mora",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(57) 5 4854213",
+      "confianza": "alta"
     }
   },
   {
     "id": 11348,
     "nombre": "Ciénaga",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Luis Alberto Fernández Quinto",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(605) 4100212",
+      "confianza": "alta"
     }
   },
   {
     "id": 11349,
     "nombre": "Concordia",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Pedro Jesús Ospino Castro",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3103611490",
+      "confianza": "alta"
     }
   },
   {
     "id": 11350,
     "nombre": "El Banco",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Ronald Darío Flórez Sierra",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "4292797",
+      "confianza": "alta"
     }
   },
   {
     "id": 11351,
     "nombre": "El Piñon",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Lorena Luz Rada De La Hoz",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "(095) 5091901",
+      "confianza": "alta"
     }
   },
   {
     "id": 11352,
     "nombre": "El Retén",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Jesús Antonio Galindo Vanstrahlen",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "6121811",
+      "confianza": "alta"
     }
   },
   {
     "id": 11353,
     "nombre": "Fundación",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Luz Helena Andrade Campo",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "+57 5 4140498",
+      "confianza": "alta"
     }
   },
   {
     "id": 11354,
     "nombre": "Guamal",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "José Luis Ramos Gómez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "4182332",
+      "confianza": "alta"
     }
   },
   {
     "id": 11355,
     "nombre": "Nueva Granada",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Joaquín Emilio Ariza Muñoz",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 3127856098",
+      "confianza": "alta"
     }
   },
   {
     "id": 11356,
     "nombre": "Pedraza",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Gustavo Aquileo Osorio Osorio",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3783321",
+      "confianza": "alta"
     }
   },
   {
     "id": 11357,
     "nombre": "Pijiño del Carmen",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Orlando Machado Machado",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3024358735",
+      "confianza": "alta"
     }
   },
   {
     "id": 11358,
     "nombre": "Pivijay",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Jorge Iván Salah Ropaín",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11359,
     "nombre": "Plato",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Armando Campuzano Restrepo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(+57) 5 4850507 - 4850108",
+      "confianza": "alta"
     }
   },
   {
@@ -1593,30 +1533,30 @@
     "id": 11361,
     "nombre": "Remolino",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "José David Escorcia Pérez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "4178100",
+      "confianza": "alta"
     }
   },
   {
     "id": 11362,
     "nombre": "Sabanas de San Angel",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Shirley Patricia Pimienta Charris",
+      "cargo": "Alcaldesa",
+      "telefono_alcaldia": "+57 312 6751824",
+      "confianza": "alta"
     }
   },
   {
     "id": 11368,
     "nombre": "Santa Marta",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Carlos Pinedo Cuello",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(+57) 605 4351719",
+      "confianza": "alta"
     }
   },
   {
@@ -1653,120 +1593,120 @@
     "id": 11373,
     "nombre": "Acacías",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Carlos Julio Plata Becerra",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "018000112996",
+      "confianza": "alta"
     }
   },
   {
     "id": 11374,
     "nombre": "Barranca de Upía",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Fredy Enrique Castro Gómez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3209568566",
+      "confianza": "alta"
     }
   },
   {
     "id": 11375,
     "nombre": "Cabuyaro",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "José Andrés Castañeda Martínez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "6769296",
+      "confianza": "alta"
     }
   },
   {
     "id": 11376,
     "nombre": "Castilla la Nueva",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Lenito Eliecer Castro Cifuentes",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(608) 6750075",
+      "confianza": "alta"
     }
   },
   {
     "id": 11377,
     "nombre": "Cubarral",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Brayhann Camilo Velásquez Suárez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "6763123",
+      "confianza": "alta"
     }
   },
   {
     "id": 11378,
     "nombre": "Cumaral",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "José Albeiro Serna Restrepo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "(8) 6870263",
+      "confianza": "alta"
     }
   },
   {
     "id": 11379,
     "nombre": "El Calvario",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Héctor Yesid Rincón Velásquez",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3134413274",
+      "confianza": "alta"
     }
   },
   {
     "id": 11380,
     "nombre": "El Castillo",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Daimer Otálora Vera",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11381,
     "nombre": "El Dorado",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Oscar Olaya López",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3213096008",
+      "confianza": "alta"
     }
   },
   {
     "id": 11382,
     "nombre": "Fuente de Oro",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Ana Shirley González González",
+      "cargo": "Alcaldesa",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11383,
     "nombre": "Granada",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Juan Carlos Mendoza Rendón",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 8 658 8158",
+      "confianza": "alta"
     }
   },
   {
     "id": 11384,
     "nombre": "Guamal",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "José Fernando Peña Rabelo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 3107860312",
+      "confianza": "alta"
     }
   },
   {
@@ -1783,40 +1723,40 @@
     "id": 11386,
     "nombre": "Lejanías",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Nick Jefree Martínez Alba",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11387,
     "nombre": "Mapiripán",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "César Julio Arenas Redondo",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "3212069664",
+      "confianza": "alta"
     }
   },
   {
     "id": 11388,
     "nombre": "Mesetas",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
+      "mandatario": "Camilo Antonio Pulgarín",
+      "cargo": "Alcalde",
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "alta"
     }
   },
   {
     "id": 11389,
     "nombre": "Puerto Concordia",
     "datos": {
-      "mandatario": null,
-      "cargo": null,
-      "telefono_alcaldia": null,
-      "confianza": "error"
+      "mandatario": "Mirto Elio Urrea Roldán",
+      "cargo": "Alcalde",
+      "telefono_alcaldia": "+57 3204758218",
+      "confianza": "alta"
     }
   },
   {
@@ -2492,6 +2432,66 @@
   {
     "id": 11559,
     "nombre": "Cepitá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11560,
+    "nombre": "Cerrito",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11561,
+    "nombre": "Charalá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11562,
+    "nombre": "Charta",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11563,
+    "nombre": "Chima",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11564,
+    "nombre": "Chipatá",
+    "datos": {
+      "mandatario": null,
+      "cargo": null,
+      "telefono_alcaldia": null,
+      "confianza": "error"
+    }
+  },
+  {
+    "id": 11565,
+    "nombre": "Cimitarra",
     "datos": {
       "mandatario": null,
       "cargo": null,
