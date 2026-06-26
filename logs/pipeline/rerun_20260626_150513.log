@@ -31,3 +31,7 @@ Total festivales en BD: 364
 Fase 1: 26 festivales
 Total seleccionados: 116
 Guardado: ./output/festivales_seleccionados.json
+[15:05:15] PASO 3 — Enriquecer festivales
+python-dotenv could not parse statement starting at line 8
+ENRIQUECIMIENTO DE FESTIVALES
+Festivales actualizados: 0
