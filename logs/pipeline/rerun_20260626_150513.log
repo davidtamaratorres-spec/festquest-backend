@@ -40,3 +40,8 @@ python-dotenv could not parse statement starting at line 8
 WIKIPEDIA — DATOS GEOGRAFICOS MUNICIPIOS
 Municipios a procesar: 36
 Municipios actualizados: 0
+[15:08:18] PASO 5 â€” Wikimedia imagenes (async)
+python-dotenv could not parse statement starting at line 8
+WIKIMEDIA — BANDERAS Y ESCUDOS (async)
+Municipios a procesar: 81
+Municipios actualizados: 0
