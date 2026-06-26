@@ -51,7 +51,7 @@ def procesar():
     conn = conectar()
     cur = conn.cursor()
     print("WIKIPEDIA — DATOS GEOGRAFICOS MUNICIPIOS")
-    cur.execute("SELECT m.id,m.name,m.department,m.gentilicio,m.temperatura_promedio,m.altura_msnm FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL) AND (m.gentilicio IS NULL OR m.gentilicio='' OR m.temperatura_promedio IS NULL OR m.altura_msnm IS NULL) ORDER BY m.department,m.name")
+    cur.execute("SELECT m.id,m.nombre,m.departamento,m.gentilicio,m.temperatura_promedio,m.altura FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL) AND (m.gentilicio IS NULL OR m.gentilicio='' OR m.temperatura_promedio IS NULL OR m.altura IS NULL) ORDER BY m.departamento,m.nombre")
     municipios = cur.fetchall()
     print(f"Municipios a procesar: {len(municipios)}")
     actualizados = 0
@@ -71,7 +71,7 @@ def procesar():
                     if tv and -5<=tv<=45: updates["temperatura_promedio"]=tv
                 if not alt:
                     av = extraer_num(extraer(wt,"altitud","Altitud","elevación","Elevación"))
-                    if av and 0<=av<=5800: updates["altura_msnm"]=int(av)
+                    if av and 0<=av<=5800: updates["altura"]=int(av)
         if updates:
             set_clause = ", ".join([f"{k}=%s" for k in updates])
             cur.execute(f"UPDATE municipalities SET {set_clause} WHERE id=%s",list(updates.values())+[mid])

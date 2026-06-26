@@ -17,7 +17,7 @@ def validar():
         festivales = json.load(f)
     muni_ids = list(set(f["municipality_id"] for f in festivales if f.get("municipality_id")))
     fest_ids = [f["id"] for f in festivales]
-    cur.execute("SELECT id,name,department,gentilicio,temperatura_promedio,altura_msnm,sitio_1,hotel_1,mandatario,bandera_url,escudo_url FROM municipalities WHERE id=ANY(%s)",(muni_ids,))
+    cur.execute("SELECT id,nombre,departamento,gentilicio,temperatura_promedio,altura,sitio_1,hotel_1,mandatario,bandera_url,escudo_url FROM municipalities WHERE id=ANY(%s)",(muni_ids,))
     munis = cur.fetchall()
     actualizados = 0
     pendientes = []
@@ -26,7 +26,7 @@ def validar():
         updates = {}
         pendiente = []
         if not temp: updates["temperatura_promedio"]=TEMP_POR_DEPT.get(dept,22)
-        if not alt: updates["altura_msnm"]=ALTURA_POR_DEPT.get(dept,1000)
+        if not alt: updates["altura"]=ALTURA_POR_DEPT.get(dept,1000)
         if not gent:
             g = GENTILICIOS.get(mname)
             if g: updates["gentilicio"]=g
@@ -45,7 +45,7 @@ def validar():
             except Exception as e:
                 conn.rollback()
         if pendiente: pendientes.append({"id":mid,"nombre":mname,"pendiente":pendiente})
-    cur.execute("SELECT id,name,department,municipality,maps_link FROM festivals WHERE id=ANY(%s)",(fest_ids,))
+    cur.execute("SELECT id,nombre,departamento,municipio,maps_link FROM festivals WHERE id=ANY(%s)",(fest_ids,))
     fests = cur.fetchall()
     for fid,fname,dept,muni,maps in fests:
         if not maps:

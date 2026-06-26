@@ -36,7 +36,7 @@ def procesar():
     conn = conectar()
     cur = conn.cursor()
     print("GOOGLE PLACES — SITIOS Y HOTELES")
-    cur.execute("SELECT DISTINCT ON (m.id) m.id,m.name,m.department,m.sitio_1,m.hotel_1 FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL) AND (m.sitio_1 IS NULL OR m.sitio_1='' OR m.hotel_1 IS NULL OR m.hotel_1='') ORDER BY m.id")
+    cur.execute("SELECT DISTINCT ON (m.id) m.id,m.nombre,m.departamento,m.sitio_1,m.hotel_1 FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL) AND (m.sitio_1 IS NULL OR m.sitio_1='' OR m.hotel_1 IS NULL OR m.hotel_1='') ORDER BY m.id")
     municipios = cur.fetchall()
     print(f"Municipios a procesar: {len(municipios)}")
     actualizados = 0

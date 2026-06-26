@@ -137,3 +137,4 @@ psycopg2.errors.UndefinedColumn: column "name" does not exist
 LINE 1: SELECT id,name,department,slug,token_edicion,gentilicio,temp...
                   ^
 
+[14:05:31] PIPELINE COMPLETADO

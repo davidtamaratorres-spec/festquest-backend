@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-06-26T14:23:07.702534",
+  "festivales": 364,
+  "municipios": 338,
+  "stats": {
+    "gentilicio": {
+      "ok": 299,
+      "total": 338,
+      "pct": 88.5
+    },
+    "temperatura_promedio": {
+      "ok": 337,
+      "total": 338,
+      "pct": 99.7
+    },
+    "altura": {
+      "ok": 337,
+      "total": 338,
+      "pct": 99.7
+    },
+    "sitio_1": {
+      "ok": 337,
+      "total": 338,
+      "pct": 99.7
+    },
+    "maps_1": {
+      "ok": 337,
+      "total": 338,
+      "pct": 99.7
+    },
+    "hotel_1": {
+      "ok": 338,
+      "total": 338,
+      "pct": 100.0
+    },
+    "wa_1": {
+      "ok": 40,
+      "total": 338,
+      "pct": 11.8
+    },
+    "mandatario": {
+      "ok": 0,
+      "total": 338,
+      "pct": 0.0
+    },
+    "bandera_url": {
+      "ok": 213,
+      "total": 338,
+      "pct": 63.0
+    },
+    "escudo_url": {
+      "ok": 193,
+      "total": 338,
+      "pct": 57.1
+    }
+  }
+}

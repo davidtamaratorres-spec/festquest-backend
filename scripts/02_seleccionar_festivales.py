@@ -12,10 +12,10 @@ def seleccionar():
     conn = conectar()
     cur = conn.cursor()
     print("SELECCION 200+ FESTIVALES 32 DEPARTAMENTOS")
-    cur.execute("""SELECT f.id,f.name,f.department,f.municipality,f.municipality_id,f.start_date,f.end_date,f.description,f.image_url,f.maps_link,
-        (CASE WHEN m.gentilicio IS NOT NULL AND m.gentilicio!='' THEN 1 ELSE 0 END+CASE WHEN m.temperatura_promedio IS NOT NULL THEN 1 ELSE 0 END+CASE WHEN m.altura_msnm IS NOT NULL THEN 1 ELSE 0 END+CASE WHEN m.sitio_1 IS NOT NULL AND m.sitio_1!='' THEN 2 ELSE 0 END+CASE WHEN m.hotel_1 IS NOT NULL AND m.hotel_1!='' THEN 2 ELSE 0 END+CASE WHEN m.mandatario IS NOT NULL AND m.mandatario!='' THEN 1 ELSE 0 END) as score_muni,
-        (CASE WHEN f.image_url IS NOT NULL AND f.image_url!='' THEN 2 ELSE 0 END+CASE WHEN f.description IS NOT NULL AND LENGTH(f.description)>50 THEN 1 ELSE 0 END+CASE WHEN f.start_date IS NOT NULL THEN 1 ELSE 0 END) as score_fest
-        FROM festivals f LEFT JOIN municipalities m ON m.id=f.municipality_id WHERE f.department IS NOT NULL ORDER BY f.department,(score_muni+score_fest) DESC""")
+    cur.execute("""SELECT f.id,f.nombre,f.departamento,f.municipio,f.municipio_id,f.fecha_inicio,f.fecha_fin,f.descripcion,f.foto_url,f.maps_link,
+        (CASE WHEN m.gentilicio IS NOT NULL AND m.gentilicio!='' THEN 1 ELSE 0 END+CASE WHEN m.temperatura_promedio IS NOT NULL THEN 1 ELSE 0 END+CASE WHEN m.altura IS NOT NULL THEN 1 ELSE 0 END+CASE WHEN m.sitio_1 IS NOT NULL AND m.sitio_1!='' THEN 2 ELSE 0 END+CASE WHEN m.hotel_1 IS NOT NULL AND m.hotel_1!='' THEN 2 ELSE 0 END+CASE WHEN m.mandatario IS NOT NULL AND m.mandatario!='' THEN 1 ELSE 0 END) as score_muni,
+        (CASE WHEN f.foto_url IS NOT NULL AND f.foto_url!='' THEN 2 ELSE 0 END+CASE WHEN f.descripcion IS NOT NULL AND LENGTH(f.descripcion)>50 THEN 1 ELSE 0 END+CASE WHEN f.fecha_inicio IS NOT NULL THEN 1 ELSE 0 END) as score_fest
+        FROM festivals f LEFT JOIN municipalities m ON m.id=f.municipio_id WHERE f.departamento IS NOT NULL ORDER BY f.departamento,(score_muni+score_fest) DESC""")
     todos = cur.fetchall()
     print(f"Total festivales en BD: {len(todos)}")
     por_dept = defaultdict(list)

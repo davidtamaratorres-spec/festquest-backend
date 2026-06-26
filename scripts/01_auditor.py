@@ -14,15 +14,15 @@ def auditar():
     cur.execute("SELECT COUNT(*) FROM festivals")
     total_fest = cur.fetchone()[0]
     print(f"Festivales: {total_fest}")
-    cur.execute("SELECT COUNT(*) FROM municipalities WHERE id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL)")
+    cur.execute("SELECT COUNT(*) FROM municipalities WHERE id IN (SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL)")
     total_munis = cur.fetchone()[0]
     print(f"Municipios con festivales: {total_munis}")
-    campos_muni = ["gentilicio","temperatura_promedio","altura_msnm","sitio_1","maps_1","hotel_1","wa_1","mandatario","bandera_url","escudo_url"]
+    campos_muni = ["gentilicio","temperatura_promedio","altura","sitio_1","maps_1","hotel_1","wa_1","mandatario","bandera_url","escudo_url"]
     print("Completitud municipios:")
     muni_stats = {}
     for campo in campos_muni:
         try:
-            cur.execute(f"SELECT COUNT(*) FROM municipalities WHERE id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL) AND {campo} IS NOT NULL AND CAST({campo} AS TEXT) NOT IN ('','null','None')")
+            cur.execute(f"SELECT COUNT(*) FROM municipalities WHERE id IN (SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL) AND {campo} IS NOT NULL AND CAST({campo} AS TEXT) NOT IN ('','null','None')")
             ok = cur.fetchone()[0]
             pct = round(ok/total_munis*100,1) if total_munis else 0
             estado = "OK" if pct>=90 else ("PARCIAL" if pct>=40 else "CRITICO")
@@ -30,7 +30,7 @@ def auditar():
             muni_stats[campo] = {"ok":ok,"total":total_munis,"pct":pct}
         except Exception as e:
             print(f"  ERROR {campo}: {e}")
-    cur.execute("SELECT m.id, m.name, m.department, m.gentilicio, m.temperatura_promedio, m.altura_msnm, m.sitio_1, m.hotel_1, m.mandatario, m.bandera_url, m.escudo_url, m.token_edicion, (SELECT COUNT(*) FROM festivals f WHERE f.municipality_id=m.id) as nf FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL) ORDER BY nf DESC")
+    cur.execute("SELECT m.id, m.nombre, m.departamento, m.gentilicio, m.temperatura_promedio, m.altura, m.sitio_1, m.hotel_1, m.mandatario, m.bandera_url, m.escudo_url, m.token_edicion, (SELECT COUNT(*) FROM festivals f WHERE f.municipio_id=m.id) as nf FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL) ORDER BY nf DESC")
     munis = cur.fetchall()
     with open(f"{OUT_DIR}/auditoria_municipios.csv","w",newline="",encoding="utf-8") as f:
         w = csv.writer(f)

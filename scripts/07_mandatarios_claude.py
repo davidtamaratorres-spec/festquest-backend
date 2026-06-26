@@ -32,7 +32,7 @@ def procesar():
     conn = conectar()
     cur = conn.cursor()
     print("MANDATARIOS — CLAUDE + WEB SEARCH")
-    cur.execute("SELECT m.id,m.name,m.department FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL) AND (m.mandatario IS NULL OR m.mandatario='') ORDER BY m.department,m.name LIMIT 250")
+    cur.execute("SELECT m.id,m.nombre,m.departamento FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL) AND (m.mandatario IS NULL OR m.mandatario='') ORDER BY m.departamento,m.nombre LIMIT 250")
     municipios = cur.fetchall()
     print(f"Municipios a procesar: {len(municipios)}")
     actualizados = 0
@@ -41,7 +41,6 @@ def procesar():
         data = buscar_mandatario(nombre,dept)
         updates = {}
         if data.get("mandatario"): updates["mandatario"]=data["mandatario"][:150]
-        if data.get("cargo"): updates["cargo"]=data["cargo"][:80]
         if data.get("telefono_alcaldia"):
             tel = re.sub(r'[^\d+]','',str(data["telefono_alcaldia"]))
             if len(tel)>=7: updates["telefono"]=tel[:20]

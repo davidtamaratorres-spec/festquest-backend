@@ -48,18 +48,18 @@ def enriquecer():
         festivales = json.load(f)
     actualizados = 0
     for fest in festivales:
-        cur.execute("SELECT id,name,department,municipality,start_date,end_date,description,image_url,maps_link FROM festivals WHERE id=%s",(fest["id"],))
+        cur.execute("SELECT id,nombre,departamento,municipio,fecha_inicio,fecha_fin,descripcion,foto_url,maps_link FROM festivals WHERE id=%s",(fest["id"],))
         row = cur.fetchone()
         if not row: continue
         _,name,dept,muni,start,end,desc,img,maps = row
         updates = {}
         if not desc or len(str(desc))<50:
             nd = generar_descripcion(name,muni,dept,start,end)
-            if nd: updates["description"]=nd
+            if nd: updates["descripcion"]=nd
             time.sleep(0.3)
         if not img:
             ni = buscar_imagen_wikimedia(name,muni,dept)
-            if ni: updates["image_url"]=ni
+            if ni: updates["foto_url"]=ni
         if not maps:
             q = f"{name}+{muni}+{dept}+Colombia".replace(" ","+")
             updates["maps_link"]=f"https://www.google.com/maps/search/?api=1&query={q}"

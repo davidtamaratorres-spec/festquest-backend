@@ -37,7 +37,7 @@ def procesar():
     conn = conectar()
     cur = conn.cursor()
     print("WIKIMEDIA — BANDERAS Y ESCUDOS")
-    cur.execute("SELECT m.id,m.name,m.department,m.bandera_url,m.escudo_url FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL) AND (m.bandera_url IS NULL OR m.bandera_url='' OR m.escudo_url IS NULL OR m.escudo_url='') ORDER BY m.department,m.name")
+    cur.execute("SELECT m.id,m.nombre,m.departamento,m.bandera_url,m.escudo_url FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipio_id FROM festivals WHERE municipio_id IS NOT NULL) AND (m.bandera_url IS NULL OR m.bandera_url='' OR m.escudo_url IS NULL OR m.escudo_url='') ORDER BY m.departamento,m.nombre")
     municipios = cur.fetchall()
     print(f"Municipios a procesar: {len(municipios)}")
     actualizados = 0

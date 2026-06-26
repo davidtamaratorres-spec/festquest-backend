@@ -11,7 +11,7 @@ def generar():
     conn = conectar()
     cur = conn.cursor()
     print("URL VALIDACION CARAMANTA")
-    cur.execute("SELECT id,name,department,slug,token_edicion,gentilicio,temperatura_promedio,altura_msnm,sitio_1,hotel_1,mandatario,(SELECT COUNT(*) FROM festivals WHERE municipality_id=id) as nf FROM municipalities WHERE LOWER(name) LIKE '%caramanta%' LIMIT 1")
+    cur.execute("SELECT id,nombre,departamento,slug,token_edicion,gentilicio,temperatura_promedio,altura,sitio_1,hotel_1,mandatario,(SELECT COUNT(*) FROM festivals WHERE municipio_id=id) as nf FROM municipalities WHERE LOWER(nombre) LIKE '%caramanta%' LIMIT 1")
     row = cur.fetchone()
     if not row:
         print("Caramanta no encontrado en BD")
