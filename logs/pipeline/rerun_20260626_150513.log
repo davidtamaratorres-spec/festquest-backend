@@ -214,3 +214,14 @@ Campos pendientes:
   bandera_url: 9 municipios
   gentilicio: 7 municipios
 Municipios actualizados: 4
+[15:43:27] PASO 9 — Backend security check
+BACKEND SECURITY CHECK
+Parches aplicados en commit 1711498:
+  OK helmet instalado
+  OK express-rate-limit instalado
+  OK CORS lista blanca estricta
+  OK rate limit 300/15min global
+  OK rate limit 10/min en escritura
+  OK RLS activo en BD
+  OK /privacidad publicado
+Reporte: output/reporte_seguridad.json
