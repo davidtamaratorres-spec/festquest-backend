@@ -212,3 +212,14 @@ Traceback (most recent call last):
     with open(f"{OUT_DIR}/festivales_seleccionados.json",encoding="utf-8") as f:
          ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 FileNotFoundError: [Errno 2] No such file or directory: './output/festivales_seleccionados.json'
+[14:59:44] PASO 9 — Backend security check
+BACKEND SECURITY CHECK
+Parches aplicados en commit 1711498:
+  OK helmet instalado
+  OK express-rate-limit instalado
+  OK CORS lista blanca estricta
+  OK rate limit 300/15min global
+  OK rate limit 10/min en escritura
+  OK RLS activo en BD
+  OK /privacidad publicado
+Reporte: output/reporte_seguridad.json
