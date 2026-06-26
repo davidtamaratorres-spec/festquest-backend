@@ -35,3 +35,8 @@ Guardado: ./output/festivales_seleccionados.json
 python-dotenv could not parse statement starting at line 8
 ENRIQUECIMIENTO DE FESTIVALES
 Festivales actualizados: 0
+[15:06:05] PASO 4 â€” Wikipedia municipios
+python-dotenv could not parse statement starting at line 8
+WIKIPEDIA — DATOS GEOGRAFICOS MUNICIPIOS
+Municipios a procesar: 36
+Municipios actualizados: 0
