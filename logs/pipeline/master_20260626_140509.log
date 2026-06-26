@@ -45,3 +45,17 @@ Traceback (most recent call last):
     with open(f"{OUT_DIR}/festivales_seleccionados.json",encoding="utf-8") as f:
          ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 FileNotFoundError: [Errno 2] No such file or directory: './output/festivales_seleccionados.json'
+[14:05:18] PASO 4 â€” Wikipedia municipios
+python-dotenv could not parse statement starting at line 8
+WIKIPEDIA — DATOS GEOGRAFICOS MUNICIPIOS
+Traceback (most recent call last):
+  File "D:\festquest-backend\scripts\04_wikipedia_municipios.py", line 85, in <module>
+    procesar()
+    ~~~~~~~~^^
+  File "D:\festquest-backend\scripts\04_wikipedia_municipios.py", line 54, in procesar
+    cur.execute("SELECT m.id,m.name,m.department,m.gentilicio,m.temperatura_promedio,m.altura_msnm FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL) AND (m.gentilicio IS NULL OR m.gentilicio='' OR m.temperatura_promedio IS NULL OR m.altura_msnm IS NULL) ORDER BY m.department,m.name")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column m.name does not exist
+LINE 1: SELECT m.id,m.name,m.department,m.gentilicio,m.temperatura_p...
+                    ^
+
