@@ -87,3 +87,17 @@ psycopg2.errors.UndefinedColumn: column m.name does not exist
 LINE 1: SELECT DISTINCT ON (m.id) m.id,m.name,m.department,m.sitio_1...
                                        ^
 
+[14:05:24] PASO 7 â€” Mandatarios
+python-dotenv could not parse statement starting at line 8
+MANDATARIOS — CLAUDE + WEB SEARCH
+Traceback (most recent call last):
+  File "D:\festquest-backend\scripts\07_mandatarios_claude.py", line 66, in <module>
+    procesar()
+    ~~~~~~~~^^
+  File "D:\festquest-backend\scripts\07_mandatarios_claude.py", line 35, in procesar
+    cur.execute("SELECT m.id,m.name,m.department FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL) AND (m.mandatario IS NULL OR m.mandatario='') ORDER BY m.department,m.name LIMIT 250")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column m.name does not exist
+LINE 1: SELECT m.id,m.name,m.department FROM municipalities m WHERE ...
+                    ^
+
