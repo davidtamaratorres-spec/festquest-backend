@@ -45,7 +45,7 @@
     "datos": {
       "mandatario": "Elquin Jadrian Uni Heredia",
       "cargo": "Alcalde",
-      "telefono_alcaldia": "+57 (8) 592 8064",
+      "telefono_alcaldia": "60(8)5928064",
       "confianza": "alta"
     }
   },
@@ -66,7 +66,7 @@
       "mandatario": null,
       "cargo": null,
       "telefono_alcaldia": null,
-      "confianza": "error"
+      "confianza": "sin_datos"
     }
   },
   {
@@ -96,7 +96,7 @@
       "mandatario": null,
       "cargo": null,
       "telefono_alcaldia": null,
-      "confianza": "sin_datos"
+      "confianza": "error"
     }
   },
   {

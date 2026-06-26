@@ -232,3 +232,4 @@ URL formulario: https://festquest-backend.onrender.com/municipio/caramanta/edita
 URL publica: https://festquest.app/municipio/caramanta/editar?token=89c265fa40225c511da8da8277721d6e0538a7add97ac329b04e5b52db065f6c
 Datos completos: gentilicio=SI, temp=SI, sitios=SI, hoteles=SI, mandatario=NO
 Guardado: ./output/caramanta_validacion.json
+[14:59:46] PIPELINE COMPLETADO
