@@ -59,3 +59,17 @@ psycopg2.errors.UndefinedColumn: column m.name does not exist
 LINE 1: SELECT m.id,m.name,m.department,m.gentilicio,m.temperatura_p...
                     ^
 
+[14:05:20] PASO 5 — Wikimedia imágenes
+python-dotenv could not parse statement starting at line 8
+WIKIMEDIA � BANDERAS Y ESCUDOS
+Traceback (most recent call last):
+  File "D:\festquest-backend\scripts\05_wikimedia_imagenes.py", line 64, in <module>
+    procesar()
+    ~~~~~~~~^^
+  File "D:\festquest-backend\scripts\05_wikimedia_imagenes.py", line 40, in procesar
+    cur.execute("SELECT m.id,m.name,m.department,m.bandera_url,m.escudo_url FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL) AND (m.bandera_url IS NULL OR m.bandera_url='' OR m.escudo_url IS NULL OR m.escudo_url='') ORDER BY m.department,m.name")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column m.name does not exist
+LINE 1: SELECT m.id,m.name,m.department,m.bandera_url,m.escudo_url F...
+                    ^
+
