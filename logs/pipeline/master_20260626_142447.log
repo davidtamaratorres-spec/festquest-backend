@@ -201,3 +201,14 @@ Municipios a procesar: 250
   OK Alejandría: Gloria Cecilia Naranjo Osorio
   OK Amagá: Wilser Darío Molina Molina
 Municipios actualizados: 6
+[14:59:42] PASO 8 â€” ValidaciÃ³n final
+python-dotenv could not parse statement starting at line 8
+VALIDACION FINAL — SOLO DATOS REALES
+Traceback (most recent call last):
+  File "D:\festquest-backend\scripts\08_validacion_final.py", line 71, in <module>
+    validar()
+    ~~~~~~~^^
+  File "D:\festquest-backend\scripts\08_validacion_final.py", line 16, in validar
+    with open(f"{OUT_DIR}/festivales_seleccionados.json",encoding="utf-8") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: './output/festivales_seleccionados.json'
