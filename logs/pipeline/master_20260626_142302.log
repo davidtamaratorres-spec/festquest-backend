@@ -191,3 +191,7 @@ Municipios a procesar: 184
   OK La Primavera: ['escudo_url']
 Municipios actualizados: 130
 [14:49:35] PASO 6 â€” Google Places
+python-dotenv could not parse statement starting at line 8
+GOOGLE PLACES — SITIOS Y HOTELES
+Municipios a procesar: 0
+Municipios actualizados: 0
