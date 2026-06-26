@@ -49,3 +49,8 @@ Traceback (most recent call last):
 FileNotFoundError: [Errno 2] No such file or directory: './output/festivales_seleccionados.json'
 [14:24:58] PASO 4 â€” Wikipedia municipios
 python-dotenv could not parse statement starting at line 8
+WIKIPEDIA — DATOS GEOGRAFICOS MUNICIPIOS
+Municipios a procesar: 38
+  OK Cali: ['gentilicio']
+  OK El Dovio: ['gentilicio']
+Municipios actualizados: 2
