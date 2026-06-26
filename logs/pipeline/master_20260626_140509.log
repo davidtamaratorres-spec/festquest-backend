@@ -73,3 +73,17 @@ psycopg2.errors.UndefinedColumn: column m.name does not exist
 LINE 1: SELECT m.id,m.name,m.department,m.bandera_url,m.escudo_url F...
                     ^
 
+[14:05:22] PASO 6 â€” Google Places
+python-dotenv could not parse statement starting at line 8
+GOOGLE PLACES — SITIOS Y HOTELES
+Traceback (most recent call last):
+  File "D:\festquest-backend\scripts\06_google_places.py", line 91, in <module>
+    procesar()
+    ~~~~~~~~^^
+  File "D:\festquest-backend\scripts\06_google_places.py", line 39, in procesar
+    cur.execute("SELECT DISTINCT ON (m.id) m.id,m.name,m.department,m.sitio_1,m.hotel_1 FROM municipalities m WHERE m.id IN (SELECT DISTINCT municipality_id FROM festivals WHERE municipality_id IS NOT NULL) AND (m.sitio_1 IS NULL OR m.sitio_1='' OR m.hotel_1 IS NULL OR m.hotel_1='') ORDER BY m.id")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column m.name does not exist
+LINE 1: SELECT DISTINCT ON (m.id) m.id,m.name,m.department,m.sitio_1...
+                                       ^
+
