@@ -123,3 +123,17 @@ Parches aplicados en commit 1711498:
   OK RLS activo en BD
   OK /privacidad publicado
 Reporte: output/reporte_seguridad.json
+[14:05:29] PASO 10 — URL Caramanta
+python-dotenv could not parse statement starting at line 8
+URL VALIDACION CARAMANTA
+Traceback (most recent call last):
+  File "D:\festquest-backend\scripts\10_url_caramanta.py", line 43, in <module>
+    generar()
+    ~~~~~~~^^
+  File "D:\festquest-backend\scripts\10_url_caramanta.py", line 14, in generar
+    cur.execute("SELECT id,name,department,slug,token_edicion,gentilicio,temperatura_promedio,altura_msnm,sitio_1,hotel_1,mandatario,(SELECT COUNT(*) FROM festivals WHERE municipality_id=id) as nf FROM municipalities WHERE LOWER(name) LIKE '%caramanta%' LIMIT 1")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "name" does not exist
+LINE 1: SELECT id,name,department,slug,token_edicion,gentilicio,temp...
+                  ^
+
