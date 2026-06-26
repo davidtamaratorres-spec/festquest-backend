@@ -228,3 +228,12 @@ Parches aplicados en commit 1711498:
   OK RLS activo en BD
   OK /privacidad publicado
 Reporte: output/reporte_seguridad.json
+[14:59:53] PASO 10 — URL Caramanta
+python-dotenv could not parse statement starting at line 8
+URL VALIDACION CARAMANTA
+Municipio: Caramanta, Antioquia
+Festivales: 0
+URL formulario: https://festquest-backend.onrender.com/municipio/caramanta/editar?token=89c265fa40225c511da8da8277721d6e0538a7add97ac329b04e5b52db065f6c
+URL publica: https://festquest.app/municipio/caramanta/editar?token=89c265fa40225c511da8da8277721d6e0538a7add97ac329b04e5b52db065f6c
+Datos completos: gentilicio=SI, temp=SI, sitios=SI, hoteles=SI, mandatario=NO
+Guardado: ./output/caramanta_validacion.json
