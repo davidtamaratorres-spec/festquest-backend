@@ -1,0 +1,33 @@
+[15:05:13] PASO 2 â€” SelecciÃ³n festivales
+python-dotenv could not parse statement starting at line 8
+SELECCION 200+ FESTIVALES 32 DEPARTAMENTOS
+Total festivales en BD: 364
+  Amazonas: Fiestas de San Juan Bautista
+  Antioquia: Fiestas de San Pedro
+  Atlántico: Gran Parada de Comparsas
+  Bolívar: Fiestas de la Independencia de Cartagena
+  Boyacá: Desfile de Carrozas Aguinaldo Boyacense
+  Caldas: Feria de Manizales
+  Casanare: Fiestas de San Pedro
+  Cauca: Procesión del Viernes Santo
+  Cesar: Festival de la Leyenda Vallenata
+  Chocó: Desfile de Comparsas San Pacho
+  Cundinamarca: Fiestas de San Pedro
+  Córdoba: Feria Nacional de la Ganadería
+  Guaviare: Fiestas del Retorno
+  Huila: Desfile Nacional del Bambuco
+  La Guajira: Fiestas de San Isidro Labrador
+  Magdalena: Fiestas de San José
+  Meta: Fiestas de San Antonio
+  Norte de Santander: Fiestas de San Antonio
+  Quindío: Fiestas Aniversarias de Armenia
+  Risaralda: Fiestas de la Cosecha
+  San Andrés y Providencia: Elección de la Reina del Coco
+  Santander: Fiestas de San Isidro Labrador
+  Tolima: Festival Folclórico Colombiano
+  Valle del Cauca: Fiestas de San Pedro
+  Vaupés: Fiestas de San Pedro
+  Vichada: Fiestas del Orinoco
+Fase 1: 26 festivales
+Total seleccionados: 116
+Guardado: ./output/festivales_seleccionados.json
