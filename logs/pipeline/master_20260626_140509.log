@@ -14,3 +14,23 @@ psycopg2.errors.UndefinedColumn: column "municipality_id" does not exist
 LINE 1: ... FROM municipalities WHERE id IN (SELECT DISTINCT municipali...
                                                              ^
 
+[14:05:12] PASO 2 — Selección festivales
+python-dotenv could not parse statement starting at line 8
+SELECCION 200+ FESTIVALES 32 DEPARTAMENTOS
+Traceback (most recent call last):
+  File "D:\festquest-backend\scripts\02_seleccionar_festivales.py", line 56, in <module>
+    seleccionar()
+    ~~~~~~~~~~~^^
+  File "D:\festquest-backend\scripts\02_seleccionar_festivales.py", line 15, in seleccionar
+    cur.execute("""SELECT f.id,f.name,f.department,f.municipality,f.municipality_id,f.start_date,f.end_date,f.description,f.image_url,f.maps_link,
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        (CASE WHEN m.gentilicio IS NOT NULL AND m.gentilicio!='' THEN 1 ELSE 0 END+CASE WHEN m.temperatura_promedio IS NOT NULL THEN 1 ELSE 0 END+CASE WHEN m.altura_msnm IS NOT NULL THEN 1 ELSE 0 END+CASE WHEN m.sitio_1 IS NOT NULL AND m.sitio_1!='' THEN 2 ELSE 0 END+CASE WHEN m.hotel_1 IS NOT NULL AND m.hotel_1!='' THEN 2 ELSE 0 END+CASE WHEN m.mandatario IS NOT NULL AND m.mandatario!='' THEN 1 ELSE 0 END) as score_muni,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        (CASE WHEN f.image_url IS NOT NULL AND f.image_url!='' THEN 2 ELSE 0 END+CASE WHEN f.description IS NOT NULL AND LENGTH(f.description)>50 THEN 1 ELSE 0 END+CASE WHEN f.start_date IS NOT NULL THEN 1 ELSE 0 END) as score_fest
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        FROM festivals f LEFT JOIN municipalities m ON m.id=f.municipality_id WHERE f.department IS NOT NULL ORDER BY f.department,(score_muni+score_fest) DESC""")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column f.municipality_id does not exist
+LINE 4: ...OM festivals f LEFT JOIN municipalities m ON m.id=f.municipa...
+                                                             ^
+
