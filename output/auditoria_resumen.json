@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-06-26T14:23:07.702534",
+  "timestamp": "2026-06-26T14:24:52.382828",
   "festivales": 364,
   "municipios": 338,
   "stats": {
     "gentilicio": {
-      "ok": 299,
+      "ok": 300,
       "total": 338,
-      "pct": 88.5
+      "pct": 88.8
     },
     "temperatura_promedio": {
       "ok": 337,

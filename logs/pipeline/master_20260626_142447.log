@@ -1,0 +1,18 @@
+[14:24:47] Instalando dependencias...
+[14:24:48] PASO 1 — Auditoría
+python-dotenv could not parse statement starting at line 8
+AUDITOR FESTQUEST
+Festivales: 364
+Municipios con festivales: 338
+Completitud municipios:
+  PARCIAL gentilicio: 300/338 (88.8%)
+  OK temperatura_promedio: 337/338 (99.7%)
+  OK altura: 337/338 (99.7%)
+  OK sitio_1: 337/338 (99.7%)
+  OK maps_1: 337/338 (99.7%)
+  OK hotel_1: 338/338 (100.0%)
+  CRITICO wa_1: 40/338 (11.8%)
+  CRITICO mandatario: 0/338 (0.0%)
+  PARCIAL bandera_url: 213/338 (63.0%)
+  PARCIAL escudo_url: 193/338 (57.1%)
+Guardado: ./output/auditoria_municipios.csv

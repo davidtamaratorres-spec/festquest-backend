@@ -47,3 +47,5 @@ Traceback (most recent call last):
     with open(f"{OUT_DIR}/festivales_seleccionados.json",encoding="utf-8") as f:
          ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 FileNotFoundError: [Errno 2] No such file or directory: './output/festivales_seleccionados.json'
+[14:23:13] PASO 4 — Wikipedia municipios
+python-dotenv could not parse statement starting at line 8
