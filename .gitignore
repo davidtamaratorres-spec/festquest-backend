@@ -26,5 +26,6 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Archivos grandes opcionales (si quieres evitar subirlos)
-# data/*.csv
+# Output del pipeline (pueden contener tokens)
+output/auditoria_municipios.csv
+output/caramanta_validacion.json
