@@ -213,6 +213,23 @@ export default function MunicipioDetail() {
         {/* ── Body ── */}
         <View style={s.body}>
 
+          {/* Descripción */}
+          {present(m.descripcion) && (
+            <View style={s.descCard}>
+              <Text style={s.descTitle}>📖 Sobre el municipio</Text>
+              <Text style={s.descText}>{m.descripcion}</Text>
+            </View>
+          )}
+
+          {/* Sitio web */}
+          {present(m.sitio_web) && (
+            <Pressable style={s.webCard} onPress={() => openLink(m.sitio_web!)}>
+              <Ionicons name="globe-outline" size={16} color={C.orange} />
+              <Text style={s.webCardTxt} numberOfLines={1}>{m.sitio_web}</Text>
+              <Ionicons name="chevron-forward" size={13} color={C.textDim} />
+            </Pressable>
+          )}
+
           {/* Stats grid */}
           <View style={s.statsGrid}>
             <StatItem label="🪪 DANE" value={m.codigo_dane ?? '—'} accent />
@@ -257,10 +274,22 @@ export default function MunicipioDetail() {
             <View style={s.secBlock}>
               <SecLabel>🎊 Festivales</SecLabel>
               {festivals.map(f => (
-                <Pressable key={f.id} style={s.festMini} onPress={() => router.push(`/festival/${f.id}`)}>
-                  <View style={s.festMiniDot} />
-                  <Text style={s.festMiniName} numberOfLines={1}>{f.nombre}</Text>
-                  <Text style={s.festMiniDate}>{f.fecha_inicio ? formatDate(f.fecha_inicio) : 'Sin fecha'}</Text>
+                <Pressable key={f.id} style={s.festCard} onPress={() => router.push(`/festival/${f.id}`)}>
+                  {present(f.foto_url) ? (
+                    <Image source={{ uri: f.foto_url }} style={s.festCardImg} contentFit="cover" />
+                  ) : (
+                    <View style={[s.festCardImg, s.festCardImgFallback]}>
+                      <Text style={{ fontSize: 20 }}>🎊</Text>
+                    </View>
+                  )}
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.festCardName} numberOfLines={2}>{f.nombre}</Text>
+                    {present(f.descripcion) && (
+                      <Text style={s.festCardDesc} numberOfLines={2}>{f.descripcion}</Text>
+                    )}
+                    <Text style={s.festCardDate}>{f.fecha_inicio ? formatDate(f.fecha_inicio) : 'Sin fecha'}</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={13} color={C.textDim} />
                 </Pressable>
               ))}
             </View>
@@ -390,15 +419,30 @@ const s = StyleSheet.create({
   },
   mapBtnTxt: { fontSize: 11, color: C.orange, fontWeight: '600' },
 
-  festMini: {
-    backgroundColor: C.surface, borderWidth: 1, borderColor: C.border,
-    borderRadius: 12, padding: 11, paddingHorizontal: 14,
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 3, shadowOffset: { width: 0, height: 1 }, elevation: 1,
+  descCard: {
+    backgroundColor: C.surface, borderWidth: 1, borderColor: C.border, borderRadius: 16, padding: 16,
+    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 1,
   },
-  festMiniDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: C.orange },
-  festMiniName: { fontFamily: 'Outfit_700Bold', flex: 1, fontSize: 12, color: C.text },
-  festMiniDate: { fontSize: 10, color: C.textDim },
+  descTitle: { fontFamily: 'Outfit_700Bold', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1.2, color: C.textDim, marginBottom: 10 },
+  descText: { fontFamily: 'DMSans_400Regular', fontSize: 14, lineHeight: 22, color: C.text },
+  webCard: {
+    backgroundColor: C.surface, borderWidth: 1, borderColor: C.border,
+    borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10,
+    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, elevation: 1,
+  },
+  webCardTxt: { flex: 1, fontSize: 12, color: C.orange, fontWeight: '600' },
+  festCard: {
+    backgroundColor: C.surface, borderWidth: 1, borderColor: C.border,
+    borderRadius: 14, overflow: 'hidden',
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 3, shadowOffset: { width: 0, height: 1 }, elevation: 1,
+    paddingRight: 12,
+  },
+  festCardImg: { width: 80, height: 80 },
+  festCardImgFallback: { backgroundColor: C.orangeDim, alignItems: 'center', justifyContent: 'center' },
+  festCardName: { fontFamily: 'Outfit_700Bold', fontSize: 13, color: C.text, marginBottom: 2 },
+  festCardDesc: { fontSize: 11, color: C.textSub, lineHeight: 15, marginBottom: 4 },
+  festCardDate: { fontSize: 10, color: C.orange },
 
   sitioItem: {
     backgroundColor: C.surface, borderWidth: 1, borderColor: C.border,

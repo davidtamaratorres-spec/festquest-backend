@@ -45,6 +45,9 @@ export type FestivalMini = {
   nombre: string;
   fecha_inicio: string | null;
   fecha_fin: string | null;
+  foto_url: string | null;
+  descripcion: string | null;
+  maps_link: string | null;
 };
 
 export type Municipio = {
@@ -59,6 +62,9 @@ export type Municipio = {
   altura: number | null;
   alcalde: string | null;
   correo_alcalde: string | null;
+  telefono: string | null;
+  descripcion: string | null;
+  sitio_web: string | null;
   bandera_url: string | null;
   escudo_url: string | null;
   latitud: number | null;

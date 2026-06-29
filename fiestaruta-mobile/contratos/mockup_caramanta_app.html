@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FestQuest — Mockup Caramanta</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Sans:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1A1A2E;
+    font-family: 'DM Sans', sans-serif;
+    padding: 40px 20px 60px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .subtitle {
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    font-size: 13px;
+    margin-bottom: 40px;
+  }
+
+  .screens-row {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .screen-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .screen-label {
+    font-family: 'Outfit', sans-serif;
+    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 320px;
+    height: 680px;
+    background: #FFF8F0;
+    border-radius: 36px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2A2A3E,
+      0 0 0 10px #444,
+      0 30px 80px rgba(0,0,0,0.5);
+  }
+  .phone-inner {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+  .phone-inner::-webkit-scrollbar { display: none; }
+
+  /* Status bar */
+  .status-bar {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .status-bar.dark { background: #FF5500; color: #fff; }
+  .status-bar.light { background: #FFF8F0; color: #1A1A1A; }
+  .status-bar.black { background: #000; color: #fff; }
+
+  /* ━━━━━ SCREEN 1: HOME ━━━━━ */
+  .home-header {
+    background: #FF5500;
+    padding: 12px 16px 16px;
+  }
+  .home-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .home-logo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .home-logo span { color: rgba(255,255,255,0.6); font-weight: 400; font-size: 13px; margin-left: 4px; }
+  .search-bar {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .search-icon { color: rgba(255,255,255,0.7); font-size: 14px; }
+  .search-text { color: rgba(255,255,255,0.7); font-size: 12px; }
+  .fest-count {
+    color: rgba(255,255,255,0.85);
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  .home-list { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+  .fest-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .fest-card-hero {
+    height: 130px;
+    position: relative;
+    overflow: hidden;
+  }
+  .fest-card-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .fest-card-hero-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.75) 100%);
+  }
+  .fest-card-hero-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 12px;
+  }
+  .fest-region-pill {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .fest-card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .fest-card-body { padding: 10px 12px; }
+  .fest-card-loc {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .fest-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .fest-card-date {
+    font-size: 10px;
+    font-weight: 600;
+    color: #FF5500;
+    font-family: 'Outfit', sans-serif;
+  }
+  .fest-card-arrow {
+    width: 24px; height: 24px;
+    background: rgba(255,85,0,0.08);
+    border: 1px solid rgba(255,85,0,0.18);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #FF5500;
+  }
+
+  .gradient-caribe  { background: linear-gradient(135deg, #FF8C42, #FF5500); }
+  .gradient-andina  { background: linear-gradient(135deg, #A855F7, #7C3AED); }
+  .gradient-pacifico{ background: linear-gradient(135deg, #3B9EE8, #1D4ED8); }
+  .gradient-llanos  { background: linear-gradient(135deg, #34A853, #059669); }
+
+  /* Tab bar */
+  .tab-bar {
+    background: #fff;
+    border-top: 1px solid rgba(0,0,0,0.07);
+    display: flex;
+    padding: 8px 0 4px;
+  }
+  .tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 9px;
+    color: #AAAAAA;
+    font-weight: 600;
+  }
+  .tab-item.active { color: #FF5500; }
+  .tab-icon { font-size: 18px; }
+
+  /* ━━━━━ SCREEN 2: FESTIVAL DETAIL ━━━━━ */
+  .fest-hero {
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+  }
+  .fest-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .fest-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.80) 100%);
+  }
+  .fest-hero-content {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 14px 16px;
+  }
+  .region-pill {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 9px; font-weight: 700; color: #fff;
+    letter-spacing: 0.5px; margin-bottom: 6px;
+  }
+  .fest-hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 22px; font-weight: 900; color: #fff;
+    line-height: 1.15; margin-bottom: 6px;
+  }
+  .fest-hero-loc {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 11px; color: rgba(255,255,255,0.8);
+  }
+
+  .back-row {
+    padding: 12px 14px 4px;
+    background: #FFF8F0;
+  }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(255,85,0,0.08);
+    border: 1px solid rgba(255,85,0,0.18);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 11px; font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    color: #FF5500;
+  }
+
+  .dates-strip {
+    display: flex;
+    background: #fff;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+  }
+  .date-block {
+    flex: 1;
+    padding: 10px 12px;
+    border-left: 1px solid rgba(0,0,0,0.07);
+  }
+  .date-block:first-child { border-left: none; }
+  .date-label {
+    font-size: 8px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: #AAAAAA; margin-bottom: 3px;
+  }
+  .date-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px; font-weight: 700; color: #FF5500;
+  }
+  .date-val.muted { color: #666; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 400; }
+
+  .body-section { padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; }
+
+  .desc-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.07);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .desc-card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.2px;
+    color: #AAAAAA; margin-bottom: 8px;
+  }
+  .desc-card-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; line-height: 1.7; color: #1A1A1A;
+  }
+
+  .info-row { display: flex; gap: 8px; }
+  .info-pill {
+    flex: 1;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.07);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .ip-label {
+    font-size: 8px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: #AAAAAA; margin-bottom: 3px;
+  }
+  .ip-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px; font-weight: 700; color: #FF5500;
+  }
+  .ip-val-sm {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px; font-weight: 700; color: #1A1A1A;
+  }
+  .ip-null { font-size: 10px; color: #AAAAAA; font-style: italic; }
+
+  .sec-label-row {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
+  }
+  .sec-bar { width: 3px; height: 14px; background: #FF5500; border-radius: 2px; }
+  .sec-label-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 800; color: #1A1A1A;
+  }
+
+  .sitio-item {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.07);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    margin-bottom: 6px;
+  }
+  .sitio-icon {
+    width: 32px; height: 32px;
+    background: #FFF4E6;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .sitio-info { flex: 1; }
+  .sitio-name { font-size: 11px; font-weight: 600; color: #1A1A1A; margin-bottom: 1px; }
+  .sitio-sub { font-size: 9px; color: #FF5500; }
+  .sitio-sub.green { color: #16A34A; }
+
+  .cta-wrap { padding: 8px 14px 20px; }
+  .cta-btn {
+    background: #FF5500;
+    border-radius: 14px;
+    padding: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    box-shadow: 0 6px 16px rgba(255,85,0,0.35);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 800; color: #fff;
+    letter-spacing: 0.3px;
+  }
+
+  /* ━━━━━ SCREEN 3: MUNICIPIO DETAIL ━━━━━ */
+  .muni-hero {
+    background: #FF5500;
+    padding: 16px 16px 18px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 8px;
+  }
+  .muni-hero-top {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+  }
+  .bandera-wrap {
+    width: 52px; height: 34px;
+    border-radius: 5px; overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    flex-shrink: 0;
+  }
+  .bandera-wrap img { width: 100%; height: 100%; object-fit: contain; }
+  .muni-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px; font-weight: 900; color: #fff;
+    text-align: center; flex: 1; line-height: 1.2;
+  }
+  .escudo-wrap {
+    width: 44px; height: 52px;
+    border-radius: 7px; overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    flex-shrink: 0;
+  }
+  .escudo-wrap img { width: 100%; height: 100%; object-fit: contain; }
+  .muni-meta {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 12px; color: rgba(255,255,255,0.85);
+  }
+  .gentilicio-badge {
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 18px;
+    padding: 3px 10px;
+    font-size: 10px; font-weight: 600; color: #fff; letter-spacing: 0.8px;
+  }
+  .alcalde-card {
+    width: 100%;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 2px;
+  }
+  .alcalde-avatar {
+    width: 34px; height: 34px;
+    border-radius: 17px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .alcalde-info { flex: 1; }
+  .alcalde-rol {
+    font-size: 8px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: rgba(255,255,255,0.65); font-weight: 700; margin-bottom: 1px;
+  }
+  .alcalde-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px; font-weight: 700; color: #fff;
+  }
+  .alcalde-email { font-size: 10px; color: rgba(255,255,255,0.8); margin-top: 1px; }
+  .alcalde-btn {
+    width: 30px; height: 30px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.35);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+
+  .stats-grid {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .stat-item {
+    width: calc(50% - 3px);
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.07);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .stat-label {
+    font-size: 8px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: #AAAAAA; margin-bottom: 3px;
+  }
+  .stat-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px; font-weight: 800; color: #1A1A1A;
+  }
+  .stat-val.accent { color: #FF5500; font-size: 13px; }
+  .stat-unit { font-size: 9px; color: #666; font-weight: 400; font-family: 'DM Sans', sans-serif; }
+
+  .map-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.07);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .map-dot {
+    width: 12px; height: 12px;
+    border-radius: 6px;
+    background: #FF5500;
+    border: 3px solid rgba(255,85,0,0.15);
+    flex-shrink: 0;
+  }
+  .map-info { flex: 1; }
+  .map-label { font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 700; color: #1A1A1A; }
+  .map-coords { font-size: 9px; color: #AAAAAA; margin-top: 1px; }
+  .map-btn {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(255,85,0,0.08);
+    border: 1px solid rgba(255,85,0,0.18);
+    border-radius: 9px;
+    padding: 5px 8px;
+    font-size: 10px; color: #FF5500; font-weight: 600;
+  }
+
+  .web-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.07);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .web-card-txt {
+    flex: 1;
+    font-size: 11px; font-weight: 700; color: #FF5500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .fest-mini-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.07);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex; align-items: center; gap: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    margin-bottom: 6px;
+  }
+  .fest-mini-img {
+    width: 70px; height: 70px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .fest-mini-body {
+    flex: 1;
+    padding: 8px 10px;
+  }
+  .fest-mini-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px; font-weight: 700; color: #1A1A1A;
+    margin-bottom: 2px; line-height: 1.3;
+  }
+  .fest-mini-desc {
+    font-size: 10px; color: #666;
+    line-height: 1.4; margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .fest-mini-date { font-size: 9px; color: #FF5500; font-weight: 600; }
+  .fest-mini-arrow { padding-right: 8px; font-size: 11px; color: #AAAAAA; }
+
+  .hotel-item {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.07);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    margin-bottom: 6px;
+  }
+  .bottom-spacer { height: 20px; }
+</style>
+</head>
+<body>
+
+<h1>🎊 FestQuest — Caramanta, Antioquia</h1>
+<p class="subtitle">Mockup con datos reales · Suroeste Antioqueño · 2.378 msnm</p>
+
+<div class="screens-row">
+
+  <!-- ━━━ PANTALLA 1: LISTA FESTIVALES ━━━ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Pantalla 1 · Lista Festivales</div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="status-bar dark">
+          <span>9:41</span>
+          <span>▐▐▐ ▓ 100%</span>
+        </div>
+        <!-- Header -->
+        <div class="home-header">
+          <div class="home-header-top">
+            <div class="home-logo">FestQuest <span>Colombia</span></div>
+            <div style="width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;">🔍</div>
+          </div>
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <span class="search-text">Buscar festivales...</span>
+          </div>
+          <div class="fest-count">364 festivales · todo el año</div>
+        </div>
+
+        <!-- Festival cards -->
+        <div class="home-list">
+
+          <!-- Fiestas de la Ruana -->
+          <div class="fest-card">
+            <div class="fest-card-hero">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Caramanta.jpg" alt="Caramanta">
+              <div class="fest-card-hero-gradient"></div>
+              <div class="fest-card-hero-content">
+                <div class="fest-region-pill">SUROESTE</div>
+                <div class="fest-card-title">Fiestas de la Ruana</div>
+              </div>
+            </div>
+            <div class="fest-card-body">
+              <div class="fest-card-loc">📍 Caramanta · Antioquia</div>
+              <div class="fest-card-bottom">
+                <div class="fest-card-date">7 nov – 10 nov 2026</div>
+                <div class="fest-card-arrow">›</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Festival de la Canción -->
+          <div class="fest-card">
+            <div class="fest-card-hero">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Caramanta_neblina.jpg" alt="Caramanta">
+              <div class="fest-card-hero-gradient"></div>
+              <div class="fest-card-hero-content">
+                <div class="fest-region-pill">SUROESTE</div>
+                <div class="fest-card-title">Festival Municipal de la Canción</div>
+              </div>
+            </div>
+            <div class="fest-card-body">
+              <div class="fest-card-loc">📍 Caramanta · Antioquia</div>
+              <div class="fest-card-bottom">
+                <div class="fest-card-date">4 sep – 6 sep 2026</div>
+                <div class="fest-card-arrow">›</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card with gradient fallback -->
+          <div class="fest-card">
+            <div class="fest-card-hero gradient-andina">
+              <div class="fest-card-hero-gradient"></div>
+              <div class="fest-card-hero-content">
+                <div class="fest-region-pill">ANDINA</div>
+                <div class="fest-card-title">Feria de las Flores</div>
+              </div>
+            </div>
+            <div class="fest-card-body">
+              <div class="fest-card-loc">📍 Medellín · Antioquia</div>
+              <div class="fest-card-bottom">
+                <div class="fest-card-date">1 ago – 10 ago 2026</div>
+                <div class="fest-card-arrow">›</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Tab bar -->
+        <div style="height: 16px;"></div>
+        <div class="tab-bar">
+          <div class="tab-item active">
+            <div class="tab-icon">🎊</div>
+            <div>Festivales</div>
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">🗺️</div>
+            <div>Mapa</div>
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">❤️</div>
+            <div>Favoritos</div>
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">👤</div>
+            <div>Perfil</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━ PANTALLA 2: DETALLE FESTIVAL ━━━ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Pantalla 2 · Fiestas de la Ruana</div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="status-bar black">
+          <span>9:41</span>
+          <span>▐▐▐ ▓ 100%</span>
+        </div>
+        <!-- Hero -->
+        <div class="fest-hero">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Caramanta.jpg" alt="Fiestas de la Ruana">
+          <div class="fest-hero-overlay"></div>
+          <div class="fest-hero-content">
+            <div class="region-pill">SUROESTE ANTIOQUEÑO</div>
+            <div class="fest-hero-title">Fiestas de la Ruana</div>
+            <div class="fest-hero-loc">📍 Caramanta · Antioquia</div>
+          </div>
+        </div>
+
+        <!-- Back -->
+        <div class="back-row">
+          <div class="back-btn">‹ Volver</div>
+        </div>
+
+        <!-- Dates strip -->
+        <div class="dates-strip">
+          <div class="date-block">
+            <div class="date-label">📅 Inicio</div>
+            <div class="date-val">7 nov 2026</div>
+          </div>
+          <div class="date-block">
+            <div class="date-label">🏁 Fin</div>
+            <div class="date-val">10 nov 2026</div>
+          </div>
+          <div class="date-block">
+            <div class="date-label">⏱ Duración</div>
+            <div class="date-val muted">4 días</div>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="body-section">
+
+          <!-- Descripción -->
+          <div class="desc-card">
+            <div class="desc-card-title">📖 Sobre el festival</div>
+            <div class="desc-card-text">Las Fiestas de la Ruana son la celebración más emblemática de Caramanta, el municipio conocido como la Capital de la Ruana de Colombia. Durante cuatro días en noviembre, el pueblo se viste de tradición antioqueña con desfiles de mulas y caballos, concursos de ruana artesanal y música de cuerdas.</div>
+          </div>
+
+          <!-- Info pills -->
+          <div class="info-row">
+            <div class="info-pill">
+              <div class="ip-label">🌡️ Clima</div>
+              <div class="ip-val">14°<span style="font-size:10px;font-weight:400;color:#666;font-family:'DM Sans'"> C</span></div>
+            </div>
+            <div class="info-pill">
+              <div class="ip-label">👥 Habitantes</div>
+              <div class="ip-val-sm">4.868</div>
+            </div>
+            <div class="info-pill">
+              <div class="ip-label">💵 Entrada</div>
+              <div class="ip-null">Libre</div>
+            </div>
+          </div>
+
+          <!-- Lugar -->
+          <div>
+            <div class="sec-label-row">
+              <div class="sec-bar"></div>
+              <div class="sec-label-text">📍 Lugar del evento</div>
+            </div>
+            <div class="sitio-item">
+              <div class="sitio-icon">🏟️</div>
+              <div class="sitio-info">
+                <div class="sitio-name">Caramanta, Antioquia Colombia</div>
+                <div class="sitio-sub">Ver en Google Maps →</div>
+              </div>
+              <span style="color:#AAAAAA;font-size:11px;">›</span>
+            </div>
+          </div>
+
+          <!-- Sitios -->
+          <div>
+            <div class="sec-label-row">
+              <div class="sec-bar"></div>
+              <div class="sec-label-text">🗺️ Sitios recomendados</div>
+            </div>
+            <div class="sitio-item">
+              <div class="sitio-icon">📍</div>
+              <div class="sitio-info">
+                <div class="sitio-name">Parque Principal - Caramanta</div>
+                <div class="sitio-sub">Ver en Maps →</div>
+              </div>
+              <span style="color:#AAAAAA;font-size:11px;">›</span>
+            </div>
+            <div class="sitio-item">
+              <div class="sitio-icon">📍</div>
+              <div class="sitio-info">
+                <div class="sitio-name">La Cascada</div>
+                <div class="sitio-sub">Ver en Maps →</div>
+              </div>
+              <span style="color:#AAAAAA;font-size:11px;">›</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-wrap">
+          <div class="cta-btn">🏛️ Ver municipio Caramanta</div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━ PANTALLA 3: DETALLE MUNICIPIO ━━━ -->
+  <div class="screen-wrap">
+    <div class="screen-label">Pantalla 3 · Municipio Caramanta</div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="status-bar dark">
+          <span>9:41</span>
+          <span>▐▐▐ ▓ 100%</span>
+        </div>
+        <!-- Hero naranja -->
+        <div class="muni-hero">
+          <div class="muni-hero-top">
+            <div class="bandera-wrap">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/be/Flag_of_Caramanta_%28Antioquia%29.svg" alt="Bandera">
+            </div>
+            <div class="muni-name">Caramanta</div>
+            <div class="escudo-wrap">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Escudo_de_Caramanta.svg/250px-Escudo_de_Caramanta.svg.png" alt="Escudo">
+            </div>
+          </div>
+
+          <div class="muni-meta">📍 Antioquia · SUROESTE</div>
+          <div class="gentilicio-badge">Caramanteño</div>
+
+          <div class="alcalde-card">
+            <div class="alcalde-avatar">👤</div>
+            <div class="alcalde-info">
+              <div class="alcalde-rol">Alcalde / Alcaldesa</div>
+              <div class="alcalde-name">Juan Esteban Correa Cárdenas</div>
+              <div class="alcalde-email">alcaldia@caramanta-antioquia.gov.co</div>
+            </div>
+            <div class="alcalde-btn">✉️</div>
+          </div>
+        </div>
+
+        <!-- Back -->
+        <div class="back-row">
+          <div class="back-btn">‹ Volver</div>
+        </div>
+
+        <!-- Body -->
+        <div class="body-section">
+
+          <!-- Descripción -->
+          <div class="desc-card">
+            <div class="desc-card-title">📖 Sobre el municipio</div>
+            <div class="desc-card-text">Caramanta es un municipio del Suroeste antioqueño conocido como El pueblo de la Ruana y Mirador de Antioquia. Con 2.378 metros sobre el nivel del mar y temperatura promedio de 14°C, conserva su arquitectura colonial casi intacta desde la época de la colonización antioqueña.</div>
+          </div>
+
+          <!-- Sitio web -->
+          <div class="web-card">
+            <span style="font-size:16px;color:#FF5500;">🌐</span>
+            <div class="web-card-txt">caramanta-antioquia.gov.co</div>
+            <span style="color:#AAAAAA;font-size:11px;">›</span>
+          </div>
+
+          <!-- Stats grid -->
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-label">🪪 DANE</div>
+              <div class="stat-val accent">5145</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">👥 Habitantes</div>
+              <div class="stat-val" style="font-size:13px;">4.868</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">🌡️ Temperatura</div>
+              <div class="stat-val">14<span class="stat-unit"> °C</span></div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">⛰️ Altura</div>
+              <div class="stat-val" style="font-size:13px;">2.378<span class="stat-unit"> msnm</span></div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">🗺️ Subregión</div>
+              <div class="stat-val accent">SUROESTE</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">📞 Teléfono</div>
+              <div class="stat-val accent" style="font-size:12px;">8553358</div>
+            </div>
+          </div>
+
+          <!-- Geolocalización -->
+          <div>
+            <div class="sec-label-row">
+              <div class="sec-bar"></div>
+              <div class="sec-label-text">📍 Geolocalización</div>
+            </div>
+            <div class="map-card">
+              <div class="map-dot"></div>
+              <div class="map-info">
+                <div class="map-label">Caramanta, Antioquia</div>
+                <div class="map-coords">5.5487, -75.6444</div>
+              </div>
+              <div class="map-btn">🗺️ Ver en Maps</div>
+            </div>
+          </div>
+
+          <!-- Festivales -->
+          <div>
+            <div class="sec-label-row">
+              <div class="sec-bar"></div>
+              <div class="sec-label-text">🎊 Festivales</div>
+            </div>
+
+            <div class="fest-mini-card">
+              <img class="fest-mini-img" src="https://upload.wikimedia.org/wikipedia/commons/7/75/Caramanta.jpg" alt="">
+              <div class="fest-mini-body">
+                <div class="fest-mini-name">Fiestas de la Ruana</div>
+                <div class="fest-mini-desc">La celebración más emblemática de Caramanta, Capital de la Ruana de Colombia. Desfiles de mulas, concursos de ruana artesanal y música de cuerdas.</div>
+                <div class="fest-mini-date">7 nov – 10 nov 2026</div>
+              </div>
+              <div class="fest-mini-arrow">›</div>
+            </div>
+
+            <div class="fest-mini-card">
+              <img class="fest-mini-img" src="https://upload.wikimedia.org/wikipedia/commons/9/91/Caramanta_neblina.jpg" alt="">
+              <div class="fest-mini-body">
+                <div class="fest-mini-name">Festival de la Canción</div>
+                <div class="fest-mini-desc">Reúne intérpretes vocales del Suroeste antioqueño. Música andina colombiana, tango y folclor regional.</div>
+                <div class="fest-mini-date">4 sep – 6 sep 2026</div>
+              </div>
+              <div class="fest-mini-arrow">›</div>
+            </div>
+
+            <div class="fest-mini-card">
+              <img class="fest-mini-img" src="https://upload.wikimedia.org/wikipedia/commons/b/b4/Casa_de_la_Cultura_-_Caramanta.jpg" alt="">
+              <div class="fest-mini-body">
+                <div class="fest-mini-name">Fiestas Patronales Inmaculada</div>
+                <div class="fest-mini-desc">Novena religiosa en la Iglesia de la Inmaculada Concepción con misas solemnes y procesiones.</div>
+                <div class="fest-mini-date">29 nov – 8 dic 2026</div>
+              </div>
+              <div class="fest-mini-arrow">›</div>
+            </div>
+
+          </div>
+
+          <!-- Hospedaje -->
+          <div>
+            <div class="sec-label-row">
+              <div class="sec-bar"></div>
+              <div class="sec-label-text">🏨 Hospedaje</div>
+            </div>
+
+            <div class="hotel-item">
+              <div class="sitio-icon">🏨</div>
+              <div class="sitio-info">
+                <div class="sitio-name">Hotel el Abuelo</div>
+                <div class="sitio-sub green">💬 WhatsApp →</div>
+              </div>
+              <span style="color:#AAAAAA;font-size:11px;">›</span>
+            </div>
+
+            <div class="hotel-item">
+              <div class="sitio-icon">🏨</div>
+              <div class="sitio-info">
+                <div class="sitio-name">Finca Hotel El Rancho de Monchito</div>
+                <div class="sitio-sub green">💬 WhatsApp →</div>
+              </div>
+              <span style="color:#AAAAAA;font-size:11px;">›</span>
+            </div>
+
+            <div class="hotel-item">
+              <div class="sitio-icon">🏨</div>
+              <div class="sitio-info">
+                <div class="sitio-name">Hotel La Ruana</div>
+                <div class="sitio-sub green">💬 WhatsApp →</div>
+              </div>
+              <span style="color:#AAAAAA;font-size:11px;">›</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center;margin-top:40px;color:rgba(255,255,255,0.35);font-size:11px;">
+  FestQuest · Datos reales API · Caramanta, Antioquia · Suroeste · 2378 msnm · 14°C · 4.868 hab.
+</div>
+
+</body>
+</html>
