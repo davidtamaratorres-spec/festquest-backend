@@ -1080,8 +1080,11 @@
       const escudo = m.escudo_url
         ? `<img class="muni-escudo" src="${escapeHtml(m.escudo_url)}" alt="Escudo ${escapeHtml(m.nombre)}" loading="lazy" onerror="this.style.display='none'">`
         : '<div style="width:68px;height:68px;background:#f3f4f6;border-radius:50%;margin-bottom:14px"></div>';
+      const badge = m.id === 10676
+        ? `<div style="background:#ea580c;color:#fff;font-size:10px;font-weight:800;letter-spacing:0.7px;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin-bottom:10px">⭐ Municipio Fundador</div>`
+        : '';
       return `<div class="muni-card">
-        ${escudo}
+        ${badge}${escudo}
         <div class="muni-nombre">${escapeHtml(m.nombre)}</div>
         <div class="muni-dept">${escapeHtml(m.departamento || '')}</div>
         ${m.gentilicio ? `<div class="muni-gent">${escapeHtml(m.gentilicio)}</div>` : ''}
