@@ -511,6 +511,39 @@
       flex-shrink: 0;
     }
 
+    /* ── MUNICIPIOS DESTACADOS ── */
+    .muni-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    .muni-card {
+      background: white;
+      border-radius: 22px;
+      padding: 24px 20px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.07);
+      border: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: transform .18s, box-shadow .18s;
+    }
+    .muni-card:hover { transform: translateY(-3px); box-shadow: 0 20px 44px rgba(0,0,0,0.10); }
+    .muni-escudo { width: 68px; height: 68px; object-fit: contain; margin-bottom: 14px; }
+    .muni-nombre { font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 800; color: #111827; margin-bottom: 3px; }
+    .muni-dept { font-size: 11px; font-weight: 700; color: #ea580c; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+    .muni-gent { font-size: 13px; color: #6b7280; margin-bottom: 14px; font-style: italic; }
+    .muni-fests { width: 100%; text-align: left; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 12px; }
+    .muni-fests-label { font-size: 10px; font-weight: 800; color: #ea580c; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 6px; }
+    .muni-fest-item { font-size: 12px; color: #374151; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; gap: 8px; align-items: baseline; }
+    .muni-fest-item:last-child { border-bottom: none; }
+    .muni-fest-date { font-size: 10px; color: #ea580c; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+    .muni-skeleton { background: linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
+    @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+    @media (max-width: 980px) { .muni-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px) { .muni-grid { grid-template-columns: 1fr; } }
+
     @media (max-width: 768px) {
       .hero { max-height: 500px; min-height: unset; }
       .hero h1 { font-size: 30px; }
@@ -678,6 +711,21 @@
             </div>
           </div>
 
+        </div>
+      </div>
+    </section>
+
+    <!-- MUNICIPIOS DESTACADOS -->
+    <section id="municipios-destacados" style="padding:52px 0;background:linear-gradient(135deg,#fff8f0 0%,#ffe7cc 100%)">
+      <div class="container">
+        <h2 class="section-title">Municipios destacados</h2>
+        <p class="section-subtitle">Destinos con cultura, tradición y festivales imperdibles de Colombia</p>
+        <div class="muni-grid" id="muni-grid">
+          <!-- skeletons mientras carga -->
+          <div class="muni-card"><div class="muni-skeleton" style="width:68px;height:68px;border-radius:50%;margin-bottom:14px"></div><div class="muni-skeleton" style="width:80%;height:20px;margin-bottom:8px"></div><div class="muni-skeleton" style="width:50%;height:12px;margin-bottom:12px"></div><div class="muni-skeleton" style="width:100%;height:60px"></div></div>
+          <div class="muni-card"><div class="muni-skeleton" style="width:68px;height:68px;border-radius:50%;margin-bottom:14px"></div><div class="muni-skeleton" style="width:80%;height:20px;margin-bottom:8px"></div><div class="muni-skeleton" style="width:50%;height:12px;margin-bottom:12px"></div><div class="muni-skeleton" style="width:100%;height:60px"></div></div>
+          <div class="muni-card"><div class="muni-skeleton" style="width:68px;height:68px;border-radius:50%;margin-bottom:14px"></div><div class="muni-skeleton" style="width:80%;height:20px;margin-bottom:8px"></div><div class="muni-skeleton" style="width:50%;height:12px;margin-bottom:12px"></div><div class="muni-skeleton" style="width:100%;height:60px"></div></div>
+          <div class="muni-card"><div class="muni-skeleton" style="width:68px;height:68px;border-radius:50%;margin-bottom:14px"></div><div class="muni-skeleton" style="width:80%;height:20px;margin-bottom:8px"></div><div class="muni-skeleton" style="width:50%;height:12px;margin-bottom:12px"></div><div class="muni-skeleton" style="width:100%;height:60px"></div></div>
         </div>
       </div>
     </section>
@@ -997,6 +1045,52 @@
   // ── LOAD DATA ──────────────────────────────────────────────────────────
   const abortCtrl = new AbortController();
   const loadTimeout = setTimeout(() => abortCtrl.abort(), 60000);
+
+  // ── MUNICIPIOS DESTACADOS ──────────────────────────────────────────────
+  const FEATURED_IDS = [10676, 10581, 10590, 10582]; // Caramanta, Medellín, Cali, Bucaramanga
+
+  function fmtShort(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
+  }
+
+  async function loadMunicipios() {
+    const grid = document.getElementById('muni-grid');
+    if (!grid) return;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const results = await Promise.all(
+      FEATURED_IDS.map(id =>
+        fetch(`https://festquest-backend.onrender.com/api/municipalities/${id}`)
+          .then(r => r.ok ? r.json() : null).catch(() => null)
+      )
+    );
+    grid.innerHTML = results.filter(Boolean).map(({ municipio: m, festivals }) => {
+      const upcoming = (festivals || [])
+        .filter(f => !f.fecha_fin || new Date(f.fecha_fin) >= today)
+        .slice(0, 3);
+      const festHtml = upcoming.length
+        ? `<div class="muni-fests-label">Próximos festivales</div>` + upcoming.map(f =>
+            `<div class="muni-fest-item">
+               <span class="muni-fest-date">${escapeHtml(fmtShort(f.fecha_inicio))}</span>
+               <span>${escapeHtml(f.nombre)}</span>
+             </div>`).join('')
+        : '<div style="font-size:12px;color:#9ca3af;padding:6px 0">Sin festivales próximos registrados</div>';
+      const escudo = m.escudo_url
+        ? `<img class="muni-escudo" src="${escapeHtml(m.escudo_url)}" alt="Escudo ${escapeHtml(m.nombre)}" loading="lazy" onerror="this.style.display='none'">`
+        : '<div style="width:68px;height:68px;background:#f3f4f6;border-radius:50%;margin-bottom:14px"></div>';
+      return `<div class="muni-card">
+        ${escudo}
+        <div class="muni-nombre">${escapeHtml(m.nombre)}</div>
+        <div class="muni-dept">${escapeHtml(m.departamento || '')}</div>
+        ${m.gentilicio ? `<div class="muni-gent">${escapeHtml(m.gentilicio)}</div>` : ''}
+        <div class="muni-fests">${festHtml}</div>
+      </div>`;
+    }).join('');
+  }
+
+  loadMunicipios();
 
   fetch('https://festquest-backend.onrender.com/api/festivals', { signal: abortCtrl.signal })
     .then(r => { clearTimeout(loadTimeout); if (!r.ok) throw new Error(r.status); return r.json(); })
