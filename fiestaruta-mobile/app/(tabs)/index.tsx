@@ -160,15 +160,17 @@ function FestCard({ f, onPress }: { f: FestivalListItem; onPress: () => void }) 
   const loc     = [f.municipio, f.departamento].filter(Boolean).join(' · ');
   const upcoming = isUpcoming(f.date_start);
   const grad    = (SUB_GRAD[sub] ?? ['#FF8C42', '#FF5500']) as [string, string];
+  const [imgErr, setImgErr] = useState(false);
 
   return (
     <Pressable style={s.festCard} onPress={onPress}>
       <View style={s.festHero}>
-        {f.foto_url ? (
+        {f.foto_url && !imgErr ? (
           <Image
             source={{ uri: f.foto_url }}
             style={StyleSheet.absoluteFillObject}
             contentFit="cover"
+            onError={() => setImgErr(true)}
           />
         ) : (
           <LinearGradient
@@ -499,7 +501,7 @@ export default function HomeScreen() {
           </View>
 
           {/* Limpiar — siempre visible */}
-          <Pressable style={[s.clearBtn, !hasActiveFilters && s.clearBtnOff]} onPress={clearAll}>
+          <Pressable style={[s.clearBtn, !hasActiveFilters && s.clearBtnOff]} onPress={clearAll} hitSlop={20}>
             <Ionicons name="close-circle-outline" size={13} color={hasActiveFilters ? C.orange : C.textDim} />
             <Text style={[s.clearBtnTxt, !hasActiveFilters && { color: C.textDim }]}>Limpiar filtros</Text>
           </Pressable>

@@ -63,6 +63,12 @@ function StatItem({ label, value, unit, accent }: {
   );
 }
 
+function FestImg({ uri, style }: { uri: string; style: any }) {
+  const [err, setErr] = useState(false);
+  if (err) return <View style={[style, s.festCardImgFallback]}><Text style={{ fontSize: 20 }}>🎊</Text></View>;
+  return <Image source={{ uri }} style={style} contentFit="cover" onError={() => setErr(true)} />;
+}
+
 function HotelItem({ nombre, wa, muted }: { nombre: string; wa?: string | null; muted?: boolean }) {
   return (
     <Pressable style={[s.sitioItem, muted && s.nullItem]} onPress={wa && !muted ? () => openLink(wa) : undefined}>
@@ -261,7 +267,7 @@ export default function MunicipioDetail() {
               {festivals.map(f => (
                 <Pressable key={f.id} style={s.festCard} onPress={() => router.push(`/festival/${f.id}`)}>
                   {present(f.foto_url) ? (
-                    <Image source={{ uri: f.foto_url }} style={s.festCardImg} contentFit="cover" />
+                    <FestImg uri={f.foto_url} style={s.festCardImg} />
                   ) : (
                     <View style={[s.festCardImg, s.festCardImgFallback]}>
                       <Text style={{ fontSize: 20 }}>🎊</Text>
