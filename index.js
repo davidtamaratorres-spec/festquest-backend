@@ -108,6 +108,9 @@ app.get("/api/festivals/:id", async (req, res) => {
         f.municipio_id,
         m.nombre AS municipio, m.departamento,
         m.subregion, m.habitantes, m.temperatura_promedio, m.altura,
+        m.gentilicio, m.mandatario AS alcalde, m.correo_alcalde,
+        m.telefono AS telefono_municipio, m.sitio_web,
+        m.descripcion AS descripcion_municipio,
         m.sitio_1, m.maps_1, m.sitio_2, m.maps_2, m.sitio_3, m.maps_3,
         m.hotel_1, m.wa_1, m.hotel_2, m.wa_2, m.hotel_3, m.wa_3
        FROM festivals f

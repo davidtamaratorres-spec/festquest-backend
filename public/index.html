@@ -891,13 +891,41 @@
     const waBtn  = hasValue(src.whatsapp_link)
       ? `<a class="app-detail-btn app-detail-btn-wa" href="${escapeHtml(safeUrl(src.whatsapp_link))}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : '';
 
+    // Descripción del municipio
+    const descMuni = d && hasValue(d.descripcion_municipio)
+      ? `<div class="app-detail-label">Destino</div><div class="app-detail-body">${escapeHtml(d.descripcion_municipio)}</div>` : '';
+
+    // Sitios turísticos
+    const sitios = d ? [
+      d.sitio_1 && d.maps_1 ? `<a class="app-detail-btn app-detail-btn-map" href="${escapeHtml(safeUrl(d.maps_1))}" target="_blank" rel="noopener noreferrer">📍 ${escapeHtml(d.sitio_1)}</a>` : null,
+      d.sitio_2 && d.maps_2 ? `<a class="app-detail-btn app-detail-btn-map" href="${escapeHtml(safeUrl(d.maps_2))}" target="_blank" rel="noopener noreferrer">📍 ${escapeHtml(d.sitio_2)}</a>` : null,
+      d.sitio_3 && d.maps_3 ? `<a class="app-detail-btn app-detail-btn-map" href="${escapeHtml(safeUrl(d.maps_3))}" target="_blank" rel="noopener noreferrer">📍 ${escapeHtml(d.sitio_3)}</a>` : null,
+    ].filter(Boolean) : [];
+    const sitiosSection = sitios.length
+      ? `<div class="app-detail-label">Sitios turísticos</div>${sitios.join('')}` : '';
+
+    // Hoteles con WA
+    function hotelBtn(nombre, wa) {
+      if (!hasValue(nombre)) return null;
+      const href = hasValue(wa) ? safeUrl(wa) : 'https://www.google.com/search?q=' + encodeURIComponent(nombre);
+      const icon = hasValue(wa) ? '📲' : '🛏';
+      return `<a class="app-detail-btn app-detail-btn-wa" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${icon} ${escapeHtml(nombre)}</a>`;
+    }
+    const hoteles = d ? [hotelBtn(d.hotel_1, d.wa_1), hotelBtn(d.hotel_2, d.wa_2), hotelBtn(d.hotel_3, d.wa_3)].filter(Boolean) : [];
+    const hotelesSection = hoteles.length
+      ? `<div class="app-detail-label">Dónde hospedarse</div>${hoteles.join('')}` : '';
+
+    // Alcalde y correo
+    const alcaldeSection = d && hasValue(d.alcalde)
+      ? `<div class="app-detail-label">Alcalde</div><div class="app-detail-body">${escapeHtml(d.alcalde)}${hasValue(d.correo_alcalde) ? ` · <a href="mailto:${escapeHtml(d.correo_alcalde)}" style="color:#FF6600">${escapeHtml(d.correo_alcalde)}</a>` : ''}</div>` : '';
+
     // Render final en un solo paso — sin riesgo de DOM stale
     el.innerHTML = `
       <button class="app-back-btn" id="phone-back-btn">← Volver</button>
       <div class="app-detail-date">📅 ${dateStr}</div>
       <div class="app-detail-title">${escapeHtml(src.nombre || festival.nombre || 'Festival')}</div>
       ${ubicacion ? `<div class="app-detail-place">📍 ${escapeHtml(ubicacion)}</div>` : ''}
-      ${muniSection}${desc}${lugar}${mapBtn}${waBtn}`;
+      ${muniSection}${desc}${lugar}${mapBtn}${waBtn}${descMuni}${sitiosSection}${hotelesSection}${alcaldeSection}`;
 
     document.getElementById('phone-back-btn').addEventListener('click', showPhoneList);
     if (detailView) detailView.scrollTop = 0;
