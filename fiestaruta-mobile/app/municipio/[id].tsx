@@ -84,7 +84,6 @@ export default function MunicipioDetail() {
   const [data, setData] = useState<MunicipioResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [banderaState, setBanderaState] = useState<'idle'|'ok'|'error'>('idle');
   const [escudoState, setEscudoState] = useState<'idle'|'ok'|'error'>('idle');
 
   useEffect(() => {
@@ -142,17 +141,6 @@ export default function MunicipioDetail() {
         {/* ── Hero naranja ── */}
         <View style={s.muniHero}>
           <View style={s.heroTopRow}>
-            {present(m.bandera_url) && banderaState !== 'error' && (
-              <View style={[s.banderaWrap, banderaState === 'idle' && { opacity: 0, position: 'absolute' }]}>
-                <Image
-                  source={{ uri: m.bandera_url }}
-                  style={s.bandera}
-                  contentFit="contain"
-                  onLoad={() => setBanderaState('ok')}
-                  onError={() => setBanderaState('error')}
-                />
-              </View>
-            )}
             <Text style={s.muniName} numberOfLines={3}>{m.nombre}</Text>
             {present(m.escudo_url) && escudoState !== 'error' && (
               <View style={[s.escudoWrap, escudoState === 'idle' && { opacity: 0, position: 'absolute' }]}>
@@ -184,9 +172,6 @@ export default function MunicipioDetail() {
 
           {/* Alcalde card dentro del hero */}
           <View style={s.alcaldeHeroCard}>
-            <View style={s.alcaldeHeroAvatar}>
-              <Text style={{ fontSize: 16 }}>👤</Text>
-            </View>
             <View style={{ flex: 1 }}>
               <Text style={s.alcaldeHeroRol}>Alcalde / Alcaldesa</Text>
               <Text style={s.alcaldeHeroName}>{present(m.alcalde) ? m.alcalde : 'Pendiente de registro'}</Text>

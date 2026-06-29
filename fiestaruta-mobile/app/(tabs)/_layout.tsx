@@ -23,14 +23,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: C.orange,
         tabBarInactiveTintColor: C.textDim,
-        tabBarStyle: {
-          backgroundColor: C.surface,
-          borderTopColor: C.border,
-          borderTopWidth: 1,
-          height: 60,
-          paddingBottom: 6,
-          paddingTop: 4,
-        },
+        tabBarStyle: { display: 'none' },
         tabBarLabelStyle: {
           fontSize: 9,
           letterSpacing: 0.5,

@@ -377,7 +377,6 @@ export default function HomeScreen() {
       <View style={s.header}>
         <Text style={s.logo}>Fest<Text style={{ color: C.orange }}>Quest</Text></Text>
         <Text style={s.tagline}>Descubre fiestas de Colombia 🇨🇴</Text>
-        <Text style={s.description}>Explora las fiestas y festivales de los municipios de Colombia. Filtra por departamento, municipio o fecha y descubre la cultura de cada región 🇨🇴</Text>
       </View>
 
       {/* ── Zona interactiva ── */}
@@ -566,7 +565,6 @@ const s = StyleSheet.create({
   },
   logo: { fontFamily: 'Outfit_900Black', fontSize: 24, color: C.text, letterSpacing: -0.5 },
   tagline: { fontFamily: 'DMSans_400Regular', fontSize: 11, color: C.textSub, marginTop: 1 },
-  description: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#333333', marginTop: 8, lineHeight: 21 },
 
   interactiveZone: { backgroundColor: C.bg, borderBottomWidth: 1, borderBottomColor: C.border, zIndex: 50 },
   filterPanel: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 12, gap: 8, zIndex: 90 },
