@@ -150,7 +150,8 @@ app.get("/api/municipalities/:id", async (req, res) => {
         `SELECT
            m.id, m.nombre, m.departamento, m.subregion,
            m.habitantes, m.temperatura_promedio, m.altura,
-           m.gentilicio, m.alcalde, m.correo_alcalde,
+           m.gentilicio, m.mandatario AS alcalde, m.correo_alcalde,
+           m.telefono, m.descripcion, m.sitio_web,
            m.sitios_turisticos, m.hoteles, m.contacto_hoteles,
            m.codigo_dane, m.bandera_url, m.escudo_url,
            m.latitud, m.longitud,
@@ -161,7 +162,7 @@ app.get("/api/municipalities/:id", async (req, res) => {
         [id]
       ),
       db.query(
-        `SELECT id, nombre,
+        `SELECT id, nombre, descripcion, foto_url, maps_link,
            TO_CHAR(fecha_inicio, 'YYYY-MM-DD') AS fecha_inicio,
            TO_CHAR(fecha_fin,    'YYYY-MM-DD') AS fecha_fin
          FROM festivals
