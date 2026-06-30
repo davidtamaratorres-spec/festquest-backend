@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contrato Anual 12 Meses — FestQuest / Municipio de Caramanta</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      font-size: 11pt;
+      color: #111;
+      background: #f4f4f4;
+      line-height: 1.6;
+    }
+
+    .page {
+      width: 216mm;
+      min-height: 279mm;
+      margin: 20px auto;
+      background: #fff;
+      padding: 18mm 20mm 18mm 20mm;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    }
+
+    /* ── ENCABEZADO ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid #1a2a5e;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .escudo {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+    }
+    .header-muni {
+      display: flex;
+      flex-direction: column;
+    }
+    .header-muni-nombre {
+      font-family: 'Merriweather', serif;
+      font-size: 15pt;
+      font-weight: 700;
+      color: #1a2a5e;
+      line-height: 1.2;
+    }
+    .header-muni-sub {
+      font-size: 9pt;
+      color: #555;
+      margin-top: 2px;
+    }
+    .header-right {
+      text-align: right;
+    }
+    .brand-festquest {
+      font-size: 22pt;
+      font-weight: 700;
+      color: #FF4D00;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .brand-sub {
+      font-size: 8pt;
+      color: #888;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ── TÍTULO ── */
+    .titulo-contrato {
+      text-align: center;
+      margin: 18px 0 6px;
+    }
+    .titulo-contrato h1 {
+      font-family: 'Merriweather', serif;
+      font-size: 13pt;
+      font-weight: 700;
+      color: #1a2a5e;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .titulo-contrato h2 {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #1a2a5e;
+      margin-top: 4px;
+    }
+    .numero-contrato-box {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin: 10px 0 16px;
+      font-size: 9.5pt;
+      color: #555;
+    }
+    .numero-contrato-box span { font-weight: 700; color: #1a2a5e; }
+    .numero-linea {
+      display: inline-block;
+      border-bottom: 1px solid #888;
+      min-width: 120px;
+    }
+
+    /* ── SECCIONES ── */
+    .seccion {
+      margin-bottom: 14px;
+    }
+    .seccion-titulo {
+      background: #1a2a5e;
+      color: #fff;
+      font-size: 9.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 5px 10px;
+      border-radius: 3px;
+      margin-bottom: 8px;
+    }
+    .seccion-titulo.naranja {
+      background: #FF4D00;
+    }
+    .dos-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .parte-box {
+      border: 1px solid #d0d7e8;
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: #f7f9ff;
+    }
+    .parte-box h3 {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: #1a2a5e;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border-bottom: 1px solid #c5cfe8;
+      padding-bottom: 4px;
+    }
+    .parte-box p {
+      font-size: 9.5pt;
+      color: #222;
+      margin-bottom: 3px;
+    }
+    .parte-box p strong { color: #1a2a5e; }
+
+    .clausula {
+      margin-bottom: 10px;
+    }
+    .clausula p {
+      font-size: 10pt;
+      color: #222;
+      text-align: justify;
+    }
+
+    ol.lista-obl {
+      padding-left: 18px;
+      margin-top: 4px;
+    }
+    ol.lista-obl li {
+      font-size: 10pt;
+      color: #222;
+      margin-bottom: 3px;
+    }
+
+    /* ── TABLA DE PAGOS ── */
+    .tabla-pagos {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 10pt;
+    }
+    .tabla-pagos th {
+      background: #1a2a5e;
+      color: #fff;
+      padding: 6px 10px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 9.5pt;
+    }
+    .tabla-pagos td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #e0e5f0;
+    }
+    .tabla-pagos tr:last-child td { border-bottom: none; }
+    .tabla-pagos tr:nth-child(even) td { background: #f4f6fb; }
+    .monto { font-weight: 700; color: #1a2a5e; }
+    .total-row td { background: #eef1fa !important; font-weight: 700; color: #1a2a5e; border-top: 2px solid #1a2a5e; }
+
+    /* ── BENEFICIOS EXTRA ── */
+    .beneficios-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .beneficio-item {
+      border: 1px solid #ffcfb3;
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #fff8f4;
+      text-align: center;
+    }
+    .beneficio-icon { font-size: 18pt; }
+    .beneficio-titulo {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #FF4D00;
+      margin-top: 3px;
+    }
+    .beneficio-desc {
+      font-size: 8pt;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    /* ── FIRMAS ── */
+    .firmas {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .firma-box {
+      text-align: center;
+    }
+    .firma-linea {
+      border-top: 1.5px solid #1a2a5e;
+      margin: 44px 8px 6px;
+    }
+    .firma-nombre {
+      font-weight: 700;
+      font-size: 10pt;
+      color: #1a2a5e;
+    }
+    .firma-cargo {
+      font-size: 9pt;
+      color: #555;
+      margin-top: 2px;
+    }
+    .firma-dato {
+      font-size: 8.5pt;
+      color: #777;
+      margin-top: 1px;
+    }
+
+    /* ── PIE DE PÁGINA ── */
+    .footer {
+      margin-top: 24px;
+      border-top: 2px solid #1a2a5e;
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 8pt;
+      color: #666;
+    }
+    .footer-col { flex: 1; }
+    .footer-col:last-child { text-align: right; }
+    .footer strong { color: #1a2a5e; }
+
+    /* ── BADGE ── */
+    .badge-tipo {
+      display: inline-block;
+      background: #FF4D00;
+      color: #fff;
+      font-size: 8pt;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+    .badge-anual {
+      display: inline-block;
+      background: #1a2a5e;
+      color: #fff;
+      font-size: 8pt;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+
+    @media print {
+      body { background: white; }
+      .page { margin: 0; box-shadow: none; width: 100%; padding: 14mm 18mm; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ENCABEZADO -->
+  <div class="header">
+    <div class="header-left">
+      <img class="escudo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Escudo_de_Caramanta.svg/250px-Escudo_de_Caramanta.svg.png" alt="Escudo Caramanta" onerror="this.style.display='none'">
+      <div class="header-muni">
+        <div class="header-muni-nombre">Municipio de Caramanta</div>
+        <div class="header-muni-sub">Suroeste Antioqueño · Antioquia · Colombia</div>
+        <div class="header-muni-sub">NIT: 890984706-1 · DANE: 05145</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="brand-festquest">FestQuest</div>
+      <div class="brand-sub">festquest.app</div>
+      <div style="font-size:8pt;color:#888;margin-top:3px">gerencia@festquest.app</div>
+    </div>
+  </div>
+
+  <!-- TÍTULO -->
+  <div class="titulo-contrato">
+    <h1>Contrato de Prestación de Servicios<br>de Promoción Turística Digital</h1>
+    <h2>Modalidad Anual · 12 meses <span class="badge-tipo">Mínima Cuantía</span><span class="badge-anual">3 SMMLV</span></h2>
+  </div>
+  <div class="numero-contrato-box">
+    <span>N.° de Contrato: <span class="numero-linea">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+    <span>Fecha de firma: <span class="numero-linea">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+    <span>Lugar: Caramanta, Antioquia</span>
+  </div>
+
+  <!-- PARTES -->
+  <div class="seccion">
+    <div class="seccion-titulo">Cláusula 1 — Partes del Contrato</div>
+    <div class="dos-col">
+      <div class="parte-box">
+        <h3>Contratante</h3>
+        <p><strong>Entidad:</strong> Municipio de Caramanta, Antioquia</p>
+        <p><strong>Representante legal:</strong> Juan Esteban Correa Cárdenas</p>
+        <p><strong>Cargo:</strong> Alcalde Municipal</p>
+        <p><strong>Correo:</strong> alcaldia@caramanta-antioquia.gov.co</p>
+        <p><strong>Teléfono:</strong> (604) 855 3358</p>
+        <p><strong>Dirección:</strong> Suroeste Antioqueño, Caramanta</p>
+        <p><strong>Sitio web:</strong> www.caramanta-antioquia.gov.co</p>
+      </div>
+      <div class="parte-box">
+        <h3>Contratista</h3>
+        <p><strong>Nombre:</strong> David Támara Torres</p>
+        <p><strong>C.C.:</strong> 92.504.919 expedida en Sincelejo</p>
+        <p><strong>NIT:</strong> 925049191-1</p>
+        <p><strong>CIIU principal:</strong> 7490 · <strong>CIIU sec.:</strong> 7310</p>
+        <p><strong>Dirección:</strong> CR 58A 13 Sur 30 Apto 1004, Medellín</p>
+        <p><strong>Correo:</strong> davidtamaratorres@gmail.com</p>
+        <p><strong>Correo comercial:</strong> gerencia@festquest.app</p>
+        <p><strong>Teléfono:</strong> 304 241 8493</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBJETO -->
+  <div class="seccion">
+    <div class="seccion-titulo">Cláusula 2 — Objeto del Contrato</div>
+    <div class="clausula">
+      <p>Prestación de servicios de <strong>promoción y divulgación turística digital</strong> del municipio de Caramanta, Antioquia, a través de la plataforma <strong>FestQuest (festquest.app)</strong>, que actualmente indexa <strong>364 festivales en los 32 departamentos de Colombia</strong>.</p>
+      <p style="margin-top:6px">El servicio incluye durante toda la vigencia anual del contrato:</p>
+      <ol class="lista-obl" style="margin-top:4px">
+        <li>Publicación y mantenimiento de ficha municipal completa con festivales, sitios turísticos, opciones de hospedaje y datos institucionales del municipio.</li>
+        <li>Visibilidad en la versión web desde la fecha de firma del presente contrato.</li>
+        <li>Visibilidad en la aplicación móvil para Android desde su lanzamiento oficial el <strong>1 de agosto de 2026</strong>.</li>
+        <li>Reportes mensuales de métricas de visitas, interacciones y posicionamiento de la ficha de Caramanta.</li>
+        <li>Actualizaciones de contenido ilimitadas durante la vigencia del contrato (máx. 5 días hábiles por solicitud).</li>
+        <li>Prioridad en la sección de <strong>Municipios Destacados</strong> de la plataforma web y móvil durante toda la vigencia.</li>
+        <li>Inclusión en campañas de difusión digital estacionales (temporadas de festival) sin costo adicional.</li>
+        <li>Acceso al panel de autogestión para revisión y validación de datos por parte de la Alcaldía.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- MODALIDAD -->
+  <div class="seccion">
+    <div class="seccion-titulo">Cláusula 3 — Modalidad de Contratación</div>
+    <div class="clausula">
+      <p>Contratación directa bajo la modalidad de <strong>mínima cuantía</strong>, de conformidad con lo establecido en la Ley 80 de 1993, modificada por la Ley 1150 de 2007, y el Decreto 1082 de 2015 (artículo 2.2.1.2.1.5.1). El valor total del presente contrato equivale a tres (3) Salarios Mínimos Mensuales Legales Vigentes (SMMLV) año 2026, suma que no supera el diez por ciento (10%) de la menor cuantía de la entidad.</p>
+    </div>
+  </div>
+
+  <!-- VALOR Y DURACIÓN -->
+  <div class="seccion">
+    <div class="seccion-titulo naranja">Cláusula 4 — Valor y Duración</div>
+    <div class="dos-col" style="gap:10px">
+      <div class="parte-box" style="background:#fff8f4;border-color:#ffcfb3">
+        <h3 style="color:#FF4D00;border-color:#ffcfb3">Valor Total</h3>
+        <p style="font-size:20pt;font-weight:700;color:#FF4D00;margin-top:4px">$5.252.715 COP</p>
+        <p style="font-size:9pt;color:#666;margin-top:2px">Equivalente a 3 SMMLV 2026</p>
+        <p style="font-size:8.5pt;color:#888;margin-top:2px">(3 × $1.750.905)</p>
+      </div>
+      <div class="parte-box" style="background:#f7f9ff;border-color:#c5cfe8">
+        <h3>Duración</h3>
+        <p style="font-size:16pt;font-weight:700;color:#1a2a5e;margin-top:4px">12 meses calendario</p>
+        <p style="font-size:9pt;color:#666;margin-top:2px">A partir de la fecha de firma</p>
+        <p style="font-size:8.5pt;color:#888;margin-top:2px">Renovable por igual período</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMA DE PAGO -->
+  <div class="seccion">
+    <div class="seccion-titulo">Cláusula 5 — Forma de Pago</div>
+    <table class="tabla-pagos">
+      <thead>
+        <tr>
+          <th>Cuota</th>
+          <th>Porcentaje</th>
+          <th>Monto (COP)</th>
+          <th>Momento de Pago</th>
+          <th>Condición</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Cuota 1</strong></td>
+          <td>50 %</td>
+          <td class="monto">$2.626.357</td>
+          <td>Al momento de la firma</td>
+          <td>Sin condición previa</td>
+        </tr>
+        <tr>
+          <td><strong>Cuota 2</strong></td>
+          <td>25 %</td>
+          <td class="monto">$1.313.179</td>
+          <td>Al inicio del mes 3</td>
+          <td>Previa verificación de ficha activa en plataforma</td>
+        </tr>
+        <tr>
+          <td><strong>Cuota 3</strong></td>
+          <td>25 %</td>
+          <td class="monto">$1.313.179</td>
+          <td>Al inicio del mes 6</td>
+          <td>Previa entrega de reporte de métricas meses 1–5</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="2"><strong>Total</strong></td>
+          <td><strong>$5.252.715</strong></td>
+          <td colspan="2">3 SMMLV 2026 · Vigencia 12 meses</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:8.5pt;color:#666;margin-top:6px">El pago se realizará mediante transferencia bancaria o instrumento acordado por las partes. Los impuestos que se generen serán asumidos conforme a la ley colombiana vigente.</p>
+  </div>
+
+  <!-- BENEFICIOS EXTRA ANUAL -->
+  <div class="seccion">
+    <div class="seccion-titulo">Beneficios exclusivos del plan anual</div>
+    <div class="beneficios-grid">
+      <div class="beneficio-item">
+        <div class="beneficio-icon">⭐</div>
+        <div class="beneficio-titulo">Municipio Destacado</div>
+        <div class="beneficio-desc">Prioridad en landing y app durante los 12 meses</div>
+      </div>
+      <div class="beneficio-item">
+        <div class="beneficio-icon">📊</div>
+        <div class="beneficio-titulo">Reportes Mensuales</div>
+        <div class="beneficio-desc">Métricas de visitas e interacciones cada mes</div>
+      </div>
+      <div class="beneficio-item">
+        <div class="beneficio-icon">📲</div>
+        <div class="beneficio-titulo">App Android</div>
+        <div class="beneficio-desc">Presencia en la app desde el lanzamiento (ago 2026)</div>
+      </div>
+      <div class="beneficio-item">
+        <div class="beneficio-icon">✏️</div>
+        <div class="beneficio-titulo">Actualizaciones</div>
+        <div class="beneficio-desc">Cambios de contenido ilimitados en 5 días hábiles</div>
+      </div>
+      <div class="beneficio-item">
+        <div class="beneficio-icon">🎪</div>
+        <div class="beneficio-titulo">Campañas Estacionales</div>
+        <div class="beneficio-desc">Inclusión sin costo en difusión por temporada</div>
+      </div>
+      <div class="beneficio-item">
+        <div class="beneficio-icon">🔄</div>
+        <div class="beneficio-titulo">Renovación Prioritaria</div>
+        <div class="beneficio-desc">Precio preferencial garantizado al renovar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBLIGACIONES CONTRATISTA -->
+  <div class="seccion">
+    <div class="seccion-titulo">Cláusula 6 — Obligaciones del Contratista</div>
+    <ol class="lista-obl">
+      <li>Mantener la ficha del municipio de Caramanta activa y visible en <strong>festquest.app</strong> durante toda la vigencia del contrato.</li>
+      <li>Incluir a Caramanta con prioridad visible en la sección de <strong>Municipios Destacados</strong> de la plataforma web y de la aplicación móvil.</li>
+      <li>Actualizar los datos del municipio cuando la Alcaldía lo solicite, en un plazo máximo de <strong>5 días hábiles</strong> tras recepción de solicitud por correo.</li>
+      <li>Entregar reporte mensual de métricas (visitas, clics, interacciones con festivales y hoteles) dentro de los primeros 5 días hábiles de cada mes.</li>
+      <li>Notificar al contratante con mínimo <strong>30 días de anticipación</strong> si la plataforma entra en mantenimiento mayor que afecte la visibilidad de Caramanta.</li>
+      <li>Proporcionar acceso al formulario de autogestión para que la Alcaldía pueda validar y corregir datos directamente.</li>
+      <li>Incluir a Caramanta sin costo adicional en campañas digitales de difusión estacionales durante la vigencia.</li>
+    </ol>
+  </div>
+
+  <!-- OBLIGACIONES CONTRATANTE -->
+  <div class="seccion">
+    <div class="seccion-titulo">Cláusula 7 — Obligaciones del Contratante</div>
+    <ol class="lista-obl">
+      <li>Efectuar los tres (3) pagos en los plazos y condiciones establecidos en la Cláusula 5.</li>
+      <li>Designar un supervisor del contrato (Secretaría de Turismo o delegado del Alcalde mediante comunicación escrita).</li>
+      <li>Suministrar información actualizada del municipio cuando el contratista la requiera para mantener la ficha.</li>
+      <li>Validar y aprobar el contenido de la ficha de Caramanta antes de su publicación definitiva o ante cualquier actualización mayor.</li>
+      <li>Responder las comunicaciones del contratista en un plazo máximo de <strong>10 días hábiles</strong>.</li>
+    </ol>
+  </div>
+
+  <!-- SUPERVISIÓN Y CONDICIONES -->
+  <div class="seccion">
+    <div class="seccion-titulo">Cláusula 8 — Supervisión, Lugar de Ejecución, Renovación y Ley Aplicable</div>
+    <div class="clausula">
+      <p><strong>Supervisión:</strong> Secretario/a de Turismo del Municipio de Caramanta, o quien delegue el Alcalde mediante comunicación escrita dirigida al contratista.</p>
+      <p style="margin-top:5px"><strong>Lugar de ejecución:</strong> Plataforma digital <strong>festquest.app</strong> — ejecución remota desde el municipio de Medellín, Antioquia.</p>
+      <p style="margin-top:5px"><strong>Renovación:</strong> Al vencimiento del plazo, el contrato podrá renovarse por períodos iguales mediante acuerdo escrito entre las partes. El contratista notificará las condiciones económicas de renovación con al menos <strong>45 días de anticipación</strong>.</p>
+      <p style="margin-top:5px"><strong>Ley aplicable:</strong> Legislación colombiana vigente, en especial el Estatuto General de Contratación de la Administración Pública (Ley 80 de 1993), sus modificaciones y el Decreto 1082 de 2015. Las controversias que no puedan resolverse de mutuo acuerdo serán dirimidas conforme a la legislación colombiana.</p>
+    </div>
+  </div>
+
+  <!-- FIRMAS -->
+  <div class="firmas">
+    <div class="firma-box">
+      <div class="firma-linea"></div>
+      <div class="firma-nombre">Juan Esteban Correa Cárdenas</div>
+      <div class="firma-cargo">Alcalde Municipal de Caramanta</div>
+      <div class="firma-dato">C.C. _________________________</div>
+      <div class="firma-dato" style="margin-top:6px">Fecha: _____ / _____ / _______</div>
+    </div>
+    <div class="firma-box">
+      <div class="firma-linea"></div>
+      <div class="firma-nombre">David Támara Torres</div>
+      <div class="firma-cargo">Ingeniero Mecánico</div>
+      <div class="firma-dato">Tarjeta Profesional No. AN230-158680</div>
+      <div class="firma-dato">C.C. 92.504.919 — NIT 925049191-1</div>
+      <div class="firma-dato" style="margin-top:6px">Fecha: _____ / _____ / _______</div>
+    </div>
+  </div>
+
+  <!-- PIE DE PÁGINA -->
+  <div class="footer">
+    <div class="footer-col">
+      <strong>Municipio de Caramanta</strong><br>
+      alcaldia@caramanta-antioquia.gov.co<br>
+      Tel. (604) 855 3358 · www.caramanta-antioquia.gov.co
+    </div>
+    <div class="footer-col" style="text-align:center;color:#bbb;font-size:7.5pt;padding-top:4px">
+      Contrato Anual 12 meses · 3 SMMLV 2026
+    </div>
+    <div class="footer-col">
+      <strong>FestQuest — David Támara Torres</strong><br>
+      gerencia@festquest.app · 304 241 8493<br>
+      festquest.app
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
